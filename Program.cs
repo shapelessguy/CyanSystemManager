@@ -19,17 +19,6 @@ namespace CyanSystemManager
         [STAThread]
         static void Main()
         {
-            /*ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM MSAcpi_ThermalZoneTemperature");
-            foreach (ManagementObject obj in searcher.Get())
-            {
-                Double temperature = Convert.ToDouble(obj["CurrentTemperature"].ToString());
-                temperature = (temperature - 2732) / 10.0;
-                Console.WriteLine(temperature);
-            }
-
-            return;*/
-
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(home = new Home());
