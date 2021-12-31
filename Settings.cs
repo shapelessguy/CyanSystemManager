@@ -45,17 +45,19 @@ namespace CyanSystemManager
 
     public class Settings
     {
+        static public bool noStat = false;
         public class variablePath
         {
             static readonly string name = Environment.UserName;
             public static string adminNetPass = @"E:\DOCUMENTI\Workspace Visual Studio\CyanSystemManager\" +
                                                 @"AdminNetPass\asjkdfhkalshljsjbdkjbayvelndkjhhka.txt";
+            public static string localFileSite = "localFile.txt";
+
             public static string displayFusion = @"C:\Program Files (x86)\DisplayFusion\DisplayFusionCommand.exe";
             public static string python = @"C:\Users\"+name+@"\AppData\Local\Programs\Python\Python38\pythonw.exe";
             public static string pyStatScript = @"E:\DOCUMENTI\Workspace PyCharm\Local Codes\Statistics - CyanFusion\Analysis.pyw";
             public static string notebookPath = @"E:\DOCUMENTI\Varie\Notebook";
             public static string networkPath = @"E:\DOCUMENTI\Varie\NetworkLogs";
-            public static string localFileSite = "localFile.txt";
         }
 
         public static class App
@@ -119,7 +121,7 @@ namespace CyanSystemManager
                 "C:\\Program Files\\desksware\\Desktop iCalendar\\Desktop iCalendar.exe");
 
             public static application g_drive = new application(new string[] { "" }, "googledrivesync",
-                "C:\\Program Files\\Google\\Drive File Stream\\53.0.8.0\\GoogleDriveFS.exe", "", true);
+                "C:\\Program Files\\Google\\Drive\\googledrivesync.exe", "", true);
 
             public static application discord = new application(new string[] { "Discord" }, "discord",
                 @"C:\Users\" + name + @"\AppData\Local\Discord\Update.exe", "--processStart Discord.exe", true);
@@ -162,21 +164,21 @@ namespace CyanSystemManager
             new BindDef(ST.Audio, "AudioHeadphones", Keys.F14, KeyModifier.Control),
             new BindDef(ST.Audio, "AudioThird", Keys.F14, KeyModifier.Shift),
 
-            new BindDef(ST.Shortcuts, "A", Keys.F10, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "B", Keys.F12, KeyModifier.Control|KeyModifier.Alt, KeyMode.Hold, 1000, true),
-            new BindDef(ST.Shortcuts, "X", Keys.F2, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "Y", Keys.F1, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "Ltrigg", Keys.F5, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "Rtrigg", Keys.F6, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "LpadClick", Keys.F7, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "reset", Keys.F8, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "start", Keys.F9, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Shortcuts, "order", Keys.F15, KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "A", Keys.F10, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "B", Keys.F12, KeyModifier.Control|KeyModifier.Alt, KeyMode.Hold, 1000, true),
+            //new BindDef(ST.Shortcuts, "X", Keys.F2, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "Y", Keys.F1, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "Ltrigg", Keys.F5, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "Rtrigg", Keys.F6, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "LpadClick", Keys.F7, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "reset", Keys.F8, KeyModifier.Control|KeyModifier.Alt),
+            //new BindDef(ST.Shortcuts, "start", Keys.F9, KeyModifier.Control|KeyModifier.Alt),
+            new BindDef(ST.Shortcuts, "order", Keys.F15, KeyModifier.Control),
             new BindDef(ST.Shortcuts, "snapshot", Keys.PrintScreen),
             new BindDef(ST.Shortcuts, "mediumUpSizing", Keys.F4, KeyModifier.Control|KeyModifier.Alt),
-            new BindDef(ST.Timer, "timer", Keys.F15),
+            new BindDef(ST.Timer, "timer", Keys.F9, KeyModifier.Control|KeyModifier.Alt),
 
-            new BindDef(ST.Notebook, "notebook", Keys.F13),
+            new BindDef(ST.Notebook, "notebook", Keys.F10, KeyModifier.Control|KeyModifier.Alt),
 
             new BindDef(ST.Monitors, "defaultProfile", Keys.F13, KeyModifier.Control),
             new BindDef(ST.Monitors, "gamingProfile", Keys.F13, KeyModifier.Alt),
@@ -220,16 +222,30 @@ namespace CyanSystemManager
         public static Configuration actualConfiguration = Configuration.getConfiguration(Config.Default);
         public static void apply() { 
             for (int id = 0; id < activityList.Count; id++) activityList[id].id = id;
-            if (!Directory.Exists(variablePath.notebookPath)) Directory.CreateDirectory(variablePath.notebookPath);
-            if (!Directory.Exists(variablePath.networkPath)) Directory.CreateDirectory(variablePath.networkPath);
-            if (!File.Exists(variablePath.displayFusion)) MessageBox.Show(variablePath.displayFusion+" not found");
-            if (!File.Exists(variablePath.python)&& !File.Exists(variablePath.pyStatScript))
-                MessageBox.Show("Neither python nor pyScript found in the system");
-            else
+            string document_path = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents");
+            if (!Directory.Exists(variablePath.notebookPath))
             {
-                if (!File.Exists(variablePath.python)) MessageBox.Show(variablePath.python + " not found");
-                if (!File.Exists(variablePath.pyStatScript)) MessageBox.Show(variablePath.pyStatScript + " not found");
+                string main_dir = Path.GetDirectoryName(variablePath.notebookPath);
+                if (!Directory.Exists(main_dir))
+                {
+                    string notebook_path = Path.Combine(document_path, "CyanNotebook");
+                    Console.WriteLine(notebook_path);
+                    variablePath.notebookPath = notebook_path;
+                }
+                Directory.CreateDirectory(variablePath.notebookPath);
             }
+            if (!Directory.Exists(variablePath.networkPath))
+            {
+                string main_dir = Path.GetDirectoryName(variablePath.networkPath);
+                if (!Directory.Exists(main_dir))
+                {
+                    string network_path = Path.Combine(document_path, "CyanNetwork");
+                    variablePath.networkPath = network_path;
+                }
+                Directory.CreateDirectory(variablePath.networkPath);
+            }
+
+            if (!File.Exists(variablePath.python) || !File.Exists(variablePath.pyStatScript)) noStat = true;
         }
     }
 }

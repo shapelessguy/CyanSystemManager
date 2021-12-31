@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
+using System.IO;
+using System.Windows.Forms;
 
 namespace CyanSystemManager
 {
@@ -44,6 +46,7 @@ namespace CyanSystemManager
         public static void startService()
         {
             status = State.NEUTRAL;
+            if (!File.Exists(variablePath.displayFusion)) MessageBox.Show(variablePath.displayFusion + " not found");
             Home.registerHotkeys(ST.Monitors); // register Hotkeys needed by Example_ activities
             Console.WriteLine("Starting monitorService..");
 

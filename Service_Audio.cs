@@ -143,6 +143,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Console.WriteLine("Starting audioService..");
+            if (!File.Exists(variablePath.displayFusion)) MessageBox.Show(variablePath.displayFusion + " not found");
             Home.registerHotkeys(ST.Audio);
             if (volForms.Count == 0)
             {

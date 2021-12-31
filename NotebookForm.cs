@@ -25,7 +25,7 @@ namespace CyanSystemManager
         public static bool styClicked = false;
         public static FontStyle act_style;
         private Font selectionFont;
-        string fileName = "Notebook.txt";
+        string fileName = "";
         List<Color> palette = new List<Color>()
         {
             Color.Navy,
@@ -73,14 +73,14 @@ namespace CyanSystemManager
             richTextBox1.HideSelection = false;
         }
 
-        private void GetActualFile()
+        private void GetCurrentFile()
         {
-            string infoFile = Path.Combine(variablePath.notebookPath, "info.txt");
+            string infoFile = Path.Combine(variablePath.notebookPath, "_info_.txt");
             if (File.Exists(infoFile))
             {
                 foreach (string line in File.ReadAllLines(infoFile))
                 {
-                    if (line.Split(':')[0] == "actualFile") { fileName = line.Split(':')[1]; }
+                    if (line.Split(':')[0] == "currentFile") { fileName = line.Split(':')[1]; }
                     //if (line.Split(':')[0] == "backColor") { richTextBox1.BackColor = Color.FromName(line.Split(':')[1]); }
                 }
                 if (!File.Exists(Path.Combine(variablePath.notebookPath, fileName))) fileName = "";
@@ -91,7 +91,7 @@ namespace CyanSystemManager
             cmbTabs.Items.Clear();
             foreach (string file in Directory.GetFiles(variablePath.notebookPath))
             {
-                if (Path.GetFileName(file) == "info.txt" || Path.GetFileName(file) == "_temp_.txt") continue;
+                if (Path.GetFileName(file) == "_info_.txt" || Path.GetFileName(file) == "_temp_.txt") continue;
                 if (Path.GetExtension(file) == ".txt")
                 {
                     cmbTabs.Items.Add(Path.GetFileNameWithoutExtension(file));
@@ -113,7 +113,7 @@ namespace CyanSystemManager
                 });
             }
             LoadTabs();
-            GetActualFile();
+            GetCurrentFile();
             LoadFile();
             richTextBox1.AutoWordSelection = false;
             ResizePalette();
@@ -161,7 +161,7 @@ namespace CyanSystemManager
         private void Save()
         {
             if (!canSave) return;
-            if (!firstLoad || !allowSave) return;
+            if ((!firstLoad && fileName != "") || !allowSave) return;
             string path = Path.Combine(variablePath.notebookPath, "_temp_.txt");
             if (!richTextBox1.Enabled) return;
             try
@@ -172,14 +172,13 @@ namespace CyanSystemManager
             }
             catch (Exception) { return; }
 
-
             path = Path.Combine(variablePath.notebookPath, fileName);
             richTextBox1.SaveFile(path, RichTextBoxStreamType.RichText);
             string backColor = "\nbackColor:" + richTextBox1.BackColor.ToArgb();
             File.AppendAllText(path, backColor);
-            using (StreamWriter sw = new StreamWriter(Path.Combine(variablePath.notebookPath, "info.txt")))
+            using (StreamWriter sw = new StreamWriter(Path.Combine(variablePath.notebookPath, "_info_.txt")))
             {
-                sw.WriteLine("actualFile:" + fileName);
+                sw.WriteLine("currentFile:" + fileName);
             }
 
         }
@@ -195,8 +194,8 @@ namespace CyanSystemManager
                 if (File.Exists(path))
                 {
                     cmbTabs.Text = Path.GetFileNameWithoutExtension(path);
-                    firstLoad = true;
                     richTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+                    firstLoad = true;
                     foreach (string line in File.ReadAllLines(path))
                     {
                         if (line.Split(':')[0] == "backColor") { richTextBox1.BackColor = Color.FromArgb(Convert.ToInt32(line.Split(':')[1])); }
@@ -371,9 +370,12 @@ namespace CyanSystemManager
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Save();
             for (; ;)
             {
                 string name = Interaction.InputBox("Type name of the new tab.", "New Tab", "Notebook");
+
+                if(fileName == "") firstLoad = true;
                 name = Path.GetFileNameWithoutExtension(name);
                 if (name == "") return;
                 string pathName = Path.Combine(variablePath.notebookPath, name) + ".txt";
