@@ -1,17 +1,10 @@
-﻿using System.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using static CyanSystemManager.Settings;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 using System.Windows.Forms;
 using System.Drawing;
-using System.CodeDom;
-using System.Management;
-using OpenHardwareMonitor.Hardware;
 
 namespace CyanSystemManager
 {

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CyanSystemManager
@@ -14,9 +12,10 @@ namespace CyanSystemManager
         public Home home;
         public string ctrlPanel = "";
 
-        CheckBox allowIdleBox, startBox;
+        CheckBox allowIdleBox, startBox, runBox;
         TextBox checkSite;
         Label checkSite_l;
+        List<Object> allControls = new List<object>();
         public Color btnBackColor = Color.FromArgb(48, 48, 48);
         public Color btnSelectionColor = Color.FromArgb(90,90,90);
         public Color btnOver = Color.FromArgb(60,60,60);
@@ -30,6 +29,20 @@ namespace CyanSystemManager
                 Properties.Settings.Default.allowIdle = allowIdleBox.Checked;
                 Properties.Settings.Default.Save(); 
             };
+            allControls.Add(allowIdleBox);
+
+            runBox = initializeBox("runBox", "Run at startup");
+            runBox.Checked = Properties.Settings.Default.runAtStartup;
+            runBox.CheckedChanged += (o, e) => {
+                try
+                {
+                    RunAtStartup(runBox.Checked);
+                    Properties.Settings.Default.runAtStartup = runBox.Checked;
+                    Properties.Settings.Default.Save();
+                }
+                catch (Exception) { MessageBox.Show("Unkwnown error."); }
+            };
+            allControls.Add(runBox);
 
             startBox = initializeBox("startBox", "Start at reboot");
             startBox.Checked = Properties.Settings.Default.startOnReboot;
@@ -37,14 +50,18 @@ namespace CyanSystemManager
                 Properties.Settings.Default.startOnReboot = startBox.Checked;
                 Properties.Settings.Default.Save();
             };
+            allControls.Add(startBox);
 
             checkSite_l = initializeLabel("checkSite", "Check updates: ");
+            allControls.Add(checkSite_l);
+
             checkSite = initializeTextBox("checkSite", Properties.Settings.Default.checkSite, checkSite_l);
             checkSite.LostFocus += (o, e) => {
                 File.Delete(Settings.variablePath.localFileSite);
                 Properties.Settings.Default.checkSite = checkSite.Text;
                 Properties.Settings.Default.Save();
             };
+            allControls.Add(checkSite);
 
 
 
@@ -59,15 +76,31 @@ namespace CyanSystemManager
             buttonClick(home.generalBtn, null);
         }
 
+        private void RunAtStartup(bool active)
+        {
+            string vbs_script_model = Properties.Resources.vbs_script;
+            string exe_folder = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            string vbs_script = vbs_script_model.Replace("RELEASEPATH", exe_folder);
+            string file_location = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup), "CyanSystemManager.vbs");
+
+            if (active)
+            {
+                using (StreamWriter sw = new StreamWriter(file_location)) sw.Write(vbs_script);
+            }
+            else
+            {
+                if (File.Exists(file_location)) File.Delete(file_location);
+            }
+        }
+
         public void changePanel()
         {
             foreach (Control ctrl in home.panel4.Controls) ctrl.Hide();
             if (ctrlPanel == "generalBtn")
             {
-                allowIdleBox.Show();
-                startBox.Show();
-                checkSite.Show();
-                checkSite_l.Show();
+                foreach (Label obj in allControls.OfType<Label>()) obj.Show();
+                foreach (CheckBox obj in allControls.OfType<CheckBox>()) obj.Show();
+                foreach (TextBox obj in allControls.OfType<TextBox>()) obj.Show();
             }
             else if(ctrlPanel == "startBtn") 
             {

@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Drawing.Printing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 using Timer = System.Threading.Timer;
-using System.Management;
 
 namespace CyanSystemManager
 {

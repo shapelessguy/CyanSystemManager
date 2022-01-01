@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -22,10 +19,11 @@ namespace CyanSystemManager
         static public BindElements binded = new BindElements();
         static public List<serviceBoxControl> serviceControls = new List<serviceBoxControl>();
         static public Thread runTimeSupport;
-        public Home()
+        static bool startup = false;
+        public Home(bool start)
         {
+            startup = start;
             InitializeComponent();
-            //FormClosing += Closing;
             FurtherInitialization();
             Settings.apply();
             buttonPressed.KeyDown += findKey;
@@ -56,27 +54,38 @@ namespace CyanSystemManager
 
         private void RunTime()
         {
-            DateTime date = DateTime.UtcNow;
-            double difference = 9999999;
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);
-            string directory = Path.Combine(path, "StartUp_Time");
-            string file = Path.Combine(directory, "time.txt");
-            Thread.Sleep(1000);
-            try
-            {
-                string text = File.ReadAllText(file);
-                try { date = DateTime.FromFileTimeUtc(Convert.ToInt64(text)); } catch (Exception) { }
-                difference = DateTime.Now.ToUniversalTime().Subtract(date).TotalSeconds;
-                Console.WriteLine("Date: " + date.ToLocalTime());
-                Console.WriteLine("Difference: " + difference);
-            }
-            catch (Exception) { }
+            //DateTime date = DateTime.UtcNow;
+            //double difference = 9999999;
+            //string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);
+            //string directory = Path.Combine(path, "StartUp_Time");
+            //string file = Path.Combine(directory, "time.txt");
+            //Thread.Sleep(400);
+            //try
+            // {
+            //    Environment.SetEnvironmentVariable("Test1", "Value1");
+            //   string start_time = Environment.GetEnvironmentVariable("StartTime");
+            //start_time = "03/21/2022-16:01:28,08";
+            //   DateTime start_datetime = new DateTime(
+            //       Convert.ToUInt16(start_time.Substring(6, 4)),
+            //       Convert.ToUInt16(start_time.Substring(0, 2)),
+            //       Convert.ToUInt16(start_time.Substring(3, 2)),
+            //       Convert.ToUInt16(start_time.Substring(11, 2)),
+            //       Convert.ToUInt16(start_time.Substring(14, 2)),
+            //       Convert.ToUInt16(start_time.Substring(17, 2))).ToUniversalTime();
+            //string text = File.ReadAllText(file);
+            //try { date = DateTime.FromFileTimeUtc(Convert.ToInt64(text)); } catch (Exception) { }
+            //   difference = DateTime.Now.ToUniversalTime().Subtract(start_datetime).TotalSeconds;
+            //Console.WriteLine("Date: " + date.ToLocalTime());
+            //   Console.WriteLine("Difference: " + difference);
+            //}
+            //catch (Exception) { }
 
 
-            bool is_Startup = difference < 120;
+            //bool is_Startup = difference < 120;
             //MessageBox.Show(date + "    " + difference + "    " + is_Startup);
 
-            if(is_Startup && Properties.Settings.Default.startOnReboot) Service_Start.SystemStart(true);
+            // MessageBox.Show(startup + "   " + Properties.Settings.Default.startOnReboot);
+            if(startup && Properties.Settings.Default.startOnReboot) Service_Start.SystemStart(true);
         }
 
         private void createServiceControls()

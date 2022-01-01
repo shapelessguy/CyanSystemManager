@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Management;
 
 namespace CyanSystemManager
 {
@@ -17,11 +13,13 @@ namespace CyanSystemManager
         public static AutoResetEvent reset = new AutoResetEvent(false);
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            bool startup = false;
+            foreach (string arg in args) if (arg == "startup") startup = true;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(home = new Home());
+            Application.Run(home = new Home(startup));
             Console.WriteLine("Program terminated");
         }
         public static void cmd(string cmd, string args, bool isPath = false)
