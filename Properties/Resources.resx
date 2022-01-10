@@ -178,10 +178,6 @@ releasePath = "RELEASEPATH"
 Dim exePath
 exePath = Chr(34) &amp; releasePath &amp; "\CyanSystemManager.exe" &amp; Chr(34) &amp; "startup" &amp; Chr(34)
 
-set shell=CreateObject("Shell.Application")
-shell.ShellExecute "SetTime.bat", , releasePath, "runas", 0 
-set shell=nothing 
-
 Set WshShell = CreateObject("WScript.Shell" ) 
 WshShell.Run exePath, 0 'Must quote command if it has spaces; must escape quotes
 Set WshShell = Nothing</value>

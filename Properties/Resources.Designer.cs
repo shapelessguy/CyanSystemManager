@@ -253,10 +253,6 @@ namespace CyanSystemManager.Properties {
         ///Dim exePath
         ///exePath = Chr(34) &amp; releasePath &amp; &quot;\CyanSystemManager.exe&quot; &amp; Chr(34) &amp; &quot;startup&quot; &amp; Chr(34)
         ///
-        ///set shell=CreateObject(&quot;Shell.Application&quot;)
-        ///shell.ShellExecute &quot;SetTime.bat&quot;, , releasePath, &quot;runas&quot;, 0 
-        ///set shell=nothing 
-        ///
         ///Set WshShell = CreateObject(&quot;WScript.Shell&quot; ) 
         ///WshShell.Run exePath, 0 &apos;Must quote command if it has spaces; must escape quotes
         ///Set WshShell = Nothing.
