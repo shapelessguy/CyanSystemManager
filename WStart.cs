@@ -99,15 +99,15 @@ namespace CyanSystemManager
                 Order_Win.Add(new Window(OpenWindows, browserToLocate, "", smallMonitor, 0, 0, verticalSet, 739));
             Order_Win.Add(new Window(OpenWindows, App.moneyguardW.win, "", smallMonitor, verticalSet + 25, 2));
 
-            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", smallMonitor, verticalSet - 5, 128));
+            //Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", smallMonitor, verticalSet - 5, 128));
 
             Order_Win.Add(new Window(win_id_calendar[0], mediumMonitor, mediumMonitor.Bounds.Width - 315, 0));
             Order_Win.Add(new Window(win_id_calendar[1], mediumMonitor, mediumMonitor.Bounds.Width - 314, 240));
             Point clockLocation = new Point(smallMonitor.WorkingArea.Width - 180, 120);
 
             Rectangle HWBound = new Rectangle(verticalSet - 5 - 8, 317, smallMonitor.WorkingArea.Width - verticalSet + 20, 419);
-            Order_Win.Add(new Window(OpenWindows, App.HW2.win, "", smallMonitor, HWBound));
-            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", smallMonitor, clockLocation));
+            //Order_Win.Add(new Window(OpenWindows, App.HW2.win, "", smallMonitor, HWBound));
+            //Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", smallMonitor, clockLocation));
 
             int[] verticalS = new int[] { 1360, 2600 };
             int[] horizontalS = new int[] { 800, 980, 980+376, 1200, 1200+0, 800+600};
@@ -182,27 +182,28 @@ namespace CyanSystemManager
             if (browserToLocate != null)
                 Order_Win.Add(new Window(OpenWindows, browserToLocate, "", smallMonitor, 0, 0, verticalSet, 739));
 
-            Order_Win.Add(new Window(OpenWindows, new string[] { "WidgetMoneyguard" }, "", smallMonitor, verticalSet + 25, 2));
+            //Order_Win.Add(new Window(OpenWindows, new string[] { "WidgetMoneyguard" }, "", smallMonitor, verticalSet + 25, 2));
 
-            Order_Win.Add(new Window(OpenWindows, new string[] { "NetMeter Evo" }, "", smallMonitor, verticalSet - 5, 128));
+            //Order_Win.Add(new Window(OpenWindows, new string[] { "NetMeter Evo" }, "", smallMonitor, verticalSet - 5, 128));
 
             Rectangle afterB = new Rectangle(verticalSet - 5 - 8, 317, smallMonitor.WorkingArea.Width - verticalSet + 20, 419);
             //Order_Win.Add(new Window(OpenWindows, new string[] { "MSI Afterburner", "grafici" }, "", smallMonitor,afterB));
             Rectangle HWBound = new Rectangle(verticalSet - 5 - 8, 317, smallMonitor.WorkingArea.Width - verticalSet + 20, 419);
-            Order_Win.Add(new Window(OpenWindows, new string[] { "HW Monitoring Charts(2)" }, "", smallMonitor, HWBound));
+            //Order_Win.Add(new Window(OpenWindows, new string[] { "HW Monitoring Charts(2)" }, "", smallMonitor, HWBound));
 
-            Order_Win.Add(new Window(OpenWindows, new string[] { "FormWeather" }, "", smallMonitor, verticalSet + 1, 128));
+            //Order_Win.Add(new Window(OpenWindows, new string[] { "FormWeather" }, "", smallMonitor, verticalSet + 1, 128));
             Order_Win.Add(new Window(win_id_calendar[0], mediumMonitor, mediumMonitor.Bounds.Width - 315, 0));
             Order_Win.Add(new Window(win_id_calendar[1], mediumMonitor, mediumMonitor.Bounds.Width - 314, 240));
             Point clockLocation = new Point(smallMonitor.WorkingArea.Width - 180, 120);
             Order_Win.Add(new Window(OpenWindows, new string[] { "ClocX" }, "#32770", smallMonitor, clockLocation));
 
-            Rectangle whatsAppBounds = new Rectangle(0,0,mediumMonitor.WorkingArea.Width/2, mediumMonitor.WorkingArea.Height);
-            Order_Win.Add(new Window(OpenWindows, new string[] { "WhatsApp" }, "", mediumMonitor, whatsAppBounds));
+            float p_wa = 0.55f;
+            Rectangle whatsAppBounds = new Rectangle(0,0,(int)(mediumMonitor.WorkingArea.Width * p_wa), mediumMonitor.WorkingArea.Height);
+            Order_Win.Add(new Window(OpenWindows, new string[] { "WhatsApp" }, "", smallMonitor, whatsAppBounds));
 
-            Rectangle telegramBounds = new Rectangle(whatsAppBounds.Width, 0, 
-                                                        mediumMonitor.WorkingArea.Width / 2, mediumMonitor.WorkingArea.Height);
-            Order_Win.Add(new Window(OpenWindows, new string[] { "Telegram" }, "", mediumMonitor, telegramBounds));
+            Rectangle telegramBounds = new Rectangle(whatsAppBounds.Width, 0,
+                                                        (int)(mediumMonitor.WorkingArea.Width * (1-p_wa)), mediumMonitor.WorkingArea.Height);
+            Order_Win.Add(new Window(OpenWindows, new string[] { "Telegram" }, "", smallMonitor, telegramBounds));
 
             int[] verticalS = new int[] { 1300, 2600 };
             int[] horizontalS = new int[] { 1150, 1300, 900, 900+294, 1150+376 };
@@ -245,39 +246,41 @@ namespace CyanSystemManager
         private static void order2()
         {
             Console.WriteLine("___2");
-            int verticalSet = 955;
+            //int verticalSet = 955;
             browserToLocate = null;
             foreach (string[] key in browsers.Keys) if (browsers[key].screen == smallMonitor) browserToLocate = key;
 
             if (browserToLocate != null)
-                Order_Win.Add(new Window(OpenWindows, browserToLocate, "", smallMonitor, 0, 0, verticalSet, 739));
+                Order_Win.Add(new Window(OpenWindows, browserToLocate, "", mediumMonitor, 0, 0, mediumMonitor.WorkingArea.Width, mediumMonitor.WorkingArea.Height));
 
-            Order_Win.Add(new Window(OpenWindows, App.moneyguardW.win, "", smallMonitor, verticalSet + 25, 2));
+            //Order_Win.Add(new Window(OpenWindows, App.moneyguardW.win, "", smallMonitor, verticalSet + 25, 2));
 
-            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", smallMonitor, verticalSet - 5, 0));
+            //Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", smallMonitor, verticalSet - 5, 0));
 
-            Rectangle afterB = new Rectangle(verticalSet - 5 - 8, 317, smallMonitor.WorkingArea.Width - verticalSet + 20, 419);
-            Rectangle HWBound = new Rectangle(verticalSet - 5 - 8, 190, smallMonitor.WorkingArea.Width - verticalSet + 20, 419 + 120);
-            Order_Win.Add(new Window(OpenWindows, App.HW2.win, "", smallMonitor, HWBound));
+            //Rectangle afterB = new Rectangle(verticalSet - 5 - 8, 317, smallMonitor.WorkingArea.Width - verticalSet + 20, 419);
+            //Rectangle HWBound = new Rectangle(verticalSet - 5 - 8, 190, smallMonitor.WorkingArea.Width - verticalSet + 20, 419 + 120);
+            //Order_Win.Add(new Window(OpenWindows, App.HW2.win, "", smallMonitor, HWBound));
 
-            Order_Win.Add(new Window(win_id_calendar[0], mediumMonitor, mediumMonitor.Bounds.Width - 315, 0));
+            //Order_Win.Add(new Window(win_id_calendar[0], mediumMonitor, mediumMonitor.Bounds.Width - 315, 0));
 
-            Order_Win.Add(new Window(win_id_calendar[1], mediumMonitor, mediumMonitor.Bounds.Width - 314, 240));
+            //Order_Win.Add(new Window(win_id_calendar[1], mediumMonitor, mediumMonitor.Bounds.Width - 314, 240));
 
-            Point clockLocation = new Point(smallMonitor.WorkingArea.Width - 180, 10);
-            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", smallMonitor, clockLocation));
+            //Point clockLocation = new Point(smallMonitor.WorkingArea.Width - 180, 10);
+            //Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", smallMonitor, clockLocation));
 
-            Rectangle whatsAppBounds = new Rectangle(0, 0, mediumMonitor.WorkingArea.Width / 2, mediumMonitor.WorkingArea.Height);
-            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", mediumMonitor, whatsAppBounds));
+
+            float p_wa = 0.56f;
+            Rectangle whatsAppBounds = new Rectangle(0, 0, (int)(smallMonitor.WorkingArea.Width * p_wa), smallMonitor.WorkingArea.Height);
+            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", smallMonitor, whatsAppBounds));
 
             Rectangle telegramBounds = new Rectangle(whatsAppBounds.Width, 0,
-                                                        mediumMonitor.WorkingArea.Width / 2, mediumMonitor.WorkingArea.Height);
-            Order_Win.Add(new Window(OpenWindows, App.telegram.win, "", mediumMonitor, telegramBounds));
+                                                        (int)(smallMonitor.WorkingArea.Width * (1 - p_wa)) + 1, smallMonitor.WorkingArea.Height);
+            Order_Win.Add(new Window(OpenWindows, App.telegram.win, "", smallMonitor, telegramBounds));
 
             int[] verticalS = new int[] { 1300, 2600 };
             int[] horizontalS = new int[] { 1150, 1300, 900, 900 + 294, 1150 + 376 };
 
-            if (browserToLocate != null) WindowWrapper.ShowNormalWin(OpenWindows, browserToLocate, "");
+            if (browserToLocate != null) WindowWrapper.MaximizeWin(OpenWindows, browserToLocate, "");
 
             WindowWrapper.FocusWin(OpenWindows, App.cyanTabata.win, "", 10);
         }

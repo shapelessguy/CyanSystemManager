@@ -75,10 +75,10 @@ namespace CyanSystemManager
                 "C:\\Program Files (x86)\\Cyan\\MoneyGuard\\Moneyguard.exe", "", false);
 
             public static application netmeterEvo = new application(new string[] { "NetMeter Evo" }, "NetMeterEvo",
-                "E:\\DOCUMENTI\\Installazioni\\Network\\NetMeterEvo.exe", "", true);
+                "E:\\DOCUMENTI\\Installazioni\\Network\\NetMeterEvo.exe", "", false);
 
             public static application clockX = new application(new string[] { "ClocX" }, "ClocX",
-                "C:\\Program Files (x86)\\ClocX\\ClocX.exe", "", true);
+                "C:\\Program Files (x86)\\ClocX\\ClocX.exe", "", false);
 
             public static application posta = new application(new string[] { "- Posta" }, "",
                 "E:\\DOCUMENTI\\Varie\\.AppLinks\\Posta.lnk", "", false);
@@ -196,8 +196,8 @@ namespace CyanSystemManager
         {
             new Configuration(Config.Default, new List<int>(){ 3,2,1},
                                 new List<Position>(){
-                                    new Position(3, new Point(0, 0)),
-                                    new Position(1, new Point(1400, 0)),
+                                    new Position(3, new Point(1400, 200)),
+                                    new Position(1, new Point(0, 0)),
                                     new Position(2, new Point(1360 + 1440, 0)),
                                 }, "Normal"),
 
