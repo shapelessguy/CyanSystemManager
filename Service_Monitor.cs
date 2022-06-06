@@ -61,14 +61,15 @@ namespace CyanSystemManager
         private static void Profile(object value)
         {
             Configuration configuration = Configuration.getConfiguration((Config)value);
-            actualConfiguration = configuration;
-            foreach (Monitor monit in monitors) monit.position = Configuration.getPosition((Config)value, monit.id);
-            cmdAsync(variablePath.displayFusion, "-wallpaperloadprofile " + configuration.fusionCommand);
-            Monitor monitor = MonitorManager.Ref(actualConfiguration.monitorList[0].id);
-            string screenName = monitor.screen.DeviceName;
-            MonitorChanger.SetAsPrimaryMonitor(monitor.screen.DeviceName);
+            //actualConfiguration = configuration;
+            //foreach (Monitor monit in monitors) monit.position = Configuration.getPosition((Config)value, monit.id);
+            string command = "-monitorloadprofile \"" + configuration.fusionCommand + "\"";
+            cmdAsync(variablePath.displayFusion, command);
+            //Monitor monitor = MonitorManager.Ref(actualConfiguration.monitorList[0].id);
+            //string screenName = monitor.screen.DeviceName;
+            //MonitorChanger.SetAsPrimaryMonitor(monitor.screen.DeviceName);
+            Console.WriteLine(command);
 
-            Thread.Sleep(4000); Service_Shortcut.KeyOrder();
             Thread.Sleep(4000); Service_Shortcut.KeyOrder();
             if (commands.Count > 1) for (int i = commands.Count - 1; i > 0; i--) commands.RemoveAt(i);
         }

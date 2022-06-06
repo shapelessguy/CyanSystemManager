@@ -3,8 +3,15 @@ using System.Runtime.InteropServices;
 
 namespace CyanSystemManager
 {
+
     static public class MonitorChanger
     {
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
         public static void SetAsPrimaryMonitor(string deviceName)
         {
             var device = new DISPLAY_DEVICE();
@@ -70,6 +77,11 @@ namespace CyanSystemManager
                         (ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET),
                         IntPtr.Zero);
 
+
+                    int WM_SYSCOMMAND = 0x0112;
+                    uint SC_MONITORPOWER = 0xF170;
+                    SendMessage(new IntPtr(0xFFFF), WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)2);
+
                 }
 
                 otherDevice.cb = Marshal.SizeOf(otherDevice);
@@ -81,7 +93,6 @@ namespace CyanSystemManager
             NativeMethods.ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null);
         }
     }
-    
 
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi)]
     public struct DEVMODE

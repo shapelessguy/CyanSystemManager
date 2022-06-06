@@ -194,11 +194,11 @@ namespace CyanSystemManager
 
         public static List<Configuration> configurations = new List<Configuration>()
         {
-            new Configuration(Config.Default, new List<int>(){ 3,2,1},
+            new Configuration(Config.Default, new List<int>(){ 1,3,2},
                                 new List<Position>(){
-                                    new Position(3, new Point(1400, 200)),
+                                    new Position(3, new Point(1400, 0)),
                                     new Position(1, new Point(0, 0)),
-                                    new Position(2, new Point(1360 + 1440, 0)),
+                                    // new Position(2),
                                 }, "Normal"),
 
             new Configuration(Config.Gaming, new List<int>(){ 2,1,3},
