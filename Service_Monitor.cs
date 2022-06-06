@@ -61,13 +61,8 @@ namespace CyanSystemManager
         private static void Profile(object value)
         {
             Configuration configuration = Configuration.getConfiguration((Config)value);
-            //actualConfiguration = configuration;
-            //foreach (Monitor monit in monitors) monit.position = Configuration.getPosition((Config)value, monit.id);
             string command = "-monitorloadprofile \"" + configuration.fusionCommand + "\"";
             cmdAsync(variablePath.displayFusion, command);
-            //Monitor monitor = MonitorManager.Ref(actualConfiguration.monitorList[0].id);
-            //string screenName = monitor.screen.DeviceName;
-            //MonitorChanger.SetAsPrimaryMonitor(monitor.screen.DeviceName);
             Console.WriteLine(command);
 
             Thread.Sleep(4000); Service_Shortcut.KeyOrder();
