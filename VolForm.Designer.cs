@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
             this.container = new System.Windows.Forms.Panel();
             this.volBar = new System.Windows.Forms.Label();
             this.terminal = new System.Windows.Forms.Label();
@@ -55,7 +54,7 @@
             this.volBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.volBar.BackColor = System.Drawing.Color.DarkRed;
+            this.volBar.BackColor = System.Drawing.Color.Cyan;
             this.volBar.Location = new System.Drawing.Point(3, 61);
             this.volBar.Name = "volBar";
             this.volBar.Size = new System.Drawing.Size(32, 108);
@@ -110,7 +109,6 @@
             this.Controls.Add(this.container);
             this.Controls.Add(this.pictureBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "VolForm";
             this.ShowInTaskbar = false;
             this.Text = "VolForm";

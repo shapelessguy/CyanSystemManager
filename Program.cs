@@ -17,6 +17,7 @@ namespace CyanSystemManager
         {
             bool startup = false;
             foreach (string arg in args) if (arg == "startup") startup = true;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(home = new Home(startup));

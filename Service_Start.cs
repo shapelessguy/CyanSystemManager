@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using static CyanSystemManager.Program;
+using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
 
 namespace CyanSystemManager
@@ -62,35 +65,63 @@ namespace CyanSystemManager
             commands.Clear();
         }
         // Inside functions
+        public static int[] startUp()
+        {
+            int nOp = 0, nTot = 0;
+
+            Dictionary<string, application> dict = App.getApplications();
+            List<application> toStart = new List<application>();
+            foreach (var app in dict.Values.ToArray())
+                if (app.start) toStart.Add(app);
+
+            foreach (var app in toStart)
+                nOp += TryToOpen(app.exe, app.proc_name, app.info); nTot += 1;
+
+            return new int[] { nOp, nTot };
+        }
+        public static int TryToOpen(string path, string processName = "", string info = "", bool admin = false)
+        {
+            try
+            {
+                if (processName != "" && Process.GetProcessesByName(processName).Length > 0) return 0;
+                if (admin) RunAsAdmin.Start(path, info);
+                else Process.Start(path, info);
+                return 1;
+            }
+            catch (Exception) { return 0; }
+        }
         static private void Start(object args)
         {
             Console.WriteLine("Starting system initialization.");
-            int[] done_over_all = WStart.startUp();
+            int[] done_over_all = startUp();
             if (done_over_all[0] < done_over_all[1]/2) return;
-            Thread.Sleep(20 * 1000);
+            Thread.Sleep(10 * 1000);
             Service_Audio.SetMasterVolume(0.18f);
-            Thread.Sleep(20 * 1000);
+            Thread.Sleep(10 * 1000);
+            SortWindows.OrderWin();
+            Thread.Sleep(10 * 1000);
+            SortWindows.OrderWin();
             fixSharpness();
             Thread.Sleep(2 * 1000);
-            WStart.OrderWin();
+            SortWindows.OrderWin();
             commands.Clear();
         }
         static private void fixSharpness()
         {
             IDictionary<IntPtr, string> OpenWindows = WindowWrapper.GetOpenWindows();
-            WindowWrapper.MaximizeWin(OpenWindows, new string[] { "Torrent" }, "");
-            WindowWrapper.MaximizeWin(OpenWindows, new string[] { "Mozilla Thunderbird" }, "");
-            WindowWrapper.ShowNormalWin(OpenWindows, new string[] { "Steam" }, "");
-            WindowWrapper.ShowNormalWin(OpenWindows, new string[] { "Google Chrome" }, "");
+            // WindowWrapper.MaximizeWin(OpenWindows, new string[] { "Torrent" }, "");
+            // WindowWrapper.MaximizeWin(OpenWindows, new string[] { "Outlook" }, "");
+            // WindowWrapper.ShowNormalWin(OpenWindows, new string[] { "Steam" }, "");
+            // WindowWrapper.ShowNormalWin(OpenWindows, new string[] { "Google Chrome" }, "");
 
             for (int i = 0; i < 3; i++) FocusWins(OpenWindows);
 
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "CyanVideos" }, "");
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Mozilla Thunderbird" }, "");
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Torrent" }, "");
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Discord" }, "");
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Teams" }, "");
-            WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Steam" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "CyanVideos" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Outlook" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Torrent" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Discord" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Teams" }, "");
+            // WindowWrapper.MinimizeWin(OpenWindows, new string[] { "Steam" }, "");
         }
         private static void FocusWins(IDictionary<IntPtr, string> OpenWindows)
         {

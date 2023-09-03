@@ -111,7 +111,7 @@ namespace CyanSystemManager
         {
             alert = true;
             alarmTime = DateTime.Now;
-            AudioArgs args = new AudioArgs(Properties.Resources.Allarme, 3, AT.Primary, 0.2f);
+            AudioArgs args = new AudioArgs(Properties.Resources.Allarme, 3, AT.Primary, 0.4f);
             Service_Audio.tempAudio(args);
         }
     }

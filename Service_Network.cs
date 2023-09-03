@@ -78,13 +78,13 @@ namespace CyanSystemManager
                     bool bP1 = false, bP2 = false;
                     try
                     {
-                        PingReply PR1 = p1.Send(getIP(), 20, buffer, new PingOptions(30, true));
+                        PingReply PR1 = p1.Send(getIP(), 50, buffer, new PingOptions(30, true));
                         bP1 = PR1.Status.ToString() == "Success";
                         p1.Dispose();
                     } catch (Exception) { p1.Dispose(); }
                     try
                     {
-                        PingReply PR2 = p2.Send("192.168.1.1", 1);
+                        PingReply PR2 = p2.Send("192.168.1.1", 50);
                         bP2 = PR2.Status.ToString() == "Success";
                         p2.Dispose();
                     } catch (Exception) { p2.Dispose(); }

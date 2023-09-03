@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using static CyanSystemManager.Settings;
 
 namespace CyanSystemManager
 {
@@ -159,9 +160,9 @@ namespace CyanSystemManager
             try
             {
                 string file_storage = "public/IP.txt";
-                string file_local = @"C:\Users\Eva\IP.txt";
+                string file_local = variablePath.networkPath + @"\IP.txt";
                 using (var sw = new StreamWriter(file_local)) { if (IP != "") sw.Write(IP); }
-                using (var stream = System.IO.File.Open(file_local, FileMode.Open))
+                using (var stream = File.Open(file_local, FileMode.Open))
                 {
                     FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
                     var task = new FirebaseStorage("mobilemoneyguard.appspot.com", op).Child(file_storage).PutAsync(stream);

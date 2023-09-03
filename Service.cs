@@ -17,6 +17,7 @@ namespace CyanSystemManager
         static public string Shortcuts = "SHORTCUTS";
         static public string Monitors = "MONITORS";
         static public string Timer = "TIMER";
+        static public string Arduino = "ARDUINO";
         static public string HW_Monitor = "HWMONITOR";
     }
 
@@ -35,6 +36,7 @@ namespace CyanSystemManager
             new Service(ST.Shortcuts, "Shortcuts Service"),
             new Service(ST.Monitors, "Monitors Service"),
             new Service(ST.Timer, "Timer Service"),
+            new Service(ST.Arduino, "Arduino Service"),
             //new Service(ST.HW_Monitor, "HW Monitor Service"),
         };
 
@@ -108,6 +110,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Shortcuts) status = Service_Shortcut.status;
             else if (serviceType == ST.Monitors) status = Service_Monitor.status;
             else if (serviceType == ST.Timer) status = Service_Timer.status;
+            else if (serviceType == ST.Arduino) status = Service_Arduino.status;
             //else if (serviceType == ST.HW_Monitor) status = Service_HWMonitoring.status;
             this.friendlyName = friendlyName;
             this.args = args;
@@ -136,6 +139,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Shortcuts) status = Service_Shortcut.status;
             else if (serviceType == ST.Monitors) status = Service_Monitor.status;
             else if (serviceType == ST.Timer) status = Service_Timer.status;
+            else if (serviceType == ST.Arduino) status = Service_Arduino.status;
             //else if (serviceType == ST.HW_Monitor) status = Service_HWMonitoring.status; 
             if (statusFromBox != State.NEUTRAL)
             {
@@ -158,6 +162,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Shortcuts) Service_Shortcut.startService();
             else if (serviceType == ST.Monitors) Service_Monitor.startService();
             else if (serviceType == ST.Timer) Service_Timer.startService();
+            else if (serviceType == ST.Arduino) Service_Arduino.startService();
             //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.startService();
         }
         public void stopService()
@@ -173,6 +178,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Shortcuts) Service_Shortcut.stopService();
             else if (serviceType == ST.Monitors) Service_Monitor.stopService();
             else if (serviceType == ST.Timer) Service_Timer.stopService();
+            else if (serviceType == ST.Arduino) Service_Arduino.stopService();
             //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.stopService();
         }
     }

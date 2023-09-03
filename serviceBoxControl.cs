@@ -21,6 +21,7 @@ namespace CyanSystemManager
             InitializeComponent();
             serviceBox.Checked = false;
             check.BackgroundImageLayout = ImageLayout.Stretch;
+            check.BackgroundImage = Properties.Resources.checkNeutral;
         }
 
         public void SetTitle(string title)
@@ -47,9 +48,27 @@ namespace CyanSystemManager
                 if(actualState != previousState)
                 {
                     previousState = actualState;
-                    if (actualState == State.ON) { check.BackgroundImage = Properties.Resources.checkTrue; }
-                    else if (actualState == State.OFF) { check.BackgroundImage = Properties.Resources.checkFalse; }
-                    else if (actualState == State.NEUTRAL) { check.BackgroundImage = null; }
+                    ToolStripMenuItem audio = null, start = null, network = null;
+                    foreach (ToolStripMenuItem v in Home.notifyIcon.ContextMenuStrip.Items)
+                    {
+                        if (v.ToString() == "Audio (Arduino)") audio = v;
+                        else if (v.ToString() == "Start now!") start = v;
+                        else if (v.ToString() == "Net Stats") network = v;
+                    }
+
+                    if (actualState == State.ON) { 
+                        check.BackgroundImage = Properties.Resources.checkTrue;
+                        if (runService.friendlyName == "Arduino Service") audio.Enabled = true;
+                        if (runService.friendlyName == "Start Service") start.Enabled = true;
+                        if (runService.friendlyName == "Network Service") network.Enabled = true;
+                    }
+                    else if (actualState == State.OFF) { 
+                        check.BackgroundImage = Properties.Resources.checkFalse;
+                        if (runService.friendlyName == "Arduino Service") audio.Enabled = false;
+                        if (runService.friendlyName == "Start Service") start.Enabled = false;
+                        if (runService.friendlyName == "Network Service") network.Enabled = false;
+                    }
+                    else { check.BackgroundImage = Properties.Resources.checkNeutral; }
                 }
                 //Console.WriteLine(runService.status);
             };

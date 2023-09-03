@@ -30,8 +30,6 @@ namespace CyanSystemManager
             Load += LoadHome;
             panel1.MouseMove += form_MouseMove;
             foreach (Control ctrl in panel1.Controls) if(ctrl.Name != "escBtn") ctrl.MouseMove += form_MouseMove;
-
-
         }
         private void LoadHome(object o, EventArgs e)
         {
@@ -45,6 +43,12 @@ namespace CyanSystemManager
         private void Closing(object sender, EventArgs e)
         {
             Program.timeToClose = true;
+
+            foreach (Service service in ServiceManager.allServices)
+            {
+                service.stopService();
+            }
+
             Timer timerClose = new Timer() { Enabled = true, Interval = 2000 };
             timerClose.Tick += (o, ea) => { Close(); };
 
@@ -135,15 +139,36 @@ namespace CyanSystemManager
         void TrayMenuContext()
         {
             notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-            //notifyIcon.ContextMenuStrip.Items.Add("Start on reboot", Properties.Resources.managerPNG, Statistics_Click);
-            //ToolStripMenuItem startOnReboot = (ToolStripMenuItem)notifyIcon.ContextMenuStrip.Items[0];
-            //startOnReboot.DropDownItems.Add("YES", Properties.Resources.managerPNG, YeReboot_Click);
-            //startOnReboot.DropDownItems.Add("NO", Properties.Resources.managerPNG, NoReboot_Click);
-            //startOnReboot.Checked = Properties.Settings.Default.startOnReboot;
+
+            notifyIcon.ContextMenuStrip.Items.Add("Sort Windows", Properties.Resources.managerPNG, Sort_Click);
+
+            notifyIcon.ContextMenuStrip.Items.Add("Audio (Arduino)", Properties.Resources.managerPNG);
             notifyIcon.ContextMenuStrip.Items.Add("Start now!", Properties.Resources.managerPNG, Now_Click);
             notifyIcon.ContextMenuStrip.Items.Add("Net Stats", Properties.Resources.managerPNG, Statistics_Click);
             notifyIcon.ContextMenuStrip.Items.Add("Exit", Properties.Resources.managerPNG, MenuExit_Click);
+
+
+            ToolStripMenuItem audio = null, start = null, network = null;
+            foreach (ToolStripMenuItem v in Home.notifyIcon.ContextMenuStrip.Items)
+            {
+                if (v.ToString() == "Audio (Arduino)") audio = v;
+                else if (v.ToString() == "Start now!") start = v;
+                else if (v.ToString() == "Net Stats") network = v;
+            }
+            audio.DropDownItems.Add("ON (keep)", Properties.Resources.managerPNG, turnAudioOnKeep_Click);
+            audio.DropDownItems.Add("ON", Properties.Resources.managerPNG, turnAudioOn_Click);
+            audio.DropDownItems.Add("OFF", Properties.Resources.managerPNG, turnAudioOff_Click);
+
+            audio.Enabled = false;
+            start.Enabled = false;
+            network.Enabled = false;
         }
+        private void Sort_Click(object sender, EventArgs e) { Service_Monitor.sort(); }
+        private void turnLightOn_Click(object sender, EventArgs e) { Service_Arduino.turnLight(true); }
+        private void turnLightOff_Click(object sender, EventArgs e) { Service_Arduino.turnLight(false); }
+        private void turnAudioOnKeep_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(true, true); }
+        private void turnAudioOn_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(true); }
+        private void turnAudioOff_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(false); }
         private void Now_Click(object sender, EventArgs e) { Service_Start.SystemStart(false); }
         private void YeReboot_Click(object sender, EventArgs e) {Reboot_Click(true); }
         private void NoReboot_Click(object sender, EventArgs e) {Reboot_Click(false);}

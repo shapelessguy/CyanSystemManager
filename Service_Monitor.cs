@@ -6,14 +6,18 @@ using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
+using Vanara.PInvoke;
 
 namespace CyanSystemManager
 {
     public static class Service_Monitor
     {
         static public State status = State.OFF;
+        static public int n_monitors = -1;
 
-        public static void changeProfile(string conf) { addCommand(conf); }
+        public static void function(string conf) { addCommand(conf); }
+        public static void sort() { addCommand(MonitorCom.SORT); }
 
         static List<Command> commands = new List<Command>();
         private static void addCommand(string type, object value = null)
@@ -24,18 +28,26 @@ namespace CyanSystemManager
 
         public static void threadRun()
         {
+            int counter = 0;
+            TurnOn();
             while (!timeToClose && status != State.OFF)
             {
                 try
                 {
                     Thread.Sleep(25);
+                    counter++;
+                    if (counter == 40) { 
+                        counter = 0;
+                        if (Screen.AllScreens.Length != n_monitors) { MonitorManager.getMonitorConfiguration(); }
+                    }
                     if (commands.Count == 0) continue;
                     Command command = commands[0];
                     commands.RemoveAt(0);
-                    if (command.type == MonitorCom.DEFAULT) Profile(Config.Default);
-                    else if (command.type == MonitorCom.GAMING) Profile(Config.Gaming);
-                    else if (command.type == MonitorCom.SOFTGAMING) Profile(Config.SoftGaming);
-                }
+                    if (command.type == MonitorCom.CENTRALIZE) Centralize();
+                    else if (command.type == MonitorCom.SORT) Sort();
+                    else if (command.type == MonitorCom.TURN_ON_MONITORS) TurnOn();
+                    else if (command.type == MonitorCom.SHUT_DOWN_MONITORS) TurnOff();
+                } 
                 catch (Exception) { Console.WriteLine("Exception in monitorRun"); }
             }
 
@@ -46,6 +58,7 @@ namespace CyanSystemManager
             if (!File.Exists(variablePath.displayFusion)) MessageBox.Show(variablePath.displayFusion + " not found");
             Home.registerHotkeys(ST.Monitors); // register Hotkeys needed by Example_ activities
             Console.WriteLine("Starting monitorService..");
+            MonitorManager.GetMonitors();
 
             new Thread(threadRun).Start();
             status = State.ON;
@@ -57,16 +70,112 @@ namespace CyanSystemManager
             Home.unregisterHotkeys(ST.Monitors);
             commands.Clear();
         }
-
-        private static void Profile(object value)
+        private static void execProfile(string command)
         {
-            Configuration configuration = Configuration.getConfiguration((Config)value);
-            string command = "-monitorloadprofile \"" + configuration.fusionCommand + "\"";
-            cmdAsync(variablePath.displayFusion, command);
+            cmdAsync(variablePath.multiMonitor, command);
             Console.WriteLine(command);
 
-            Thread.Sleep(4000); Service_Shortcut.KeyOrder();
+            // Thread.Sleep(4000); Sort();
             if (commands.Count > 1) for (int i = commands.Count - 1; i > 0; i--) commands.RemoveAt(i);
         }
+        private static void Centralize()
+        {
+            Console.WriteLine("1");
+            string command = " /MoveWindow Primary All";
+            execProfile(command);
+        }
+        private static void Sort()
+        {
+            SortWindows.OrderWin(1);
+        }
+
+        private static void TurnOn()
+        {
+            string command = " /TurnOn " + MonitorManager.Ref(1).screen.DeviceName + " "
+                                          + MonitorManager.Ref(2).screen.DeviceName + " "
+                                          + MonitorManager.Ref(3).screen.DeviceName + " ";
+            execProfile(command);
+        }
+
+        private static void TurnOff()
+        {
+            string command = " /TurnOff " + MonitorManager.Ref(1).screen.DeviceName + " "
+                                          + MonitorManager.Ref(2).screen.DeviceName + " "
+                                          + MonitorManager.Ref(3).screen.DeviceName + " ";
+            execProfile(command);
+        }
+    }
+
+    class SortWindows
+    {
+        public static List<Window> Order_Win = new List<Window>();
+        public static Dictionary<string[], MyMonitor> browsers = new Dictionary<string[], MyMonitor>();
+        public static int tempo_avvio = 25000;
+        public static Dictionary<float, float> AudioLevels = new Dictionary<float, float>();
+        static string[] browserToLocate;
+
+        public static void defBrowsers()
+        {
+            browsers.Clear();
+            // browsers.Add(App.chrome.win, MonitorManager.Ref(2));
+            browsers.Add(App.firefox.win, MonitorManager.Ref(1));
+        }
+
+        public static void OrderWin(int nTimes = 1) { for (int i = 0; i < nTimes; i++) OrderWin(); }
+
+        public static IDictionary<System.IntPtr, string> OpenWindows;
+        public static Screen monitor1;
+        public static Screen monitor2;
+        public static Screen monitor3;
+        public static Screen monitor_cin;
+        public static void OrderWin()
+        {
+            OpenWindows = WindowWrapper.GetOpenWindows();
+            Order_Win.Clear();
+
+            monitor1 = MonitorManager.Ref(1).screen; // principal monitor
+            monitor2 = MonitorManager.Ref(2).screen; // secondary left
+            monitor3 = MonitorManager.Ref(3).screen; // secondary right
+            monitor_cin = MonitorManager.Ref(4).screen; // cinema monitor
+
+            Console.WriteLine("\nMonitors detected ->");
+            if (monitor1 != null) Console.WriteLine("monitor 1 (" + MonitorManager.Ref(1).deviceName + "): " + monitor1.Bounds);
+            else { Console.WriteLine("monitor1 not found"); }
+            if (monitor2 != null) Console.WriteLine("monitor 2 (" + MonitorManager.Ref(2).deviceName + "): " + monitor2.Bounds);
+            else { Console.WriteLine("monitor2 not found"); }
+            if (monitor3 != null) Console.WriteLine("monitor 3 (" + MonitorManager.Ref(3).deviceName + "): " + monitor3.Bounds);
+            else { Console.WriteLine("monitor3 not found"); }
+            if (monitor_cin != null) Console.WriteLine("monitor 4 (" + MonitorManager.Ref(4).deviceName + "): " + monitor_cin.Bounds);
+            else { Console.WriteLine("monitor4 not found"); }
+
+            defBrowsers();
+            bool primaryProfile = monitor1 != null && monitor2 != null && monitor3 != null;
+            bool cinemaProfile = monitor1 == null && monitor2 == null && monitor3 == null && monitor_cin != null;
+
+            if (primaryProfile) order_primary();
+            else if (cinemaProfile) order_cinema();
+        }
+        private static void order_primary()
+        {
+            Console.WriteLine("Primary ordering!\n");
+            browserToLocate = null;
+            foreach (string[] key in browsers.Keys) if (browsers[key].screen == monitor1) browserToLocate = key;
+            // if (browserToLocate != null) Order_Win.Add(new Window(OpenWindows, browserToLocate, "", monitor1, 150, 80, 1600, 1000));
+
+            Order_Win.Add(new Window(OpenWindows, new string[] { "MSI Afterburner", "hardware monitor" }, "", monitor3, -7, -1, 1129, 410));
+            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", monitor3, 1115, 0, 590, 220));
+            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", monitor3, monitor1.WorkingArea.Width - 210, 8));
+            Order_Win.Add(new Window(OpenWindows, App.chatGPT.win, "", monitor3, -7, 401, 1129, 646));
+            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", monitor2, 1112, 0, monitor1.WorkingArea.Width - 1105, 1047));
+            Order_Win.Add(new Window(OpenWindows, App.outlook.win, "", monitor2, 0, 0, 1120, 1040));
+            Order_Win.Add(new Window(OpenWindows, new string[] { }, "Spotify", monitor3, 1115, 220, monitor1.WorkingArea.Width - 1115, 820));
+            WindowWrapper.CloseWin(OpenWindows, App.nordvpn.win, "");
+            // WindowWrapper.FocusWin(OpenWindows, browserToLocate, "", 10);
+        }
+        private static void order_cinema()
+        {
+            Console.WriteLine("Cinema ordering!\n");
+        }
+
     }
 }

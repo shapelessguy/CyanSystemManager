@@ -5,7 +5,7 @@ namespace CyanSystemManager
 {
     class RunAsAdmin
     {
-        public static void Start(string fileName)
+        public static void Start(string fileName, string info)
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(fileName));
@@ -83,7 +83,8 @@ namespace CyanSystemManager
                 // Start the target process with the new token.
                 var si = new STARTUPINFO();
                 var pi = new PROCESS_INFORMATION();
-                if (!CreateProcessWithTokenW(hPrimaryToken, 0, fileName, "", 0, IntPtr.Zero, System.IO.Path.GetDirectoryName(fileName), ref si, out pi))
+                if (!CreateProcessWithTokenW(hPrimaryToken, 0, fileName, info, 0, 
+                    IntPtr.Zero, System.IO.Path.GetDirectoryName(fileName), ref si, out pi))
                     return;
             }
             finally

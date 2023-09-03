@@ -5,14 +5,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Tools;
+using WindowsDisplayAPI;
 
 namespace CyanSystemManager
 {
     public class ScreenClass
     {
-        public static string GetScreenName(Screen screen)
+        public static string[] GetDeviceFriendlyNames()
         {
-            return screen.DeviceFriendlyName();
+            return ScreenInterrogatory.GetAllMonitorsFriendlyNames().ToArray();
         }
     }
 }
@@ -275,7 +276,7 @@ namespace Tools
 
         #endregion
 
-        private static string[] MonitorFriendlyName(LUID adapterId, uint targetId)
+        private static string MonitorFriendlyName(LUID adapterId, uint targetId)
         {
             var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
             {
@@ -290,10 +291,10 @@ namespace Tools
             var error = DisplayConfigGetDeviceInfo(ref deviceName);
             if (error != ERROR_SUCCESS)
                 throw new Win32Exception(error);
-            return new string[] { deviceName.monitorFriendlyDeviceName, deviceName.connectorInstance.ToString(), deviceName.monitorDevicePath };
+            return deviceName.monitorFriendlyDeviceName;
         }
 
-        private static IEnumerable<string[]> GetAllMonitorsFriendlyNames()
+        public static IEnumerable<string> GetAllMonitorsFriendlyNames()
         {
             uint pathCount, modeCount;
             var error = GetDisplayConfigBufferSizes(QUERY_DEVICE_CONFIG_FLAGS.QDC_ONLY_ACTIVE_PATHS, out pathCount, out modeCount);
@@ -314,16 +315,14 @@ namespace Tools
 
         public static string DeviceFriendlyName(this Screen screen)
         {
-            var allFriendlyNames = GetAllMonitorsFriendlyNames();
-            if (Screen.AllScreens.Length == 0) return null;
-            Screen[] orderedScreens = Screen.AllScreens.OrderBy(o => o.DeviceName).ToArray();
-            for (var index = 0; index < orderedScreens.Length; index++)
-                if (Equals(screen, orderedScreens[index]))
-                {
-                    if (allFriendlyNames.ToArray().Length <= index) return null;
-                    if (allFriendlyNames.ToArray()[index].Length == 0) return null;
-                    return allFriendlyNames.ToArray()[index][0];
-                }
+
+            var allFriendlyNames = ScreenInterrogatory.GetAllMonitorsFriendlyNames().ToArray();
+            var allDisplays = Display.GetDisplays().ToArray();
+            
+            for (int i=0; i<allFriendlyNames.Count(); i++)
+            {
+                if (screen == allDisplays[i].GetScreen()) return allFriendlyNames[i]; 
+            }
             return null;
         }
 

@@ -4,6 +4,41 @@ using static CyanSystemManager.Utility;
 
 namespace CyanSystemManager
 {
+
+    public enum AT
+    {
+        None = 0,
+        Primary = 1,
+        Secondary = 2,
+        Headphones = 3,
+        Third = 4,
+    }
+
+    public class application
+    {
+        public string[] win;
+        public string exe;
+        public string info;
+        public string proc_name;
+        public bool start;
+        /// <summary>
+        /// Instantiate an application.
+        /// </summary>
+        /// <param name="win">Array containing substrings findable in the window's name.</param>
+        /// <param name="proc_name">Name of the process.</param>
+        /// <param name="exe">Exe file needed for executing the application.</param>
+        /// <param name="start">If true, the application will be executed at the startup.</param>
+        /// <param name="info">Optional arguments for the execution of the application.</param>
+        public application(string[] win, string proc_name, string exe, bool start = true, string info = "")
+        {
+            this.win = win;
+            this.proc_name = proc_name;
+            this.exe = exe;
+            this.info = info;
+            this.start = start;
+        }
+    }
+
     // //////////// Example commands
     public class ExampleCom
     {
@@ -26,6 +61,14 @@ namespace CyanSystemManager
 
         static public string TEMPAUDIO = "tempAudio";
     }
+    public class ArduinoCom
+    {
+        static public string AUDIO_ON_KEEP = "AUDIO_ON_KEEP";
+        static public string AUDIO_ON = "AUDIO_ON";
+        static public string AUDIO_OFF = "AUDIO_OFF";
+        static public string LIGHT_ON = "LIGHT_ON";
+        static public string LIGHT_OFF = "LIGHT_OFF";
+    }
     public class ShortcutCom
     {
         static public string ORDER = "orderWin";
@@ -43,9 +86,10 @@ namespace CyanSystemManager
     }
     public class MonitorCom
     {
-        static public string DEFAULT = "Default";
-        static public string GAMING = "Gaming";
-        static public string SOFTGAMING = "SoftGaming";
+        static public string CENTRALIZE = "centralize";
+        static public string SORT = "sort";
+        static public string TURN_ON_MONITORS = "TOM";
+        static public string SHUT_DOWN_MONITORS = "SDM";
     }
     public class TimerCom
     {
@@ -78,7 +122,6 @@ namespace CyanSystemManager
             else if (name == "LpadClick") Service_Shortcut.KeyPad(ShortcutCom.LPAD);
             else if (name == "reset") Service_Shortcut.KeyPad(ShortcutCom.RST);
             else if (name == "start") Service_Shortcut.KeyPad(ShortcutCom.START);
-            else if (name == "order") Service_Shortcut.KeyOrder();
             else if (name == "snapshot") Service_Shortcut.TakeSnapshot();
             else if (name == "mediumUpSizing") Service_Shortcut.UpSizing();
 
@@ -87,9 +130,10 @@ namespace CyanSystemManager
             else if (name == "AudioHeadphones") Service_Audio.SetDevice(AudioCom.HEADPHONES);
             else if (name == "AudioThird") Service_Audio.SetDevice(AudioCom.THIRD);
 
-            else if (name == "defaultProfile") Service_Monitor.changeProfile(MonitorCom.DEFAULT);
-            else if (name == "gamingProfile") Service_Monitor.changeProfile(MonitorCom.GAMING);
-            else if (name == "softgamingProfile") Service_Monitor.changeProfile(MonitorCom.SOFTGAMING);
+            else if (name == "centralize") Service_Monitor.function(MonitorCom.CENTRALIZE);
+            else if (name == "TOM") Service_Monitor.function(MonitorCom.TURN_ON_MONITORS);
+            else if (name == "SDM") Service_Monitor.function(MonitorCom.SHUT_DOWN_MONITORS);
+            else if (name == "order") Service_Monitor.function(MonitorCom.SORT);
 
             else if (name == "timer") Service_Timer.TimerPressed();
             else if (name == "notebook") Service_Notebook.OpenOrClose();

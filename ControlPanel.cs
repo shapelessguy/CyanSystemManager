@@ -44,7 +44,7 @@ namespace CyanSystemManager
             };
             allControls.Add(runBox);
 
-            startBox = initializeBox("startBox", "Start at reboot");
+            startBox = initializeBox("startBox", "Execute applications at startup");
             startBox.Checked = Properties.Settings.Default.startOnReboot;
             startBox.CheckedChanged += (o, e) => {
                 Properties.Settings.Default.startOnReboot = startBox.Checked;

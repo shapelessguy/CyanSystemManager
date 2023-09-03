@@ -130,6 +130,16 @@ namespace CyanSystemManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap checkNeutral {
+            get {
+                object obj = ResourceManager.GetObject("checkNeutral", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap checkTrue {
             get {
                 object obj = ResourceManager.GetObject("checkTrue", resourceCulture);

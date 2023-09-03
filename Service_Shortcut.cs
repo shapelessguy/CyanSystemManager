@@ -30,7 +30,6 @@ namespace CyanSystemManager
         }
 
         // //////////////   Functions of ShortcutService
-        public static void KeyOrder() { addCommand(ShortcutCom.ORDER); }
         public static void TakeSnapshot() { addCommand(ShortcutCom.SNAPSHOT); }
         public static void UpSizing() { addCommand(ShortcutCom.UPSIZING); }
         public static void KeyPad(string command, KeyMode keymode = KeyMode.Normal) { addCommand(command, keymode); }
@@ -54,8 +53,7 @@ namespace CyanSystemManager
                     Command command = commands[0];
                     commands.RemoveAt(0);
                     int mode = 0;
-                    if (command.type == ShortcutCom.ORDER) OrderWindows();
-                    else if (command.type == ShortcutCom.A) A(mode);
+                    if (command.type == ShortcutCom.A) A(mode);
                     else if (command.type == ShortcutCom.X) X(mode);
                     else if (command.type == ShortcutCom.Y) Y(mode);
                     else if (command.type == ShortcutCom.B) B(mode, (KeyMode)command.value);
@@ -71,7 +69,6 @@ namespace CyanSystemManager
             }
 
         }
-        private static void OrderWindows() { Console.WriteLine("Ordering!"); WStart.OrderWin(2); }
 
         static int updatedThreadID = 0;
         static Point prevPoint;
@@ -80,7 +77,7 @@ namespace CyanSystemManager
             if (mode == 0)
             {
                 MonitorManager.GetMonitors();
-                Monitor bigMonitor = MonitorManager.Ref(2);
+                MyMonitor bigMonitor = MonitorManager.Ref(2);
                 if (bigMonitor == null) return;
                 Point centralPoint = new Point(bigMonitor.screen.Bounds.Location.X + bigMonitor.screen.Bounds.Width/2, 
                                                 bigMonitor.screen.Bounds.Location.Y + bigMonitor.screen.Bounds.Height/2);
@@ -127,12 +124,12 @@ namespace CyanSystemManager
         }
         private static void LTRIG(int mode = 0)
         {
-            Monitor bigM = MonitorManager.Ref(2);
+            MyMonitor bigM = MonitorManager.Ref(2);
             if (bigM == null) return;
-            Monitor mediumM = MonitorManager.Ref(1);
+            MyMonitor mediumM = MonitorManager.Ref(1);
             if(mediumM == null) mediumM = MonitorManager.Ref(3);
             if (mediumM == null) return;
-            Monitor smallM = MonitorManager.Ref(3);
+            MyMonitor smallM = MonitorManager.Ref(3);
 
             Point centralBig = new Point(bigM.screen.Bounds.X + bigM.screen.Bounds.Width / 2,
                                             bigM.screen.Bounds.Y + bigM.screen.Bounds.Height / 2);
@@ -148,7 +145,7 @@ namespace CyanSystemManager
                 //List<Rectangle> bounds = new List<Rectangle>();
                 if (ScreenSaverForm.active) { ScreenSaverForm.active = false; return; }
                 MonitorManager.GetMonitors();
-                foreach (Monitor monitor in monitors) if (monitor.id != 2)
+                foreach (MyMonitor monitor in monitors) if (monitor.id != 2)
                     {
                         Program.home.Invoke((MethodInvoker)delegate {
                             ScreenSaverForm screenForm = new ScreenSaverForm() { Bounds = monitor.screen.Bounds};
@@ -180,7 +177,7 @@ namespace CyanSystemManager
         {
             IntPtr hWnd = WindowFromPoint(Cursor.Position);
             Console.WriteLine("window -> " + hWnd);
-            WStart.OpenWindows = WindowWrapper.GetOpenWindows();
+            SortWindows.OpenWindows = WindowWrapper.GetOpenWindows();
 
             //Window win = new Window(hWnd);
             SetForegroundWindow(hWnd);
