@@ -118,7 +118,7 @@ namespace CyanSystemManager
         {
             browsers.Clear();
             // browsers.Add(App.chrome.win, MonitorManager.Ref(2));
-            browsers.Add(App.firefox.win, MonitorManager.Ref(1));
+            browsers.Add(App.opera.win, MonitorManager.Ref(1));
         }
 
         public static void OrderWin(int nTimes = 1) { for (int i = 0; i < nTimes; i++) OrderWin(); }
@@ -162,13 +162,14 @@ namespace CyanSystemManager
             foreach (string[] key in browsers.Keys) if (browsers[key].screen == monitor1) browserToLocate = key;
             // if (browserToLocate != null) Order_Win.Add(new Window(OpenWindows, browserToLocate, "", monitor1, 150, 80, 1600, 1000));
 
-            Order_Win.Add(new Window(OpenWindows, new string[] { "MSI Afterburner", "hardware monitor" }, "", monitor3, -7, -1, 1129, 410));
-            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", monitor3, 1115, 0, 590, 220));
-            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", monitor3, monitor1.WorkingArea.Width - 210, 8));
-            Order_Win.Add(new Window(OpenWindows, App.chatGPT.win, "", monitor3, -7, 401, 1129, 646));
-            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", monitor2, 1112, 0, monitor1.WorkingArea.Width - 1105, 1047));
-            Order_Win.Add(new Window(OpenWindows, App.outlook.win, "", monitor2, 0, 0, 1120, 1040));
-            Order_Win.Add(new Window(OpenWindows, new string[] { }, "Spotify", monitor3, 1115, 220, monitor1.WorkingArea.Width - 1115, 820));
+            Order_Win.Add(new Window(OpenWindows, App.outlook.win, "", monitor2, 0, 0, 1112, 1040));
+            Order_Win.Add(new Window(OpenWindows, new string[] { "MSI Afterburner", "hardware monitor" }, "", monitor2, 1105, -1, 822, 430));
+            Order_Win.Add(new Window(OpenWindows, App.chatGPT.win, "", monitor2, 1105, 421, 822, 626));
+            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", monitor3, -7, 0, 730, 1046));
+            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", monitor3, 716, 0, 590, 220));
+            Order_Win.Add(new Window(OpenWindows, new string[] { }, "Spotify", monitor3, 716, 220, 1, 820));
+            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", monitor3, 1306, 8, 200, 200));
+            Order_Win.Add(new Window(OpenWindows, App.skype_fb.win, "", monitor3, 1517, 0, 1, 1040));
             WindowWrapper.CloseWin(OpenWindows, App.nordvpn.win, "");
             // WindowWrapper.FocusWin(OpenWindows, browserToLocate, "", 10);
         }

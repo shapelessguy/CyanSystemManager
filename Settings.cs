@@ -32,10 +32,16 @@ namespace CyanSystemManager
         {
             static readonly string name = Environment.UserName;
 
+            public static application opera = new application(
+                new string[] { "Opera" },
+                "opera",
+                "C:\\Users\\shape\\AppData\\Local\\Programs\\Opera\\launcher.exe");
+
             public static application firefox = new application(
-                new string[] { "Mozilla Firefox" }, 
+                new string[] { "Mozilla Firefox" },
                 "firefox",
-                "C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+                "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+                false);
 
             public static application netmeterEvo = new application(
                 new string[] { "NetMeter Evo" }, 
@@ -49,8 +55,13 @@ namespace CyanSystemManager
 
             public static application outlook = new application(
                 new string[] { "- Outlook" },
-                "OUTLOOK", 
-                "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
+                "OUTLOOK",
+                "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
+
+            public static application skype_fb = new application(
+                new string[] { "Skype for Business" },
+                "lync",
+                "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\lync.exe");
 
             public static application spotify = new application(
                 new string[] { "Spotify", "Premium" }, 
