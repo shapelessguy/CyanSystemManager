@@ -14,14 +14,14 @@ namespace CyanSystemManager
         public class variablePath
         {
             public static string localFileSite = "localFile.txt";
-            static readonly string name = Environment.UserName;
+            static readonly string documents_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            static readonly string app_data_path = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
+            static readonly string prog86_path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            public static string adminNetPass = documents_path + @"\Workspace Visual Studio\CyanSystemManager\AdminNetPass\asjkdfhkalshljsjbdkjbayvelndkjhhka.txt";
 
-            public static string adminNetPass = @"C:\Users\"+name+@"\OneDrive\Documenti\Workspace Visual Studio\CyanSystemManager\" +
-                                                @"AdminNetPass\asjkdfhkalshljsjbdkjbayvelndkjhhka.txt";
-
-            public static string displayFusion = @"C:\Program Files (x86)\DisplayFusion\DisplayFusionCommand.exe";
-            public static string python = @"C:\Users\"+name+@"\AppData\Local\Programs\Python\Python311\pythonw.exe";
-            public static string pyStatScript = @"C:\Users\"+name+@"\OneDrive\Documenti\Workspace PyCharm\University-Basic Projects\Statistics - CyanFusion\Analysis.pyw";
+            public static string displayFusion = prog86_path + @"\DisplayFusion\DisplayFusionCommand.exe";
+            public static string python = app_data_path + @"\Local\Programs\Python\Python311\pythonw.exe";
+            public static string pyStatScript = documents_path + @"\Workspace PyCharm\University-Basic Projects\Statistics - CyanFusion\Analysis.pyw";
             public static string cyanPath = @"C:\ProgramData\Cyan";
             public static string notebookPath = cyanPath + @"\Notebook";
             public static string networkPath = cyanPath + @"\NetworkLogs";
@@ -31,16 +31,20 @@ namespace CyanSystemManager
         public static class App
         {
             static readonly string name = Environment.UserName;
+            static readonly string documents_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            static readonly string app_data_path = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
+            static readonly string drive_path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles).Substring(0, 2);
+            static readonly string prog86_path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
             public static application opera = new application(
                 new string[] { "Opera" },
                 "opera",
-                "C:\\Users\\shape\\AppData\\Local\\Programs\\Opera\\launcher.exe");
+                app_data_path + "\\Local\\Programs\\Opera\\launcher.exe");
 
             public static application firefox = new application(
                 new string[] { "Mozilla Firefox" },
                 "firefox",
-                "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+                drive_path + "\\Program Files\\Mozilla Firefox\\firefox.exe",
                 false);
 
             public static application netmeterEvo = new application(
@@ -51,26 +55,26 @@ namespace CyanSystemManager
             public static application clockX = new application(
                 new string[] { "ClocX" }, 
                 "ClocX",
-                "C:\\Program Files (x86)\\ClocX\\ClocX.exe");
+                prog86_path + "\\ClocX\\ClocX.exe");
 
             public static application outlook = new application(
                 new string[] { "- Outlook" },
                 "OUTLOOK",
-                "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
+                prog86_path + "\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
 
             public static application skype_fb = new application(
                 new string[] { "Skype for Business" },
                 "lync",
-                "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\lync.exe");
+                prog86_path + "\\Microsoft Office\\root\\Office16\\lync.exe");
 
             public static application spotify = new application(
                 new string[] { "Spotify", "Premium" }, 
                 "Spotify",
-                @"C:\Users\" + name + @"\AppData\Roaming\Spotify\\Spotify.exe");
+                app_data_path + "\\Roaming\\Spotify\\Spotify.exe");
 
             public static application teams = new application(
                 new string[] { "Microsoft Teams" }, "",
-                @"C:\Users\" + name + @"\AppData\Local\Microsoft\Teams\Update.exe",
+                app_data_path + "\\Local\\Microsoft\\Teams\\Update.exe",
                 false, 
                 " --processStart Teams.exe");
 
@@ -89,29 +93,29 @@ namespace CyanSystemManager
             public static application deepL = new application(
                 new string[] { "DeepL" }, 
                 "DeepL",
-                @"C:\Users\" + name + @"\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\DeepL.lnk", 
+                app_data_path + "\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DeepL.lnk", 
                 true,
                 "run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml");
 
             public static application chatGPT = new application(
                 new string[] { "ChatGPT" }, 
                 "ChatGPT",
-                @"C:\Users\" + name + @"\OneDrive\Documenti\Workspace PyCharm\miscellaneous\OpenAI\ChatGPT.lnk");
+                documents_path + "\\Workspace PyCharm\\miscellaneous\\OpenAI\\ChatGPT.lnk");
 
             public static application msiG = new application(
                 new string[] { "MSI Afterburner", "grafici" }, 
                 "MSIAfterburner",
-                "C:\\Program Files (x86)\\MSI Afterburner\\MSIAfterburner.exe");
+                prog86_path + "\\MSI Afterburner\\MSIAfterburner.exe");
 
             public static application displFusion = new application(
                 new string[] { "Display Fusion" }, 
                 "",
-                "C:\\Program Files (x86)\\DisplayFusion\\DisplayFusion.exe");
+                prog86_path + "\\DisplayFusion\\DisplayFusion.exe");
 
             public static application discord = new application(
                 new string[] { "Discord" },
                 "discord",
-                @"C:\Users\" + name + @"\AppData\Local\Discord\Update.exe",
+                app_data_path + "\\Local\\Discord\\Update.exe",
                 true);
 
             // public static application chrome = new application(new string[] { "Google Chrome" }, "chrome",
@@ -200,7 +204,7 @@ namespace CyanSystemManager
             new MyMonitor(4, "SAM71B5"),
         };
 
-        public static void apply() { 
+        public static void apply() {
             for (int id = 0; id < activityList.Count; id++) activityList[id].id = id;
             if (!Directory.Exists(variablePath.notebookPath)) Directory.CreateDirectory(variablePath.notebookPath);
             if (!Directory.Exists(variablePath.networkPath)) Directory.CreateDirectory(variablePath.networkPath);
@@ -227,7 +231,7 @@ namespace CyanSystemManager
 
             foreach(var item in App.getApplications())
             {
-                if(!File.Exists(item.Value.exe)) Console.WriteLine("File " + item.Value.exe + " does not exist!");
+                if (item.Value.exe != "" && !File.Exists(item.Value.exe)) Console.WriteLine("File " + item.Value.exe + " does not exist!");
             }
             Console.WriteLine("");
         }
