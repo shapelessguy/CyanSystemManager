@@ -171,7 +171,7 @@ namespace CyanSystemManager
             Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", monitor3, 1306, 8, 200, 200));
             Order_Win.Add(new Window(OpenWindows, App.skype_fb.win, "", monitor3, 1517, 0, 1, 1040));
             WindowWrapper.CloseWin(OpenWindows, App.nordvpn.win, "");
-            // WindowWrapper.FocusWin(OpenWindows, browserToLocate, "", 10);
+            WindowWrapper.CloseWin(OpenWindows, App.deepL.win, "");
         }
         private static void order_cinema()
         {
