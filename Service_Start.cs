@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Settings;
@@ -84,11 +85,30 @@ namespace CyanSystemManager
             try
             {
                 if (processName != "" && Process.GetProcessesByName(processName).Length > 0) return 0;
-                if (admin) RunAsAdmin.Start(path, info);
-                else Process.Start(path, info);
+                if (admin) {
+                    try {
+                        RunAsAdmin.Start(path, info);
+                    }
+                    catch
+                    {
+                        RunAsAdmin.Start(path);
+                    }
+                }
+                else
+                    try
+                    {
+                        Process.Start(path, info);
+                    }
+                    catch
+                    {
+                        Process.Start("explorer.exe", path);
+                    }
                 return 1;
             }
-            catch (Exception) { return 0; }
+            catch (Exception) {
+                Console.WriteLine("Error while trying to open " + path + ". Admin = " + admin);
+                return 0; 
+            }
         }
         static private void Start(object args)
         {

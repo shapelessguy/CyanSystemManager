@@ -8,6 +8,8 @@ using System.IO;
 using System.Windows.Forms;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 using Vanara.PInvoke;
+using System.Diagnostics;
+using Microsoft.VisualBasic;
 
 namespace CyanSystemManager
 {
@@ -73,7 +75,7 @@ namespace CyanSystemManager
         private static void execProfile(string command)
         {
             cmdAsync(variablePath.multiMonitor, command);
-            Console.WriteLine(command);
+            // Console.WriteLine(command);
 
             // Thread.Sleep(4000); Sort();
             if (commands.Count > 1) for (int i = commands.Count - 1; i > 0; i--) commands.RemoveAt(i);
@@ -106,9 +108,52 @@ namespace CyanSystemManager
         }
     }
 
+    class WinCol
+    {
+        List<Win> collection = new List<Win>();
+        IDictionary<System.IntPtr, string> openWin = null;
+        public WinCol(IDictionary<System.IntPtr, string> openWin) 
+        {
+            this.openWin = openWin;
+        } 
+
+        public void addWin(application application, Screen monitor, int x, int y, int width, int height)
+        {
+            this.collection.Add(new Win(application, monitor, x, y, width, height));
+        }
+
+        public void SortNow()
+        {
+            foreach (Win win in this.collection)
+            {
+                new Window(this.openWin, win.win, win.class_name, win.monitor, win.x, win.y, win.width, win.height);
+            }
+        }
+    }
+
+    class Win
+    {
+        public string[] win = null;
+        public string class_name = null;
+        public Screen monitor = null;
+        public int x = 0;
+        public int y = 0;
+        public int width = 0;
+        public int height = 0;
+        public Win(application application, Screen monitor, int x, int y, int width, int height)
+        {
+            this.win = application.win;
+            this.class_name = application.class_name;
+            this.monitor = monitor;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     class SortWindows
     {
-        public static List<Window> Order_Win = new List<Window>();
         public static Dictionary<string[], MyMonitor> browsers = new Dictionary<string[], MyMonitor>();
         public static int tempo_avvio = 25000;
         public static Dictionary<float, float> AudioLevels = new Dictionary<float, float>();
@@ -131,7 +176,6 @@ namespace CyanSystemManager
         public static void OrderWin()
         {
             OpenWindows = WindowWrapper.GetOpenWindows();
-            Order_Win.Clear();
 
             monitor1 = MonitorManager.Ref(1).screen; // principal monitor
             monitor2 = MonitorManager.Ref(2).screen; // secondary left
@@ -160,16 +204,25 @@ namespace CyanSystemManager
             Console.WriteLine("Primary ordering!\n");
             browserToLocate = null;
             foreach (string[] key in browsers.Keys) if (browsers[key].screen == monitor1) browserToLocate = key;
-            // if (browserToLocate != null) Order_Win.Add(new Window(OpenWindows, browserToLocate, "", monitor1, 150, 80, 1600, 1000));
+            WinCol col = new WinCol(OpenWindows);
 
-            Order_Win.Add(new Window(OpenWindows, App.outlook.win, "", monitor2, 0, 0, 1112, 1040));
-            Order_Win.Add(new Window(OpenWindows, new string[] { "MSI Afterburner", "hardware monitor" }, "", monitor2, 1105, -1, 822, 430));
-            Order_Win.Add(new Window(OpenWindows, App.chatGPT.win, "", monitor2, 1105, 421, 822, 626));
-            Order_Win.Add(new Window(OpenWindows, App.whatsapp.win, "", monitor3, -7, 0, 730, 1046));
-            Order_Win.Add(new Window(OpenWindows, App.netmeterEvo.win, "", monitor3, 716, 0, 590, 220));
-            Order_Win.Add(new Window(OpenWindows, new string[] { }, "Spotify", monitor3, 716, 220, 1, 820));
-            Order_Win.Add(new Window(OpenWindows, App.clockX.win, "#32770", monitor3, 1306, 8, 200, 200));
-            Order_Win.Add(new Window(OpenWindows, App.skype_fb.win, "", monitor3, 1517, 0, 1, 1040));
+            foreach(WinSet winset in ControlPanel.winSets)
+            {
+                if (winset.monitor != null && winset.enabled)
+                {
+                    col.addWin(winset.app, winset.monitor.screen, winset.location.X, winset.location.Y, winset.size.Width, winset.size.Height);
+                }
+            }
+            /*col.addWin(App.outlook_new, monitor2, 500, 0, 1112, 1040);
+            col.addWin(App.outlook, monitor2, 0, 0, 1112, 1040);
+            col.addWin(App.msiG, monitor2, 0, -1, 822, 430);
+            col.addWin(App.chatGPT, monitor2, 1105, 421, 822, 626);
+            col.addWin(App.whatsapp, monitor3, -7, 0, 730, 1046);
+            col.addWin(App.netmeterEvo, monitor3, 716, 0, 590, 220);
+            col.addWin(App.spotify, monitor3, 716, 220, 1, 820);
+            col.addWin(App.clockX, monitor3, 1306, 8, 200, 200);
+            col.addWin(App.skypeFB, monitor3, 1517, 0, 1, 1040); */
+            col.SortNow();
             WindowWrapper.CloseWin(OpenWindows, App.nordvpn.win, "");
             WindowWrapper.CloseWin(OpenWindows, App.deepL.win, "");
         }

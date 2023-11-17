@@ -5,7 +5,7 @@ namespace CyanSystemManager
 {
     class RunAsAdmin
     {
-        public static void Start(string fileName, string info)
+        public static void Start(string fileName, string info = "")
         {
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(fileName));

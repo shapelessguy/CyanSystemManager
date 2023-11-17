@@ -55,22 +55,29 @@ namespace CyanSystemManager
             public static application clockX = new application(
                 new string[] { "ClocX" }, 
                 "ClocX",
-                prog86_path + "\\ClocX\\ClocX.exe");
+                prog86_path + "\\ClocX\\ClocX.exe",
+                true, "", "#32770");
 
             public static application outlook = new application(
-                new string[] { "- Outlook" },
+                new string[] { "Claudio.Ciano@dlr.de - Outlook" },
                 "OUTLOOK",
                 prog86_path + "\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
 
-            public static application skype_fb = new application(
+            public static application outlookNew = new application(
+                new string[] { "Claudio Ciano - Outlook" },
+                "olk",
+                documents_path + "\\Outlook.lnk");
+
+            public static application skypeFB = new application(
                 new string[] { "Skype for Business" },
                 "lync",
                 prog86_path + "\\Microsoft Office\\root\\Office16\\lync.exe");
 
             public static application spotify = new application(
-                new string[] { "Spotify", "Premium" }, 
+                new string[] {}, 
                 "Spotify",
-                app_data_path + "\\Roaming\\Spotify\\Spotify.exe");
+                app_data_path + "\\Roaming\\Spotify\\Spotify.exe",
+                true, "", "Spotify");
 
             public static application teams = new application(
                 new string[] { "Microsoft Teams" }, "",
@@ -103,7 +110,7 @@ namespace CyanSystemManager
                 documents_path + "\\Workspace PyCharm\\miscellaneous\\OpenAI\\ChatGPT.lnk");
 
             public static application msiG = new application(
-                new string[] { "MSI Afterburner", "grafici" }, 
+                new string[] { "MSI Afterburner", "hardware monitor" }, 
                 "MSIAfterburner",
                 prog86_path + "\\MSI Afterburner\\MSIAfterburner.exe");
 
@@ -147,7 +154,15 @@ namespace CyanSystemManager
                 FieldInfo[] fields = typeof(App).GetFields(BindingFlags.Static | BindingFlags.Public);
 
                 Dictionary<string, application> dict = new Dictionary<string, application>();
-                foreach (FieldInfo fi in fields) dict[fi.Name] = (application)fi.GetValue(null);
+
+                foreach (FieldInfo fi in fields)
+                {
+                    try
+                    {
+                        dict[fi.Name] = (application)fi.GetValue(null);
+                    }
+                    catch (Exception e) { Console.WriteLine(e); }
+                }
                 return dict;
             }
         }
@@ -204,7 +219,8 @@ namespace CyanSystemManager
             new MyMonitor(4, "SAM71B5"),
         };
 
-        public static void apply() {
+        public static void apply()
+        {
             for (int id = 0; id < activityList.Count; id++) activityList[id].id = id;
             if (!Directory.Exists(variablePath.notebookPath)) Directory.CreateDirectory(variablePath.notebookPath);
             if (!Directory.Exists(variablePath.networkPath)) Directory.CreateDirectory(variablePath.networkPath);

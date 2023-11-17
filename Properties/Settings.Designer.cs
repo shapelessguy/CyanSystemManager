@@ -130,5 +130,17 @@ namespace CyanSystemManager.Properties {
                 this["arduinoDefPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("clockX:true:HKC2413(2):100:20:40:40;Spotify:true:monitor1:110:1430:40:40;")]
+        public string winSet {
+            get {
+                return ((string)(this["winSet"]));
+            }
+            set {
+                this["winSet"] = value;
+            }
+        }
     }
 }

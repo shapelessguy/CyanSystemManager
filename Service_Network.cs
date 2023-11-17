@@ -35,7 +35,12 @@ namespace CyanSystemManager
             Thread pingThread = new Thread(PingTimer);
             pingThread.Start();
         }
-        public static void stopService() { Console.WriteLine("netService Stopped"); status = State.OFF; }
+        public static void stopService() 
+        { 
+            Console.WriteLine("netService Stopped");
+            HideDisconnect();
+            status = State.OFF; 
+        }
 
         private static readonly Dictionary<string, string> ips = new Dictionary<string, string>(){
         { "google", "8.8.8.8" },
@@ -54,12 +59,13 @@ namespace CyanSystemManager
             Status act_status = new Status(false, false);
             Status last_persistentStatus = new Status();
             byte[] buffer = new byte[650];
+            bool initialization = true;
 
             while (!Program.timeToClose)
             {
-                if (status == State.OFF) { Thread.Sleep(100); continue; }
+                if (status == State.OFF) { Thread.Sleep(100); return; }
                 iter++;
-                Thread.Sleep(200);
+                Thread.Sleep(150);
                 now = DateTime.Now;
                 int[] act_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
 
@@ -76,20 +82,23 @@ namespace CyanSystemManager
                 {
                     Ping p1 = new Ping(), p2 = new Ping(); ;
                     bool bP1 = false, bP2 = false;
+                    DateTime localDate = DateTime.Now;
                     try
                     {
                         PingReply PR1 = p1.Send(getIP(), 50, buffer, new PingOptions(30, true));
                         bP1 = PR1.Status.ToString() == "Success";
                         p1.Dispose();
-                    } catch (Exception) { p1.Dispose(); }
+                    } catch (Exception) { p1.Dispose(); if (initialization) ShowDisconnect(disc_modem); initialization = false; }
                     try
                     {
                         PingReply PR2 = p2.Send("192.168.1.1", 50);
                         bP2 = PR2.Status.ToString() == "Success";
                         p2.Dispose();
-                    } catch (Exception) { p2.Dispose(); }
+                    } catch (Exception) { p2.Dispose(); if (initialization) ShowDisconnect(disc_wan); }
+                    initialization = false;
                     act_status = new Status(bP2, bP1);
 
+                    if (act_status.modem == true && act_status.wan == true) { HideDisconnect(); }
                     if (act_status.modem == prev_status.modem && act_status.wan == prev_status.wan) { act_status = prev_status; act_status.IncPers(); }
 
 
@@ -112,8 +121,7 @@ namespace CyanSystemManager
                         }
                         else
                         {
-                            if (disc_modem.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_modem.Hide(); });
-                            if (disc_wan.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_wan.Hide(); });
+                            HideDisconnect();
                             if (updatePublicIP) FirebaseClass.UploadIP();
                         }
                     }
@@ -121,6 +129,7 @@ namespace CyanSystemManager
                     prev_status = act_status;
                     if (status == State.OFF) { Thread.Sleep(100); continue; }
                     status = State.ON;
+                    continue;
                 }
                 catch (Exception) { Console.WriteLine("Exception"); }
             }
@@ -134,6 +143,12 @@ namespace CyanSystemManager
             int num_zeros = num - stringa.Length;
             for (int i = 0; i < num_zeros; i++) stringa = "0" + stringa;
             return stringa;
+        }
+
+        private static void HideDisconnect()
+        {
+            if (disc_modem.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_modem.Hide(); });
+            if (disc_wan.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_wan.Hide(); });
         }
 
         private static void ShowDisconnect(DisconnectForm form)

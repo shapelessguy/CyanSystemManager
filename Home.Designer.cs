@@ -54,7 +54,7 @@
             this.escBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.escBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.escBtn.ForeColor = System.Drawing.Color.Black;
-            this.escBtn.Location = new System.Drawing.Point(937, 9);
+            this.escBtn.Location = new System.Drawing.Point(1055, 9);
             this.escBtn.Name = "escBtn";
             this.escBtn.Size = new System.Drawing.Size(28, 24);
             this.escBtn.TabIndex = 0;
@@ -64,11 +64,11 @@
             // 
             // buttonPressed
             // 
-            this.buttonPressed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPressed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonPressed.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.buttonPressed.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.buttonPressed.Font = new System.Drawing.Font("Cambria", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonPressed.Location = new System.Drawing.Point(820, 361);
+            this.buttonPressed.Location = new System.Drawing.Point(938, 539);
             this.buttonPressed.Name = "buttonPressed";
             this.buttonPressed.Size = new System.Drawing.Size(145, 23);
             this.buttonPressed.TabIndex = 1;
@@ -94,7 +94,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(981, 48);
+            this.panel1.Size = new System.Drawing.Size(1099, 48);
             this.panel1.TabIndex = 3;
             // 
             // panel2
@@ -111,11 +111,12 @@
             this.panel2.Controls.Add(this.buttonPressed);
             this.panel2.Location = new System.Drawing.Point(0, 48);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(981, 400);
+            this.panel2.Size = new System.Drawing.Size(1099, 577);
             this.panel2.TabIndex = 4;
             // 
             // startBtn
             // 
+            this.startBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.startBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.startBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.startBtn.FlatAppearance.BorderColor = System.Drawing.Color.Black;
@@ -123,16 +124,17 @@
             this.startBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.startBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.startBtn.Font = new System.Drawing.Font("Cambria", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startBtn.Location = new System.Drawing.Point(350, 354);
+            this.startBtn.Location = new System.Drawing.Point(350, 532);
             this.startBtn.Name = "startBtn";
-            this.startBtn.Size = new System.Drawing.Size(105, 34);
+            this.startBtn.Size = new System.Drawing.Size(105, 33);
             this.startBtn.TabIndex = 10;
-            this.startBtn.Text = "Start Apps";
+            this.startBtn.Text = "Windows";
             this.startBtn.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.startBtn.UseVisualStyleBackColor = false;
             // 
             // generalBtn
             // 
+            this.generalBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.generalBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.generalBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.generalBtn.FlatAppearance.BorderColor = System.Drawing.Color.Black;
@@ -140,9 +142,9 @@
             this.generalBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.generalBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.generalBtn.Font = new System.Drawing.Font("Cambria", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.generalBtn.Location = new System.Drawing.Point(252, 354);
+            this.generalBtn.Location = new System.Drawing.Point(252, 532);
             this.generalBtn.Name = "generalBtn";
-            this.generalBtn.Size = new System.Drawing.Size(92, 34);
+            this.generalBtn.Size = new System.Drawing.Size(92, 33);
             this.generalBtn.TabIndex = 9;
             this.generalBtn.Text = "General";
             this.generalBtn.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -150,23 +152,27 @@
             // 
             // panel4
             // 
-            this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel4.AutoScroll = true;
             this.panel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Location = new System.Drawing.Point(252, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(713, 349);
+            this.panel4.Size = new System.Drawing.Size(831, 523);
             this.panel4.TabIndex = 8;
             // 
             // panel3
             // 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel3.Controls.Add(this.servicesLabel);
             this.panel3.Location = new System.Drawing.Point(3, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(243, 390);
+            this.panel3.Size = new System.Drawing.Size(243, 563);
             this.panel3.TabIndex = 5;
             // 
             // servicesLabel
@@ -181,10 +187,10 @@
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Cambria", 14.75F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(685, 360);
+            this.label2.Location = new System.Drawing.Point(803, 538);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(129, 23);
             this.label2.TabIndex = 3;
@@ -195,7 +201,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.ClientSize = new System.Drawing.Size(981, 450);
+            this.ClientSize = new System.Drawing.Size(1099, 626);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.Color.White;

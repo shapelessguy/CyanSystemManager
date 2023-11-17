@@ -25,6 +25,7 @@ namespace CyanSystemManager
     {
         public Screen screen;
         public string deviceName;
+        public string id;
         public int width;
         public int height;
         public int x;
@@ -40,7 +41,7 @@ namespace CyanSystemManager
         }
         public void Print()
         {
-            Console.WriteLine(deviceName + "  -> [" + width + " . " + height + "]   p=(" + x + ", " + y + ")");
+            Console.WriteLine(id + "  -> [" + width + " . " + height + "]   p=(" + x + ", " + y + ")");
         }
     }
 
@@ -172,6 +173,20 @@ namespace CyanSystemManager
                 MonitorManager.allMonitors.Add(new Monitor(screen, deviceName, width, height, x, y));
             }
             MonitorManager.allMonitors = MonitorManager.allMonitors.OrderBy(p => p.x).ToList();
+            Dictionary<string, int> name_freq = new Dictionary<string, int>();
+            foreach (Monitor monitor in MonitorManager.allMonitors)
+            {
+                if (!name_freq.ContainsKey(monitor.deviceName))
+                {
+                    name_freq[monitor.deviceName] = 1;
+                    monitor.id = monitor.deviceName;
+                }
+                else
+                {
+                    name_freq[monitor.deviceName] += 1;
+                    monitor.id = monitor.deviceName + "(" + name_freq[monitor.deviceName] + ")";
+                }
+            }
             Service_Monitor.n_monitors = Screen.AllScreens.Length;
         }
     }
@@ -297,10 +312,10 @@ namespace CyanSystemManager
             SetSize(width, height);
         }
         public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name,
-                        Screen screen, Rectangle bounds, string[] exclusions = null)
+                        Screen screen, Rectangle bounds)
         {
             if (screen == null) return;
-            FindWindow(OpenWindows, partialname, class_name, exclusions);
+            FindWindow(OpenWindows, partialname, class_name);
             Focus();
             SetPosition(screen, bounds.X, bounds.Y);
             SetSize(bounds.Width, bounds.Height);
@@ -337,7 +352,7 @@ namespace CyanSystemManager
             }
         }
 
-        public void FindWindow(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name, string[] exclusions = null)
+        public void FindWindow(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name)
         {
             bool found = false;
             // Console.WriteLine("FindWindow -> " + partialname + "    " + class_name);
@@ -348,9 +363,7 @@ namespace CyanSystemManager
                 bool containsall = true;
                 StringBuilder lpString = new StringBuilder("Class not found");
                 foreach (string stringa in partialname) if (!window.Value.Contains(stringa)) containsall = false;
-                if (exclusions != null)
-                    foreach (string stringa in exclusions) if (window.Value.Contains(stringa)) containsall = false;
-                if (partialname.Length == 0 && exclusions == null) containsall = false;
+                if (partialname.Length == 0) containsall = false;
                 if (containsall)
                 {
                     lpString = new StringBuilder("Class not found");

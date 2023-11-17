@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 
@@ -21,6 +22,7 @@ namespace CyanSystemManager
         public string info;
         public string proc_name;
         public bool start;
+        public string class_name;
         /// <summary>
         /// Instantiate an application.
         /// </summary>
@@ -29,13 +31,15 @@ namespace CyanSystemManager
         /// <param name="exe">Exe file needed for executing the application.</param>
         /// <param name="start">If true, the application will be executed at the startup.</param>
         /// <param name="info">Optional arguments for the execution of the application.</param>
-        public application(string[] win, string proc_name, string exe, bool start = true, string info = "")
+        /// <param name="class_name">Class name. Used in extreme case when the window cannot be found easily.</param>
+        public application(string[] win, string proc_name, string exe, bool start = true, string info = "", string class_name = "")
         {
             this.win = win;
-            this.proc_name = proc_name;
+            this.proc_name = proc_name.Split(new string[] {"."}, System.StringSplitOptions.None)[0];
             this.exe = exe;
             this.info = info;
             this.start = start;
+            this.class_name = class_name;
         }
     }
 
