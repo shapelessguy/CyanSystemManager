@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using static CyanSystemManager.Utility;
 using NAudio.CoreAudioApi;
+using Microsoft.Diagnostics.Tracing.Parsers.AspNet;
 
 namespace CyanSystemManager
 {
@@ -13,18 +14,14 @@ namespace CyanSystemManager
         static public bool noStat = false;
         public class variablePath
         {
-            public static string localFileSite = "localFile.txt";
             static readonly string documents_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             static readonly string app_data_path = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName;
             static readonly string prog86_path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            public static string adminNetPass = documents_path + @"\Workspace Visual Studio\CyanSystemManager\AdminNetPass\asjkdfhkalshljsjbdkjbayvelndkjhhka.txt";
 
-            public static string displayFusion = prog86_path + @"\DisplayFusion\DisplayFusionCommand.exe";
             public static string python = app_data_path + @"\Local\Programs\Python\Python311\pythonw.exe";
             public static string pyStatScript = documents_path + @"\Workspace PyCharm\University-Basic Projects\Statistics - CyanFusion\Analysis.pyw";
-            public static string cyanPath = @"C:\ProgramData\Cyan";
-            public static string notebookPath = cyanPath + @"\Notebook";
-            public static string networkPath = cyanPath + @"\NetworkLogs";
+            public static string notebookPath = @"C:\ProgramData\Cyan\Notebook";
+            public static string networkPath = @"C:\ProgramData\Cyan\NetworkLogs";
             public static string multiMonitor = @"E:\Software\Controller\MultiMonitorTool\MultiMonitorTool.exe";
         }
 
@@ -36,144 +33,139 @@ namespace CyanSystemManager
             static readonly string drive_path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles).Substring(0, 2);
             static readonly string prog86_path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
-            public static application opera = new application(
-                new string[] { "Opera" },
-                "opera",
-                app_data_path + "\\Local\\Programs\\Opera\\launcher.exe");
-
-            public static application firefox = new application(
-                new string[] { "Mozilla Firefox" },
-                "firefox",
-                drive_path + "\\Program Files\\Mozilla Firefox\\firefox.exe",
-                false);
-
-            public static application netmeterEvo = new application(
-                new string[] { "NetMeter Evo" }, 
-                "NetMeterEvo",
-                "E:\\Software\\Network\\NetMeterEvo.exe");
-
-            public static application clockX = new application(
-                new string[] { "ClocX" }, 
-                "ClocX",
-                prog86_path + "\\ClocX\\ClocX.exe",
-                true, "", "#32770");
-
-            public static application outlook = new application(
-                new string[] { "Claudio.Ciano@dlr.de - Outlook" },
-                "OUTLOOK",
-                prog86_path + "\\Microsoft Office\\root\\Office16\\OUTLOOK.exe");
-
-            public static application outlookNew = new application(
-                new string[] { "Claudio Ciano - Outlook" },
-                "olk",
-                documents_path + "\\Outlook.lnk");
-
-            public static application skypeFB = new application(
-                new string[] { "Skype for Business" },
-                "lync",
-                prog86_path + "\\Microsoft Office\\root\\Office16\\lync.exe");
-
-            public static application spotify = new application(
-                new string[] {}, 
-                "Spotify",
-                app_data_path + "\\Roaming\\Spotify\\Spotify.exe",
-                true, "", "Spotify");
-
-            public static application teams = new application(
-                new string[] { "Microsoft Teams" }, "",
-                app_data_path + "\\Local\\Microsoft\\Teams\\Update.exe",
-                false, 
-                " --processStart Teams.exe");
-
-            public static application whatsapp = new application(
-                new string[] { "WhatsApp" },
-                "WhatsApp",
-                @"",
-                false);
-
-            public static application nordvpn = new application(
-                new string[] { "NordVPN" },
-                "NordVPN",
-                @"",
-                false);
-
-            public static application deepL = new application(
-                new string[] { "DeepL" }, 
-                "DeepL",
-                app_data_path + "\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DeepL.lnk", 
-                true,
-                "run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml");
-
-            public static application chatGPT = new application(
-                new string[] { "ChatGPT" }, 
-                "ChatGPT",
-                documents_path + "\\Workspace PyCharm\\miscellaneous\\OpenAI\\ChatGPT.lnk");
-
-            public static application msiG = new application(
-                new string[] { "MSI Afterburner", "hardware monitor" }, 
-                "MSIAfterburner",
-                prog86_path + "\\MSI Afterburner\\MSIAfterburner.exe");
-
-            public static application displFusion = new application(
-                new string[] { "Display Fusion" }, 
-                "",
-                prog86_path + "\\DisplayFusion\\DisplayFusion.exe");
-
-            public static application discord = new application(
-                new string[] { "Discord" },
-                "discord",
-                app_data_path + "\\Local\\Discord\\Update.exe",
-                true);
-
-            // public static application chrome = new application(new string[] { "Google Chrome" }, "chrome",
-            //     "Path\\to\\google.exe", "", false);
-
-            // public static application moneyguardW = new application(new string[] { "WidgetMoneyguard" }, "Moneyguard",
-            //     "C:\\Program Files (x86)\\Cyan\\MoneyGuard\\Moneyguard.exe", "", false);
-
-            // public static application posta = new application(new string[] { "- Posta" }, "",
-            //     "E:\\DOCUMENTI\\Varie\\.AppLinks\\Posta.lnk", "", false);
-
-            // public static application thunderbird = new application(new string[] { "- Mozilla Thunderbird" },
-            //     "thunderbird", "C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe", "", true);
-
-            // public static application calendario = new application(new string[] { "- Calendar" }, "",
-            //     "E:\\DOCUMENTI\\Varie\\.AppLinks\\Calendario.lnk", "", false);
-
-            // public static application telegram = new application(new string[] { "Telegram" }, "Telegram",
-            //      @"C:\Users\" + name + @"\AppData\Roaming\Telegram Desktop\Telegram.exe", "", true);
-
-            // public static application cyanTabata = new application(new string[] { "Cyan Tabata" }, "",
-            //     "E:\\DOCUMENTI\\Workspace Visual Studio\\CyanTabata\\CyanTabata\\bin\\Debug\\CyanTabata.exe");
-
-            // public static application xPadder = new application(new string[] { "Xpadder [5.7]" }, "Xpadder [5.7]",
-            //     "E:\\DOCUMENTI\\Installazioni\\Controller\\Xpadder\\Xpadder 5.7\\Xpadder [5.7].exe", "", false);
+            public static List<application> all_apps = new List<application>()
+            {
+                new application(
+                    "Opera",
+                    new string[] { "Opera" },
+                    "opera",
+                    app_data_path + "\\Local\\Programs\\Opera\\launcher.exe"
+                    ),
+                new application(
+                    "Mozilla Firefox",
+                    new string[] { "Mozilla Firefox" },
+                    "firefox",
+                    drive_path + "\\Program Files\\Mozilla Firefox\\firefox.exe",
+                    false),
+                new application(
+                    "NetMeter Evo",
+                    new string[] { "NetMeter Evo" },
+                    "NetMeterEvo",
+                    "E:\\Software\\Network\\NetMeterEvo.exe"
+                    ),
+                new application(
+                    "ClocX",
+                    new string[] { "ClocX" },
+                    "ClocX",
+                    prog86_path + "\\ClocX\\ClocX.exe",
+                    true, "", "#32770"
+                    ),
+                new application(
+                    "Outlook",
+                    new string[] { "Claudio.Ciano@dlr.de - Outlook" },
+                    "OUTLOOK",
+                    prog86_path + "\\Microsoft Office\\root\\Office16\\OUTLOOK.exe"
+                    ),
+                new application(
+                    "Outlook NEW",
+                    new string[] { "Claudio Ciano - Outlook" },
+                    "olk",
+                    documents_path + "\\Outlook.lnk"
+                    ),
+                new application(
+                    "Skype for Business",
+                    new string[] { "Skype for Business" },
+                    "lync",
+                    prog86_path + "\\Microsoft Office\\root\\Office16\\lync.exe"
+                    ),
+                new application(
+                    "Spotify",
+                    new string[] {},
+                    "Spotify",
+                    app_data_path + "\\Roaming\\Spotify\\Spotify.exe",
+                    true, "", "Spotify"
+                    ),
+                new application(
+                    "Microsoft Teams",
+                    new string[] { "Microsoft Teams" }, "",
+                    app_data_path + "\\Local\\Microsoft\\Teams\\Update.exe",
+                    false,
+                    " --processStart Teams.exe"
+                    ),
+                new application(
+                    "WhatsApp",
+                    new string[] { "WhatsApp" },
+                    "WhatsApp",
+                    @"",
+                    false
+                    ),
+                new application(
+                    "NordVPN",
+                    new string[] { "NordVPN" },
+                    "NordVPN",
+                    @"",
+                    false
+                    ),
+                new application(
+                    "DeepL",
+                    new string[] { "DeepL" },
+                    "DeepL",
+                    app_data_path + "\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DeepL.lnk",
+                    true,
+                    "run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml"
+                    ),
+                new application(
+                    "ChatGPT",
+                    new string[] { "ChatGPT" },
+                    "ChatGPT",
+                    documents_path + "\\Workspace PyCharm\\miscellaneous\\OpenAI\\ChatGPT.lnk"
+                    ),
+                new application(
+                    "MSI Afterburner",
+                    new string[] { "MSI Afterburner", "hardware monitor" },
+                    "MSIAfterburner",
+                    prog86_path + "\\MSI Afterburner\\MSIAfterburner.exe"
+                    ),
+                new application(
+                    "Display Fusion",
+                    new string[] { "Display Fusion" },
+                    "",
+                    prog86_path + "\\DisplayFusion\\DisplayFusion.exe"
+                    ),
+                new application(
+                    "Discord",
+                    new string[] { "Discord" },
+                    "discord",
+                    app_data_path + "\\Local\\Discord\\Update.exe",
+                    true
+                    ),
+            };
 
             static public Dictionary<string, application> getApplications()
             {
-                FieldInfo[] fields = typeof(App).GetFields(BindingFlags.Static | BindingFlags.Public);
-
                 Dictionary<string, application> dict = new Dictionary<string, application>();
-
-                foreach (FieldInfo fi in fields)
+                foreach (var app in all_apps)
                 {
-                    try
-                    {
-                        dict[fi.Name] = (application)fi.GetValue(null);
-                    }
-                    catch (Exception e) { Console.WriteLine(e); }
+                    dict[app.name] = app;
                 }
                 return dict;
+            }
+
+            static public application getApp(string name)
+            {
+                application out_ = null;
+                foreach(var app in all_apps) { if (app.name== name) { out_ = app;break; } }
+                return out_;
             }
         }
 
         public static List<AudioDevice> audioDevices = new List<AudioDevice>()
         {
             new AudioDevice(AT.None),
-            new AudioDevice(AT.Primary, "Speakers"),
-            new AudioDevice(AT.Headphones, "Headphones", "Soundcore Life Q30 Stereo"),
-            new AudioDevice(AT.Secondary, "SAMSUNG"),
-            new AudioDevice(AT.Third, "19LS4D-ZB", "LG 19''"),
+            new AudioDevice(AT.Primary, new string[] { "Speakers (Realtek(R) Audio)" }),
+            new AudioDevice(AT.Headphones, new string[] { "Headphones (Soundcore Life Q30 Stereo)" }),
+            new AudioDevice(AT.Secondary, new string[] { "SAMSUNG (NVIDIA High Definition Audio)" }),
+            new AudioDevice(AT.Third, new string[] { "19LS4D-ZB" }),
         };
 
         // This list is useful in order to bind a key to a specific activity
@@ -238,8 +230,6 @@ namespace CyanSystemManager
 
             if (!Directory.Exists(variablePath.networkPath)) Console.WriteLine("Directory " + variablePath.networkPath + " does not exist!");
             if (!Directory.Exists(variablePath.notebookPath)) Console.WriteLine("Directory " + variablePath.notebookPath + " does not exist!");
-            if (!File.Exists(variablePath.adminNetPass)) Console.WriteLine("File " + variablePath.adminNetPass + " does not exist!");
-            if (!File.Exists(variablePath.displayFusion)) Console.WriteLine("File " + variablePath.displayFusion + " does not exist!");
             if (!File.Exists(variablePath.python)) Console.WriteLine("File " + variablePath.python + " does not exist!");
             if (!File.Exists(variablePath.pyStatScript)) Console.WriteLine("File " + variablePath.pyStatScript + " does not exist!");
             if (!File.Exists(variablePath.multiMonitor)) Console.WriteLine("File " + variablePath.multiMonitor + " does not exist!");

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Threading;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Settings;
@@ -76,7 +78,7 @@ namespace CyanSystemManager
                 if (app.start) toStart.Add(app);
 
             foreach (var app in toStart)
-                nOp += TryToOpen(app.exe, app.proc_name, app.info); nTot += 1;
+                nOp += TryToOpen(app.exe, app.proc_name, app.info, app.admin); nTot += 1;
 
             return new int[] { nOp, nTot };
         }
@@ -87,17 +89,23 @@ namespace CyanSystemManager
                 if (processName != "" && Process.GetProcessesByName(processName).Length > 0) return 0;
                 if (admin) {
                     try {
-                        RunAsAdmin.Start(path, info);
+                        Console.WriteLine("Executing '" + path + "' as admin user");
+                        Process process = new Process()
+                        {
+                            StartInfo = new ProcessStartInfo(path, info)
+                            {
+                                WindowStyle = ProcessWindowStyle.Normal,
+                                WorkingDirectory = Path.GetDirectoryName(path)
+                            }
+                        };
+                        process.Start();
                     }
-                    catch
-                    {
-                        RunAsAdmin.Start(path);
-                    }
+                    catch { }
                 }
                 else
                     try
                     {
-                        Process.Start(path, info);
+                        ProcessHelper.RunAsRestrictedUser(path, info);
                     }
                     catch
                     {

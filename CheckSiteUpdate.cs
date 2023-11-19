@@ -15,6 +15,7 @@ namespace CyanSystemManager
         bool alarmBool = false;
         string site = "";
         bool verbose = true;
+        public static string localFileSite = "localFile.txt";
 
         public CheckSiteUpdate()
         {
@@ -68,9 +69,9 @@ namespace CyanSystemManager
                 }
                 catch (Exception) { Console.WriteLine("Check site failed.");  return false; }
 
-                if (File.Exists(Settings.variablePath.localFileSite))
+                if (File.Exists(localFileSite))
                 {
-                    if(compareStrings(htmlCode, File.ReadAllText(Settings.variablePath.localFileSite)))
+                    if(compareStrings(htmlCode, File.ReadAllText(localFileSite)))
                     {
                         if (verbose) Console.WriteLine("CheckSite -> Same file");
                         Program.home.Invoke((MethodInvoker)delegate { ShowInTaskbar = false; });
@@ -80,7 +81,7 @@ namespace CyanSystemManager
                 else
                 {
                     if (verbose) Console.WriteLine("CheckSite -> New file");
-                    using (StreamWriter sw = new StreamWriter(Settings.variablePath.localFileSite))
+                    using (StreamWriter sw = new StreamWriter(localFileSite))
                     {
                         sw.Write(htmlCode);
                     }
@@ -96,7 +97,7 @@ namespace CyanSystemManager
                     });
 
                 if (verbose) Console.WriteLine("CheckSite -> Updated file");
-                using (StreamWriter sw = new StreamWriter(Settings.variablePath.localFileSite))
+                using (StreamWriter sw = new StreamWriter(localFileSite))
                 {
                     sw.Write(htmlCode);
                 }

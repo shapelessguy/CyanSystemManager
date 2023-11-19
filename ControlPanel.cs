@@ -116,12 +116,24 @@ namespace CyanSystemManager
             };
             allControls.Add(startBox);
 
-            checkSite_l = initializeLabel("checkSite_pan1", "Check updates: ", new Point(16, 14 + 3 * 30), new Size(555, 26));
+            Label firebaseAPI_l = initializeLabel("firebaseAPI_l_pan1", "Firebase Key (Pub IP): ", new Point(16, 14 + 3 * 30), new Size(555, 26));
+            allControls.Add(firebaseAPI_l);
+
+            TextBox firebaseAPI = initializeTextBox("firebaseAPI_pan1", Properties.Settings.Default.firebaseApiKey, new Point(16 + firebaseAPI_l.Width, 14 + 3 * 30 + 1), new Size(664 - firebaseAPI_l.Width, 26));
+            firebaseAPI.PasswordChar = '\u25CF';
+            firebaseAPI.Font = new Font("Cambria", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            firebaseAPI.LostFocus += (o, e) => {
+                Properties.Settings.Default.firebaseApiKey = firebaseAPI.Text;
+                Properties.Settings.Default.Save();
+            };
+            allControls.Add(firebaseAPI);
+
+            checkSite_l = initializeLabel("checkSite_l_pan1", "Check updates: ", new Point(16, 14 + 4 * 30), new Size(555, 26));
             allControls.Add(checkSite_l);
 
-            checkSite = initializeTextBox("checkSite_pan1", Properties.Settings.Default.checkSite, new Point(16 + checkSite_l.Width, 14 + 3 * 30), new Size(664 - checkSite_l.Width, 26));
+            checkSite = initializeTextBox("checkSite_pan1", Properties.Settings.Default.checkSite, new Point(16 + checkSite_l.Width, 14 + 4 * 30), new Size(664 - checkSite_l.Width, 26));
             checkSite.LostFocus += (o, e) => {
-                File.Delete(Settings.variablePath.localFileSite);
+                File.Delete(CheckSiteUpdate.localFileSite);
                 Properties.Settings.Default.checkSite = checkSite.Text;
                 Properties.Settings.Default.Save();
             };

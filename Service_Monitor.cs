@@ -57,7 +57,6 @@ namespace CyanSystemManager
         public static void startService()
         {
             status = State.NEUTRAL;
-            if (!File.Exists(variablePath.displayFusion)) MessageBox.Show(variablePath.displayFusion + " not found");
             Home.registerHotkeys(ST.Monitors); // register Hotkeys needed by Example_ activities
             Console.WriteLine("Starting monitorService..");
             MonitorManager.GetMonitors();
@@ -163,7 +162,7 @@ namespace CyanSystemManager
         {
             browsers.Clear();
             // browsers.Add(App.chrome.win, MonitorManager.Ref(2));
-            browsers.Add(App.opera.win, MonitorManager.Ref(1));
+            browsers.Add(App.getApp("Opera").win, MonitorManager.Ref(1));
         }
 
         public static void OrderWin(int nTimes = 1) { for (int i = 0; i < nTimes; i++) OrderWin(); }
@@ -223,8 +222,8 @@ namespace CyanSystemManager
             col.addWin(App.clockX, monitor3, 1306, 8, 200, 200);
             col.addWin(App.skypeFB, monitor3, 1517, 0, 1, 1040); */
             col.SortNow();
-            WindowWrapper.CloseWin(OpenWindows, App.nordvpn.win, "");
-            WindowWrapper.CloseWin(OpenWindows, App.deepL.win, "");
+            WindowWrapper.CloseWin(OpenWindows, App.getApp("NordVPN").win, "");
+            WindowWrapper.CloseWin(OpenWindows, App.getApp("DeepL").win, "");
         }
         private static void order_cinema()
         {

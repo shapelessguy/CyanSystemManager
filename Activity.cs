@@ -17,12 +17,14 @@ namespace CyanSystemManager
 
     public class application
     {
+        public string name;
         public string[] win;
         public string exe;
         public string info;
         public string proc_name;
         public bool start;
         public string class_name;
+        public bool admin;
         /// <summary>
         /// Instantiate an application.
         /// </summary>
@@ -32,14 +34,16 @@ namespace CyanSystemManager
         /// <param name="start">If true, the application will be executed at the startup.</param>
         /// <param name="info">Optional arguments for the execution of the application.</param>
         /// <param name="class_name">Class name. Used in extreme case when the window cannot be found easily.</param>
-        public application(string[] win, string proc_name, string exe, bool start = true, string info = "", string class_name = "")
+        public application(string name, string[] win, string proc_name, string exe, bool start = true, string info = "", string class_name = "", bool admin = false)
         {
+            this.name = name;
             this.win = win;
             this.proc_name = proc_name.Split(new string[] {"."}, System.StringSplitOptions.None)[0];
             this.exe = exe;
             this.info = info;
             this.start = start;
             this.class_name = class_name;
+            this.admin = admin;
         }
     }
 

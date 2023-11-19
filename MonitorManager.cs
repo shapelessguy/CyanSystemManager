@@ -112,82 +112,91 @@ namespace CyanSystemManager
         public static void getMonitorConfiguration()
         {
             Console.WriteLine("Get Monitor Configuration");
-            string conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "multimonitor.cfg");
-            string def_conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "defConfig.cfg");
-            try
-            {
-                if (File.Exists(conf_path)) File.Delete(conf_path);
-                Thread.Sleep(100);
-            }
-            catch (Exception) { }
-
-            cmdAsync(variablePath.multiMonitor, "/SaveConfig " + conf_path);
-            for (int i = 0; i < 20; i++)
-            {
-                Thread.Sleep(100);
-                if (File.Exists(conf_path)) break;
-            }
-            Thread.Sleep(200);
-            if (File.Exists(conf_path))
+            for (int repeat=0; repeat<10; repeat++)
             {
                 try
                 {
-                    File.Copy(conf_path, def_conf_path);
-                }
-                catch (IOException)
-                {
-                    File.Delete(def_conf_path);
-                    File.Copy(conf_path, def_conf_path);
-                }
-            }
-            else conf_path = def_conf_path;
+                    string conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "multimonitor.cfg");
+                    string def_conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "defConfig.cfg");
+                    try
+                    {
+                        if (File.Exists(conf_path)) File.Delete(conf_path);
+                        Thread.Sleep(100);
+                    }
+                    catch (Exception) { }
 
-            List<List<string>> monitors = new List<List<string>>();
-            string[] lines = new string[] { };
-            for (int i = 0; i < 20; i++)
-            {
-                try { lines = File.ReadAllLines(conf_path); }
-                catch (Exception) { Thread.Sleep(100); }
-            }
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("[")) monitors.Add(new List<string>());
-                else
-                {
-                    monitors[monitors.Count - 1].Add(line.Substring(line.IndexOf("=") + 1));
+                    cmdAsync(variablePath.multiMonitor, "/SaveConfig " + conf_path);
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Thread.Sleep(100);
+                        if (File.Exists(conf_path)) break;
+                    }
+                    Thread.Sleep(200);
+                    if (File.Exists(conf_path))
+                    {
+                        try
+                        {
+                            File.Copy(conf_path, def_conf_path);
+                        }
+                        catch (IOException)
+                        {
+                            File.Delete(def_conf_path);
+                            File.Copy(conf_path, def_conf_path);
+                        }
+                    }
+                    else conf_path = def_conf_path;
+
+                    List<List<string>> monitors = new List<List<string>>();
+                    string[] lines = new string[] { };
+                    for (int i = 0; i < 20; i++)
+                    {
+                        try { lines = File.ReadAllLines(conf_path); break; }
+                        catch (Exception) { Thread.Sleep(100); }
+                    }
+                    foreach (var line in lines)
+                    {
+                        if (line.StartsWith("[")) monitors.Add(new List<string>());
+                        else
+                        {
+                            if (monitors.Count > 0) monitors[monitors.Count - 1].Add(line.Substring(line.IndexOf("=") + 1));
+                        }
+                    }
+                    foreach (var monitor in monitors)
+                    {
+                        string deviceName = monitor[1].Split('\\')[1];
+                        int width, height, x, y;
+                        int.TryParse(monitor[3], out width);
+                        int.TryParse(monitor[4], out height);
+                        int.TryParse(monitor[8], out x);
+                        int.TryParse(monitor[9], out y);
+                        Screen screen = null;
+                        foreach (var sc in Screen.AllScreens)
+                        {
+                            if (sc.DeviceName == monitor[0]) screen = sc;
+                        }
+                        MonitorManager.allMonitors.Add(new Monitor(screen, deviceName, width, height, x, y));
+                    }
+                    MonitorManager.allMonitors = MonitorManager.allMonitors.OrderBy(p => p.x).ToList();
+                    Dictionary<string, int> name_freq = new Dictionary<string, int>();
+                    foreach (Monitor monitor in MonitorManager.allMonitors)
+                    {
+                        if (!name_freq.ContainsKey(monitor.deviceName))
+                        {
+                            name_freq[monitor.deviceName] = 1;
+                            monitor.id = monitor.deviceName;
+                        }
+                        else
+                        {
+                            name_freq[monitor.deviceName] += 1;
+                            monitor.id = monitor.deviceName + "(" + name_freq[monitor.deviceName] + ")";
+                        }
+                    }
+                    Service_Monitor.n_monitors = Screen.AllScreens.Length;
+                    return;
                 }
+                catch (Exception e) { continue; }
             }
-            foreach (var monitor in monitors)
-            {
-                string deviceName = monitor[1].Split('\\')[1];
-                int width, height, x, y;
-                int.TryParse(monitor[3], out width);
-                int.TryParse(monitor[4], out height);
-                int.TryParse(monitor[8], out x);
-                int.TryParse(monitor[9], out y);
-                Screen screen = null;
-                foreach (var sc in Screen.AllScreens)
-                {
-                    if (sc.DeviceName == monitor[0]) screen = sc;
-                }
-                MonitorManager.allMonitors.Add(new Monitor(screen, deviceName, width, height, x, y));
-            }
-            MonitorManager.allMonitors = MonitorManager.allMonitors.OrderBy(p => p.x).ToList();
-            Dictionary<string, int> name_freq = new Dictionary<string, int>();
-            foreach (Monitor monitor in MonitorManager.allMonitors)
-            {
-                if (!name_freq.ContainsKey(monitor.deviceName))
-                {
-                    name_freq[monitor.deviceName] = 1;
-                    monitor.id = monitor.deviceName;
-                }
-                else
-                {
-                    name_freq[monitor.deviceName] += 1;
-                    monitor.id = monitor.deviceName + "(" + name_freq[monitor.deviceName] + ")";
-                }
-            }
-            Service_Monitor.n_monitors = Screen.AllScreens.Length;
+            throw new Exception("Error while fetching monitor configuration.");
         }
     }
 

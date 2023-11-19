@@ -53,7 +53,7 @@ namespace CyanSystemManager
 
         static public async Task<string> GetProvider()
         {
-            const string firebaseApiKey = "AIzaSyCkMWnAG5jv_kSIrKIy2o8ybi6dBtvluB0";
+            string firebaseApiKey = Properties.Settings.Default.firebaseApiKey;
 
             if (!await CheckConnection()) { return "Errore di connessione"; }
             try
@@ -61,9 +61,9 @@ namespace CyanSystemManager
                 auth = new FirebaseAuthProvider(new Firebase.Auth.FirebaseConfig(firebaseApiKey));
             }
             catch (Exception) { return "Errore di connessione al server, riprova più tardi"; }
-            return "";
+            return "API key accepted";
         }
-        static public async Task<string> CheckFirebaseCred(string firebaseUsername, string firebasePassword)
+        static public async Task<string> CheckFirebaseCred(string firebaseUsername = "", string firebasePassword = "")
         {
             string result = await GetProvider();
             if (!silent) Console.WriteLine(result);
@@ -77,26 +77,27 @@ namespace CyanSystemManager
                 if (!silent) Console.WriteLine("Trying to authenticate.. iteration: {0}", iteration);
                 try
                 {
-                    token = await auth.SignInWithEmailAndPasswordAsync(firebaseUsername, firebasePassword);
+                    if (firebaseUsername == "" && firebasePassword == "") token = await auth.SignInAnonymouslyAsync();
+                    else token = await auth.SignInWithEmailAndPasswordAsync(firebaseUsername, firebasePassword);
                     tryAgain = false;
+                    return "true";
                 }
                 catch (FirebaseAuthException faException)
                 {
-                    if(!silent) Console.WriteLine(faException.Reason.ToString());
-                    if (faException.Reason.ToString() == "InvalidEmailAddress") error = "E-mail non valida";
+                    if(!silent) Console.WriteLine("Error with authentication: " + faException.Reason.ToString());
+                    if (faException.Reason.ToString() == "Undefined") error = "Undefined";
+                    else if (faException.Reason.ToString() == "InvalidEmailAddress") error = "E-mail non valida";
                     else if (faException.Reason.ToString() == "UnknownEmailAddress") error = "E-mail non registrata";
                     else if (faException.Reason.ToString() == "WrongPassword" || faException.Reason.ToString() == "Undefined") error = "Password errata";
                     else error = "Errore di autenticazione";
 
-                    //MessageBox.Show(error);
                     tryAgain = false;
                     return error;
-                    //token = await auth.CreateUserWithEmailAndPasswordAsync(firebaseUsername, firebasePassword, "Greg", false);
                 }
-                catch (Exception e) { if (!silent) Console.WriteLine(e.Message); }
+                catch (Exception e) { if (!silent) Console.WriteLine("Error while checking FirebaseCreds\n" + e.Message); }
             }
             while (tryAgain);
-            return "";
+            return "false";
         }
         static public bool FireBaseLogIn()
         {
@@ -105,8 +106,8 @@ namespace CyanSystemManager
             {
                 var firebase = new FirebaseClient(firebaseUrl, new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) });
             }
-            catch (Exception) { return false; }
-            if (!silent) Console.WriteLine("User Authenticated - " + token.User.Email);
+            catch (Exception ex) { Console.WriteLine("Issue while logging in Firebase\n" + ex); return false; }
+            if (!silent && token != null) Console.WriteLine("User Authenticated - " + token.User.Email);
             return true;
         }
 
@@ -128,44 +129,58 @@ namespace CyanSystemManager
         }
         public static async Task CreateUser(string firebaseUsername, string firebasePassword)
         {
-            token = await auth.CreateUserWithEmailAndPasswordAsync(firebaseUsername, firebasePassword, "User", false);
+            if (auth == null) await GetProvider();
+            try
+            {
+                token = await auth.CreateUserWithEmailAndPasswordAsync(firebaseUsername, firebasePassword, "User", false);
+            }
+            catch (Exception e) { Console.WriteLine(e); Console.WriteLine(token); }
             return;
         }
 
         static public EventWaitHandle quit = new AutoResetEvent(false);
         public static bool error = false;
         public static string IP = "";
+        static public bool uploading = false;
         public static void UploadIP()
         {
+            if (uploading) return;
             try
             {
+                uploading = true;
                 if (!silent) Console.WriteLine("Uploading IP");
                 IP = new WebClient().DownloadString("http://icanhazip.com");
                 error = false;
-                System.Threading.Thread register = new Thread(Register);
+                Thread register = new Thread(Register);
                 register.Start();
             }
             catch (Exception) { }
+            uploading = false;
         }
         private static async void Register()
         {
-            if (token == null || (int)((DateTime.Now - token.Created).TotalSeconds) > 30) { await FirebaseClass.CheckFirebaseCred("shapelessguy@hotmail.it", "180393acer"); FirebaseClass.FireBaseLogIn(); }
-            if (token == null) { Console.WriteLine("LogIn richiesto.."); error = true; }
+            if (token == null || (int)((DateTime.Now - token.Created).TotalSeconds) > 30)
+            {
+                string result = await FirebaseClass.CheckFirebaseCred("firebase_ip_server@gmail.com", "123456");
+                if (result == "false") await CreateUser("firebase_ip_server@gmail.com", "123456");
+                FireBaseLogIn();
+            }
+            if (token == null) { error = true; }
             await UploadIP_onStorage();
         }
 
         public static async Task UploadIP_onStorage()
         {
-            if (token == null) { Console.WriteLine("LogIn richiesto.."); return; }
+            if (token == null) { Console.WriteLine("LogIn required."); return; }
             try
             {
-                string file_storage = "public/IP.txt";
+                string file_storage = Environment.MachineName + "/IP.txt";
                 string file_local = variablePath.networkPath + @"\IP.txt";
                 using (var sw = new StreamWriter(file_local)) { if (IP != "") sw.Write(IP); }
                 using (var stream = File.Open(file_local, FileMode.Open))
                 {
                     FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
-                    var task = new FirebaseStorage("mobilemoneyguard.appspot.com", op).Child(file_storage).PutAsync(stream);
+                    var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage).PutAsync(stream);
                     await task;
                 };
                 Console.WriteLine("IP has been uploaded -> " + DateTime.Now);

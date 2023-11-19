@@ -142,5 +142,17 @@ namespace CyanSystemManager.Properties {
                 this["winSet"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AIzaSyCkMWnAG5jv_kSIrKIy2o8ybi6dBtvluB0")]
+        public string firebaseApiKey {
+            get {
+                return ((string)(this["firebaseApiKey"]));
+            }
+            set {
+                this["firebaseApiKey"] = value;
+            }
+        }
     }
 }

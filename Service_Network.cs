@@ -13,7 +13,6 @@ namespace CyanSystemManager
     public class Service_Network
     {
         static public State status = State.OFF;
-        static public bool updatePublicIP = false;
         static public DisconnectForm disc_modem;
         static public DisconnectForm disc_wan;
         static DateTime now = DateTime.Now;
@@ -25,7 +24,6 @@ namespace CyanSystemManager
         {
             Console.WriteLine("Starting netService..");
             listIP = ips.Values.ToList();
-            updatePublicIP = File.Exists(Settings.variablePath.adminNetPass);
             status = State.NEUTRAL;
             disc_modem = new DisconnectForm(Properties.Resources.forbidden);
             disc_wan = new DisconnectForm(Properties.Resources.global);
@@ -72,7 +70,7 @@ namespace CyanSystemManager
                 if (!act_data.SequenceEqual(prev_data))
                 {
                     iter_UpdateIP++;
-                    if (iter_UpdateIP > 60) { iter_UpdateIP = 0; if (updatePublicIP) FirebaseClass.UploadIP(); }  
+                    if (iter_UpdateIP > 60) { iter_UpdateIP = 0; FirebaseClass.UploadIP(); }  
                     // upload ip ogni ora ... oppure ogni disconnessione (guarda sotto)
                     prev_data = new int[] { act_data[0], act_data[1], act_data[2], act_data[3], act_data[4] };
                     SaveGarancy(Fill0(act_data[0], 4) + Fill0(act_data[1], 2) + Fill0(act_data[2], 2) + Fill0(act_data[3], 2) + Fill0(act_data[4], 2));
@@ -122,7 +120,7 @@ namespace CyanSystemManager
                         else
                         {
                             HideDisconnect();
-                            if (updatePublicIP) FirebaseClass.UploadIP();
+                            FirebaseClass.UploadIP();
                         }
                     }
 

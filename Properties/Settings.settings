@@ -32,5 +32,8 @@
     <Setting Name="winSet" Type="System.String" Scope="User">
       <Value Profile="(Default)">clockX:true:HKC2413(2):100:20:40:40;Spotify:true:monitor1:110:1430:40:40;</Value>
     </Setting>
+    <Setting Name="firebaseApiKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AIzaSyCkMWnAG5jv_kSIrKIy2o8ybi6dBtvluB0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
