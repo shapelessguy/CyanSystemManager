@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Threading;
 using static CyanSystemManager.Program;
@@ -17,6 +18,7 @@ namespace CyanSystemManager
         static public string title = "startService";
         static public string serviceType = ST.Start;
         static public State status = State.OFF;
+        static public bool clear;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void SystemStart(object args) { addCommand(StartCom.START, args); }
@@ -31,7 +33,7 @@ namespace CyanSystemManager
         // run Example thread -> Interpret commands and call the appropriate functions inside the service
         static public void threadRun()
         {
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -60,12 +62,13 @@ namespace CyanSystemManager
             status = State.ON;
         }
         static public void beforeStart() { }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         public static int[] startUp()

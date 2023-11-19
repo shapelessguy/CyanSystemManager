@@ -77,6 +77,7 @@ namespace CyanSystemManager
         static public string title = "hwmonitoringService";
         static public string serviceType = ST.None;
         static public State status = State.OFF;
+        static public bool clear;
         static Dictionary<string, int> fps_ = new Dictionary<string, int>();
         static public computerInfo PC_INFO = new computerInfo();
 
@@ -97,7 +98,7 @@ namespace CyanSystemManager
         static public void threadRun()
         {
             GPUSession();
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 condition = ((monitoringTick * 1000) / sleep);
                 try
@@ -139,6 +140,7 @@ namespace CyanSystemManager
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         static private void getInformation()
@@ -322,7 +324,7 @@ namespace CyanSystemManager
         }
         static void OutputThreadProc()
         {
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 long t1, t2;
                 long dt = 2000;

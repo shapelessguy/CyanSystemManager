@@ -5,7 +5,7 @@ namespace CyanSystemManager
 {
     public partial class ScreenSaverForm : Form
     {
-        public static bool active = false;
+        public static bool active;
         public Screen follow;
         public Timer timerClose = new Timer() { Enabled = true, Interval = 50 };
         public ScreenSaverForm()

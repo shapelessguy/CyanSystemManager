@@ -12,13 +12,15 @@ namespace CyanSystemManager
     public partial class CheckSiteUpdate : Form
     {
         Thread alarmThread;
-        bool alarmBool = false;
-        string site = "";
+        bool alarmBool;
+        string site;
         bool verbose = true;
         public static string localFileSite = "localFile.txt";
 
         public CheckSiteUpdate()
         {
+            alarmBool = false; 
+            site = ""; 
             InitializeComponent();
 
             System.Windows.Forms.Timer checking = new System.Windows.Forms.Timer() { Interval = 10000, Enabled = true };

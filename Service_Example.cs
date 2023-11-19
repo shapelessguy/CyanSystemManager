@@ -16,6 +16,7 @@ namespace CyanSystemManager
         static public string title = "exampleService";
         static public string serviceType = ST.None;
         static public State status = State.OFF;
+        static public bool clear;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void FunctionFromOutside() { addCommand(ExampleCom.EX_COM1); }
@@ -30,7 +31,7 @@ namespace CyanSystemManager
         // run Example thread -> Interpret commands and call the appropriate functions inside the service
         static public void threadRun()
         {
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -60,12 +61,13 @@ namespace CyanSystemManager
             status = State.ON;
         }
         static public void beforeStart() { }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         static private void InternalFunction1() { Console.WriteLine("Do something"); }

@@ -5,6 +5,7 @@ using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
 
 namespace CyanSystemManager
 {
@@ -13,6 +14,7 @@ namespace CyanSystemManager
         static public string title = "timerService";
         static public string serviceType = ST.Timer;
         static public State status = State.OFF;
+        static public bool clear;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void TimerPressed() { addCommand(TimerCom.TIMER); }
@@ -29,7 +31,7 @@ namespace CyanSystemManager
         // run Example thread -> Interpret commands and call the appropriate functions inside the service
         static public void threadRun()
         {
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -86,12 +88,13 @@ namespace CyanSystemManager
             status = State.ON;
         }
         static public void beforeStart() { }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         static private void shortSystemTimer()

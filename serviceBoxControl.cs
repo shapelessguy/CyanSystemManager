@@ -8,16 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static CyanSystemManager.Utility;
+using System.Threading;
+using System.Xml.Serialization;
 
 namespace CyanSystemManager
 {
     public partial class serviceBoxControl : UserControl
     {
-        public Service runService = null;
-        bool started = false;
-        State previousState = State.NEUTRAL;
+        public Service runService;
+        bool started;
+        State previousState;
+        System.Windows.Forms.Timer timeCheck;
         public serviceBoxControl()
         {
+            runService = null;
+            started = false;
+            previousState = State.NEUTRAL;
             InitializeComponent();
             serviceBox.Checked = false;
             check.BackgroundImageLayout = ImageLayout.Stretch;
@@ -31,9 +37,13 @@ namespace CyanSystemManager
 
         private void serviceBoxControl_Load(object sender, EventArgs e)
         {
-            Timer timeCheck = new Timer() { Enabled = true, Interval = 50 };
+            timeCheck = new System.Windows.Forms.Timer() { Enabled = true, Interval = 500 };
             timeCheck.Tick += (o, ea) =>
             {
+                if (runService.generation < ServiceManager.generation)
+                {
+                    timeCheck.Dispose();
+                }
                 if (runService != null && !started)
                 {
                     //Console.WriteLine(runService.statusFromBox);

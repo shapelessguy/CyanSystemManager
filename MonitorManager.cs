@@ -71,7 +71,11 @@ namespace CyanSystemManager
         }
         public void UpdateScreen()
         {
-            if (MonitorManager.allMonitors.Count == 0) MonitorManager.getMonitorConfiguration();
+            if (MonitorManager.allMonitors.Count == 0)
+            {
+                List<Monitor> all_monitors_ = MonitorManager.getMonitorConfiguration();
+                if (MonitorManager.allMonitors.Count == 0) MonitorManager.allMonitors = all_monitors_;
+            }
             List<Screen> candidates = new List<Screen>();
             foreach (Monitor monitor in MonitorManager.allMonitors)
             {
@@ -95,11 +99,20 @@ namespace CyanSystemManager
             }
         }
     }
-    public class MonitorManager
+    public static class MonitorManager
     {
-        public static List<Monitor> allMonitors = new List<Monitor>();
-        public static void GetMonitors() { 
-            if (allMonitors.Count == 0) getMonitorConfiguration();
+        public static List<Monitor> allMonitors;
+
+        public static void initialize_monitors()
+        {
+            allMonitors = new List<Monitor>();
+        }
+        public static void GetMonitors() {
+            if (MonitorManager.allMonitors.Count == 0)
+            {
+                List<Monitor> all_monitors_ = MonitorManager.getMonitorConfiguration();
+                if (MonitorManager.allMonitors.Count == 0) MonitorManager.allMonitors = all_monitors_;
+            }
             foreach (MyMonitor monitor in monitors) monitor.UpdateScreen(); 
         }
 
@@ -109,7 +122,7 @@ namespace CyanSystemManager
             return null;
         }
 
-        public static void getMonitorConfiguration()
+        public static List<Monitor> getMonitorConfiguration()
         {
             Console.WriteLine("Get Monitor Configuration");
             for (int repeat=0; repeat<10; repeat++)
@@ -161,6 +174,7 @@ namespace CyanSystemManager
                             if (monitors.Count > 0) monitors[monitors.Count - 1].Add(line.Substring(line.IndexOf("=") + 1));
                         }
                     }
+                    List<Monitor> temp_monitors = new List<Monitor>();
                     foreach (var monitor in monitors)
                     {
                         string deviceName = monitor[1].Split('\\')[1];
@@ -174,11 +188,11 @@ namespace CyanSystemManager
                         {
                             if (sc.DeviceName == monitor[0]) screen = sc;
                         }
-                        MonitorManager.allMonitors.Add(new Monitor(screen, deviceName, width, height, x, y));
+                        temp_monitors.Add(new Monitor(screen, deviceName, width, height, x, y));
                     }
-                    MonitorManager.allMonitors = MonitorManager.allMonitors.OrderBy(p => p.x).ToList();
+                    temp_monitors = temp_monitors.OrderBy(p => p.x).ToList();
                     Dictionary<string, int> name_freq = new Dictionary<string, int>();
-                    foreach (Monitor monitor in MonitorManager.allMonitors)
+                    foreach (Monitor monitor in temp_monitors)
                     {
                         if (!name_freq.ContainsKey(monitor.deviceName))
                         {
@@ -192,7 +206,7 @@ namespace CyanSystemManager
                         }
                     }
                     Service_Monitor.n_monitors = Screen.AllScreens.Length;
-                    return;
+                    return temp_monitors;
                 }
                 catch (Exception e) { continue; }
             }

@@ -7,7 +7,7 @@ namespace CyanSystemManager
 {
     public partial class ShowBlockListForm : Form
     {
-        static public bool active = false;
+        static public bool active;
         static private Timer timerUpdate;
         //static List<Button> blocked = new List<Button>();
         public ShowBlockListForm()

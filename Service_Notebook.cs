@@ -4,6 +4,7 @@ using System.Threading;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
 using System.Windows.Forms;
+using System.Runtime.ConstrainedExecution;
 
 namespace CyanSystemManager
 {
@@ -12,6 +13,7 @@ namespace CyanSystemManager
         static public string title = "notebookService";
         static public string serviceType = ST.Notebook;
         static public State status = State.OFF;
+        static public bool clear;
         static private NotebookForm notebook;
 
         // Functions of Example_Service --> they should be called from outside the service
@@ -28,7 +30,7 @@ namespace CyanSystemManager
         static public void threadRun()
         {
             Program.home.Invoke((MethodInvoker)delegate { notebook = new NotebookForm(); });
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -60,12 +62,13 @@ namespace CyanSystemManager
         {
             notebook = new NotebookForm();
         }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         static private void CallNotebook()

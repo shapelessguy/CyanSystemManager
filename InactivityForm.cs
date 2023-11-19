@@ -5,12 +5,13 @@ namespace CyanSystemManager
 {
     public partial class InactivityForm : Form
     {
-        static public bool active = false;
-        static private int countdown = 2 * 60;
+        static public bool active;
+        static private int countdown;
         Timer timerClose, timerCheck;
         public InactivityForm()
         {
             active = true;
+            countdown = 2 * 60;
             InitializeComponent();
             Home.setTopAndTransparent(Handle);
 

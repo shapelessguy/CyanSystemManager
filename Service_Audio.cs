@@ -86,14 +86,14 @@ namespace CyanSystemManager
     public static class Service_Audio
     {
         static public State status = State.OFF;
-        static public bool suppressAllSounds = false;
-        static public bool changingDevice = false;
-        static public bool changedDevice = false;
-        public static List<VolFormHelper> volForms = new List<VolFormHelper>();
-        static public AudioInfo audioInfo = new AudioInfo();
+        static public bool clear;
+        static public bool suppressAllSounds;
+        static public bool changingDevice;
+        static public bool changedDevice;
+        public static List<VolFormHelper> volForms;
+        static public AudioInfo audioInfo;
         static MMDeviceEnumerator devEnum;
         static private int msCycle = 20;
-        static private int msCycleDiscovery = 2000;
         static private float baseSpeed = 0.01f;
         static private float fastSpeed = 0.02f;
         static private float limitInc = 0.4f;
@@ -140,6 +140,12 @@ namespace CyanSystemManager
         static IEnumerable<CoreAudioDevice> all_devices;
         public static void startService()
         {
+            suppressAllSounds = false;
+            changingDevice = false;
+            changedDevice = false;
+            volForms = new List<VolFormHelper>();
+            audioInfo = new AudioInfo();
+
             status = State.NEUTRAL;
             Console.WriteLine("Starting audioService..");
             Home.registerHotkeys(ST.Audio);
@@ -153,13 +159,14 @@ namespace CyanSystemManager
             }
             status = State.ON;
         }
-        public static void stopService() {
+        public static void stopService(bool dispose) {
             Console.WriteLine("audioService stopped");
             status = State.OFF;
             changingDevice = false;
             changedDevice = false;
             Home.unregisterHotkeys(ST.Audio);
             commands.Clear();
+            clear = true;
         }
         static void createVolForms() { for (int i = 0; i < 10; i++) volForms.Add(new VolFormHelper(i)); }
         public static void activateAllForms()
@@ -548,7 +555,7 @@ namespace CyanSystemManager
         static int n_devices = 0;
         public static void audioRun(Object ob)
         {
-            if (Program.timeToClose) return;
+            if (Program.forceTermination) return;
             if (status == State.OFF) { Thread.Sleep(50); audioThread.Change(msCycle, Timeout.Infinite); return; }
             try
             {

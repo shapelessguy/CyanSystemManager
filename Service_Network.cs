@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Windows.Forms;
 using static CyanSystemManager.Settings;
@@ -13,16 +14,19 @@ namespace CyanSystemManager
     public class Service_Network
     {
         static public State status = State.OFF;
+        static public bool clear;
         static public DisconnectForm disc_modem;
         static public DisconnectForm disc_wan;
-        static DateTime now = DateTime.Now;
-        static int[] prev_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
+        static DateTime now;
+        static int[] prev_data;
         static int iter_UpdateIP = 61;
         static string pathLogs = Path.Combine(variablePath.networkPath, "Logs.txt");
         static string pathLogsGar = Path.Combine(variablePath.networkPath, "Logs_gar.txt");
         public static void startService()
         {
             Console.WriteLine("Starting netService..");
+            now = DateTime.Now;
+            prev_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
             listIP = ips.Values.ToList();
             status = State.NEUTRAL;
             disc_modem = new DisconnectForm(Properties.Resources.forbidden);
@@ -33,11 +37,12 @@ namespace CyanSystemManager
             Thread pingThread = new Thread(PingTimer);
             pingThread.Start();
         }
-        public static void stopService() 
+        public static void stopService(bool dispose) 
         { 
             Console.WriteLine("netService Stopped");
             HideDisconnect();
-            status = State.OFF; 
+            status = State.OFF;
+            clear = true;
         }
 
         private static readonly Dictionary<string, string> ips = new Dictionary<string, string>(){
@@ -59,7 +64,7 @@ namespace CyanSystemManager
             byte[] buffer = new byte[650];
             bool initialization = true;
 
-            while (!Program.timeToClose)
+            while (!Program.forceTermination)
             {
                 if (status == State.OFF) { Thread.Sleep(100); return; }
                 iter++;

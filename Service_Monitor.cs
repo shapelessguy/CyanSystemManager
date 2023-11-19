@@ -16,7 +16,8 @@ namespace CyanSystemManager
     public static class Service_Monitor
     {
         static public State status = State.OFF;
-        static public int n_monitors = -1;
+        static public bool clear;
+        static public int n_monitors;
 
         public static void function(string conf) { addCommand(conf); }
         public static void sort() { addCommand(MonitorCom.SORT); }
@@ -31,8 +32,9 @@ namespace CyanSystemManager
         public static void threadRun()
         {
             int counter = 0;
+            n_monitors = -1;
             TurnOn();
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -40,7 +42,10 @@ namespace CyanSystemManager
                     counter++;
                     if (counter == 40) { 
                         counter = 0;
-                        if (Screen.AllScreens.Length != n_monitors) { MonitorManager.getMonitorConfiguration(); }
+                        if (Screen.AllScreens.Length != n_monitors)
+                        {
+                            MonitorManager.allMonitors = MonitorManager.getMonitorConfiguration();
+                        }
                     }
                     if (commands.Count == 0) continue;
                     Command command = commands[0];
@@ -64,12 +69,13 @@ namespace CyanSystemManager
             new Thread(threadRun).Start();
             status = State.ON;
         }
-        public static void stopService()
+        public static void stopService(bool dispose)
         {
             Console.WriteLine("monitorService stopped");
             status = State.OFF;
             Home.unregisterHotkeys(ST.Monitors);
             commands.Clear();
+            clear = true;
         }
         private static void execProfile(string command)
         {

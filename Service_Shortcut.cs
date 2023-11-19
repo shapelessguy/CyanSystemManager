@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Windows.Forms;
 using static CyanSystemManager.Settings;
@@ -11,6 +12,7 @@ namespace CyanSystemManager
     static public class Service_Shortcut
     {
         static public State status = State.OFF;
+        static public bool clear;
         public static void startService()
         {
             status = State.NEUTRAL;
@@ -21,12 +23,13 @@ namespace CyanSystemManager
             audioThread.Start();
             status = State.ON;
         }
-        public static void stopService()
+        public static void stopService(bool dispose)
         {
             Console.WriteLine("shortcutService stopped");
             status = State.OFF;
             Home.unregisterHotkeys(ST.Shortcuts);
             commands.Clear();
+            clear = true;
         }
 
         // //////////////   Functions of ShortcutService
@@ -44,7 +47,7 @@ namespace CyanSystemManager
         static List<Command> commands = new List<Command>();
         public static void shortcutRun()
         {
-            while (!Program.timeToClose && status != State.OFF)
+            while (!Program.forceTermination && status != State.OFF)
             {
                 try
                 {

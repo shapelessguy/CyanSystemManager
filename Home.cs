@@ -16,12 +16,16 @@ namespace CyanSystemManager
     {
         static readonly IContainer componentsNotify = new Container();
         static public NotifyIcon notifyIcon;
-        static public BindElements binded = new BindElements();
-        static public List<serviceBoxControl> serviceControls = new List<serviceBoxControl>();
+        static public BindElements binded;
+        static public List<serviceBoxControl> serviceControls;
         static public Thread runTimeSupport;
         static bool startup = false;
+
         public Home(bool start)
         {
+            MonitorManager.initialize_monitors();
+            binded = new BindElements(); 
+            serviceControls = new List<serviceBoxControl>();
             startup = start;
             InitializeComponent();
             FurtherInitialization();
@@ -40,20 +44,18 @@ namespace CyanSystemManager
             runTimeSupport = new Thread(RunTime);
             runTimeSupport.Start();
         }
-        private void Closing(object sender, EventArgs e)
+        public void Closing(object sender, EventArgs e)
         {
-            Program.timeToClose = true;
+            if (notifyIcon != null) notifyIcon.Visible = false;
+            Program.forceTermination = true;
 
             foreach (Service service in ServiceManager.allServices)
             {
-                service.stopService();
+                service.stopService(true);
             }
 
             Timer timerClose = new Timer() { Enabled = true, Interval = 2000 };
             timerClose.Tick += (o, ea) => { Close(); };
-
-            Timer timerEmClose = new Timer() { Enabled = true, Interval = 6000 };
-            timerEmClose.Tick += (o, ea) => { killMainProcess(); };
         }
 
         private void RunTime()
@@ -94,7 +96,8 @@ namespace CyanSystemManager
 
         private void createServiceControls()
         {
-            foreach(Service service in ServiceManager.allServices)
+            ServiceManager.createServices();
+            foreach (Service service in ServiceManager.allServices)
             {
                 serviceControls.Add(new serviceBoxControl() { runService = service });
                 panel3.Controls.Add(serviceControls[serviceControls.Count - 1]);
@@ -113,7 +116,7 @@ namespace CyanSystemManager
             WindowState = FormWindowState.Minimized;
             FormClosing += (o, e) =>
             {
-                if (Program.timeToClose) return;
+                if (Program.forceTermination) return;
                 e.Cancel = true;
                 Visible = false;
             };
@@ -186,18 +189,6 @@ namespace CyanSystemManager
             Closing(null, null);
         }
 
-        private void killMainProcess()
-        {
-            void kill()
-            {
-                Thread.Sleep(1000);
-                foreach (Process clsProcess in Process.GetProcesses())
-                    if (clsProcess.ProcessName == Application.ProductName)
-                    { clsProcess.Kill(); Console.WriteLine("Process killed"); }
-            }
-            new Thread(kill).Start();
-        }
-
         public static void registerHotkeys(string service)
         {
             foreach (BindDef def in activityList)
@@ -235,7 +226,7 @@ namespace CyanSystemManager
         {
             if (m.Msg.Equals(WM_QUERYENDSESSION) || m.Msg.Equals(WM_ENDSESSION) || m.Msg.Equals(SHUTDOWN_NORETRY))
             {
-                killMainProcess();
+                Closing(null, null);
             }
             if (m.Msg == 0x0312)
             {

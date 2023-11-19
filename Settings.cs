@@ -208,7 +208,7 @@ namespace CyanSystemManager
             new MyMonitor(1, "DEL41EE"),
             new MyMonitor(2, "HKC2413", 0),
             new MyMonitor(3, "HKC2413", 1),
-            new MyMonitor(4, "SAM71B5"),
+            new MyMonitor(4, "SAM71B4"),
         };
 
         public static void apply()
@@ -217,7 +217,12 @@ namespace CyanSystemManager
             if (!Directory.Exists(variablePath.notebookPath)) Directory.CreateDirectory(variablePath.notebookPath);
             if (!Directory.Exists(variablePath.networkPath)) Directory.CreateDirectory(variablePath.networkPath);
             if (!File.Exists(variablePath.python) || !File.Exists(variablePath.pyStatScript)) noStat = true;
-            if (MonitorManager.allMonitors.Count == 0) MonitorManager.getMonitorConfiguration();
+
+            if (MonitorManager.allMonitors.Count == 0)
+            {
+                List<Monitor> all_monitors_ = MonitorManager.getMonitorConfiguration();
+                if (MonitorManager.allMonitors.Count == 0) MonitorManager.allMonitors = all_monitors_;
+            }
 
             Console.WriteLine("\nMonitors ->");
             foreach (var monitor in MonitorManager.allMonitors) { monitor.Print(); }

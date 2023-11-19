@@ -7,8 +7,8 @@ namespace CyanSystemManager
 {
     public class Statistics
     {
-        public List<Status> status = new List<Status>();
-        public List<DateTime> garancies = new List<DateTime>();
+        public List<Status> status;
+        public List<DateTime> garancies;
         static string pathLogs = Path.Combine(variablePath.networkPath, "Logs.txt");
         static string pathLogsGar = Path.Combine(variablePath.networkPath, "Logs_gar.txt");
         static string pathLogsCSV = Path.Combine(variablePath.networkPath, "Logs.csv");
@@ -16,6 +16,8 @@ namespace CyanSystemManager
 
         public Statistics()
         {
+            status = new List<Status>();
+            garancies = new List<DateTime>();
             System.Threading.Thread thread = new System.Threading.Thread(Stat);
             thread.Start();
         }

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.ComponentModel.Design;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 
 namespace CyanSystemManager
 {
@@ -20,7 +21,8 @@ namespace CyanSystemManager
         static public string serviceType = ST.None;
         static public State status = State.OFF;
         static public SerialPort sp;
-        static public bool connected = false;
+        static public bool connected;
+        static public bool clear;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void turnAudio(bool on, bool keep=false) 
@@ -49,9 +51,8 @@ namespace CyanSystemManager
 
             //Thread.Sleep(10000);
             //if (!active) { stopService(); }
-            //status = State.ON;
 
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -91,13 +92,14 @@ namespace CyanSystemManager
         static public void beforeStart() 
         {
         }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             new Thread(ClosePort).Start();
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
         static private bool getAudioState()
@@ -207,7 +209,7 @@ namespace CyanSystemManager
                 }
             }
             if (connected) status = State.ON;
-            else stopService();
+            else stopService(false);
         }
         // //////////
     }

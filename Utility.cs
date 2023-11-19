@@ -15,9 +15,9 @@ namespace CyanSystemManager
         public bool initialTrigger;
         public KeyMode mode = KeyMode.Normal;
         public KeyMode actMode = KeyMode.Normal;
-        private object arg = null;
-        public Thread thread = null;
-        public Thread activityThread = null;
+        private object arg;
+        public Thread thread;
+        public Thread activityThread;
         private bool feed = false;
         public KeyActivity(string name, KeyMode mode, int trigger, bool initialTrigger)
         {
@@ -42,7 +42,7 @@ namespace CyanSystemManager
         }
         public void delayActivity()
         {
-            if (Program.timeToClose) return;
+            if (Program.forceTermination) return;
             int iterations = 0;
             if(mode == KeyMode.Normal)
             {

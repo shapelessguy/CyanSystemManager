@@ -12,6 +12,7 @@ namespace CyanSystemManager
         static public string title = "checkSiteService";
         static public string serviceType = ST.CheckSite;
         static public State status = State.OFF;
+        static public bool clear;
         static private CheckSiteUpdate checkform;
 
         // Functions of Example_Service --> they should be called from outside the service
@@ -32,7 +33,7 @@ namespace CyanSystemManager
                 checkform = new CheckSiteUpdate();
                 checkform.Show();
             });
-            while (!timeToClose && status != State.OFF)
+            while (!forceTermination && status != State.OFF)
             {
                 try
                 {
@@ -63,12 +64,13 @@ namespace CyanSystemManager
         static public void beforeStart()
         {
         }
-        static public void stopService()
+        static public void stopService(bool dispose)
         {
             Console.WriteLine(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
+            clear = true;
         }
         // Inside functions
 

@@ -11,12 +11,12 @@ namespace CyanSystemManager
 {
     public partial class NotebookForm : Form
     {
-        public static bool canSave = true;
-        public static bool canResize = false;
+        public static bool canSave;
+        public static bool canResize;
+        public static bool palClicked;
+        public static bool styClicked;
         Screen actualScreen;
-        public static bool palClicked = false;
         public static Color act_color = Color.Black;
-        public static bool styClicked = false;
         public static FontStyle act_style;
         private Font selectionFont;
         string fileName = "";
@@ -41,6 +41,10 @@ namespace CyanSystemManager
 
         public NotebookForm()
         {
+            canSave = true;
+            canResize = false;
+            palClicked = false;
+            styClicked = false;
             InitializeComponent();
             InitializeControlsPanel();
             Timer checkClick = new Timer() { Interval = 10, Enabled = true, };

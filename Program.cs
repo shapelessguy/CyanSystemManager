@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -9,8 +10,8 @@ namespace CyanSystemManager
     static class Program
     {
         public static Home home;
-        public static bool timeToClose = false;
-        public static AutoResetEvent reset = new AutoResetEvent(false);
+        public static bool forceTermination = false;
+        public static bool restart = true;
 
         [STAThread]
         static void Main(string[] args)
@@ -20,9 +21,35 @@ namespace CyanSystemManager
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(home = new Home(startup));
+            while (restart)
+            {
+                restart = false;
+                Application.Run(home = new Home(startup));
+                startup = false;
+                if (restart)
+                {
+                    ConfigurationManager.RefreshSection("appSettings");
+                    ConfigurationManager.RefreshSection("configuration");
+                    Properties.Settings.Default.Reload();
+                    Thread.Sleep(1500);
+                }
+                forceTermination = false;
+            }
+            killMainProcess();
             Console.WriteLine("Program terminated");
         }
+
+        static public void killMainProcess()
+        {
+            void kill()
+            {
+                foreach (Process clsProcess in Process.GetProcesses())
+                    if (clsProcess.ProcessName == Application.ProductName)
+                    { clsProcess.Kill(); Console.WriteLine("Process killed"); }
+            }
+            new Thread(kill).Start();
+        }
+
         public static void cmd(string cmd, string args, bool isPath = false)
         {
             //Console.Write("Running cmd");
@@ -64,7 +91,7 @@ namespace CyanSystemManager
                     }
                 }
             }
-            new System.Threading.Thread(run).Start();
+            new Thread(run).Start();
         }
         public static DateTime WindowsStartTime()
         {

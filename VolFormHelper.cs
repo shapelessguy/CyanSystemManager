@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Windows.Forms;
 using Tools;
@@ -10,6 +11,7 @@ namespace CyanSystemManager
 {
     public class VolFormHelper
     {
+        static bool dispose;
         int timeout = 80; // proportional to the time needed for hiding Volume form
         int generalInterval = 5;
         int animationDelay = 3; // min 2
@@ -19,7 +21,7 @@ namespace CyanSystemManager
         public static System.Threading.Timer timerGeneralUpdate;
         public System.Threading.Timer timerUpdate;
         public static float[] volHist;
-        public static List<VolSettings> messages = new List<VolSettings>();
+        public static List<VolSettings> messages;
         private VolForm volForm;
         int nScreen;
         bool destroyed = false;
@@ -32,6 +34,8 @@ namespace CyanSystemManager
         }
         public void initializeForm(int screenId)
         {
+            messages = new List<VolSettings>();
+            dispose = false;
             this.screenId = screenId;
             destroyed = false;
             if (volForm == null)
@@ -67,7 +71,7 @@ namespace CyanSystemManager
         public void Dispose()
         {
             if (volForm == null) return;
-            try { Program.home.Invoke((MethodInvoker)delegate { volForm.Dispose(); }); }
+            try { Program.home.Invoke((MethodInvoker)delegate { volForm.DisposeAll(); volForm = null; }); }
             catch (Exception) { }
         }
 
@@ -76,7 +80,7 @@ namespace CyanSystemManager
         static DateTime prev;
         private void generalUpdate(Object state)
         {
-            if (Program.timeToClose) return;
+            if (Program.forceTermination) { dispose = true; return; }
             if (Service_Audio.status==State.OFF) { timerGeneralUpdate.Change(100, Timeout.Infinite); return; }
             if (iteration % animationDelay == 0)
             {
@@ -109,7 +113,15 @@ namespace CyanSystemManager
         int countDownHide = 0;
         private void Update(Object state)
         {
-            if (Program.timeToClose) return;
+            if (dispose)
+            {
+                Dispose();
+                timerUpdate.Dispose();
+                timerGeneralUpdate = null; 
+                volHist = null;
+                return;
+            }
+            if (Program.forceTermination) return;
             if (Service_Audio.status == State.OFF || destroyed) 
                 { Hide(); timerUpdate.Change(300, Timeout.Infinite); return; }
             if (volHist == null) { timerUpdate.Change(generalInterval, Timeout.Infinite); return; }

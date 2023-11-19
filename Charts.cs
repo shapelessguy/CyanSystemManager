@@ -8,7 +8,7 @@ namespace CyanSystemManager
 {
     public partial class Charts : Form
     {
-        static public List<Charts> chartForms = new List<Charts>();
+        static public List<Charts> chartForms;
 
         static public List<ChartClass> orderedList = new List<ChartClass>()
               { new ChartClass(ChartName.cpuTot, "CPU", "%", 100),
@@ -24,9 +24,9 @@ namespace CyanSystemManager
         private ToolStripMenuItem showBlock;
 
         private Timer updateSingleTimer;
-        static public List<computerInfo> infos = new List<computerInfo>();
-        static public List<string> allowList = new List<string>();
-        static public List<string> blockList = new List<string>();
+        static public List<computerInfo> infos;
+        static public List<string> allowList;
+        static public List<string> blockList;
         public int id = -1;
         static public bool reallyToSave = false;
         private void CloseAll()
@@ -37,6 +37,10 @@ namespace CyanSystemManager
         }
         public Charts()
         {
+            chartForms = new List<Charts>(); 
+            infos = new List<computerInfo>();
+            allowList = new List<string>();
+            blockList = new List<string>();
             InitializeComponent();
             contextMenuStrip = new ContextMenuStrip
             {
@@ -80,7 +84,7 @@ namespace CyanSystemManager
         public void ShowForm() { if (!Visible) { Show(); } }
         private void update(object sender, EventArgs e)
         {
-            if (Program.timeToClose) { CloseAll(); return; }
+            if (Program.forceTermination) { CloseAll(); return; }
             if (Service_HWMonitoring.status == Utility.State.OFF) { HideForm(); return; }
             try { infos.Add(Service_HWMonitoring.PC_INFO.copy()); } catch (Exception) { }
             if (infos.Count > Service_HWMonitoring.sampling) infos.RemoveAt(0);

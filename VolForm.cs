@@ -15,7 +15,8 @@ namespace CyanSystemManager
                                                            // assign your custom style to the form
         private static Style style;
         private int nScreen;
-        static bool imageThreadCreated = false;
+        public bool dispose = false;
+        static bool imageThreadCreated;
         static private VolSettings previousSet;
         static public VolSettings actualSet;
         static private Image actualVolImage;
@@ -27,6 +28,7 @@ namespace CyanSystemManager
 
         public VolForm(int nScreen, Style style_ = defaultStyle)
         {
+            imageThreadCreated = false;
             this.nScreen = nScreen;
             InitializeComponent();
             defaultSize = Size;
@@ -42,6 +44,12 @@ namespace CyanSystemManager
             }
             else pictureBox.Visible = false;
             this.Load += new EventHandler(FormLoad);
+        }
+
+        public void DisposeAll()
+        {
+            dispose = true;
+            Dispose();
         }
         void FormLoad(object sender, EventArgs e) { locate(); Refresh(); HideForm(); }
 
@@ -122,7 +130,7 @@ namespace CyanSystemManager
         private void createImage()
         {
             imageThreadCreated = true;
-            while (!Program.timeToClose)
+            while (!Program.forceTermination && !dispose)
             {
                 if (Service_Audio.status == State.OFF || style == Style.Classic) { Thread.Sleep(100); continue; }
 

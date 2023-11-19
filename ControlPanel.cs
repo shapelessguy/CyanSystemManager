@@ -8,8 +8,10 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Vanara.PInvoke;
+using System.Configuration;  // Add a reference to System.Configuration.dll
 using static CyanSystemManager.Settings;
 using static System.Net.Mime.MediaTypeNames;
+using static Vanara.PInvoke.Kernel32.RETRIEVAL_POINTERS_BUFFER;
 
 namespace CyanSystemManager
 {
@@ -72,20 +74,26 @@ namespace CyanSystemManager
     public class ControlPanel
     {
         public Home home;
-        public string ctrlPanel = "";
-        public static List<WinSet> winSets = new List<WinSet>();
-        public bool initializing = true;
+        public string ctrlPanel;
+        public static List<WinSet> winSets;
+        public bool initializing;
+        static public string settings_path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
 
         CheckBox allowIdleBox, startBox, runBox;
         TextBox checkSite;
         Label checkSite_l;
-        List<Object> allControls = new List<object>();
+        List<Object> allControls;
         public Color btnBackColor = Color.FromArgb(48, 48, 48);
         public Color btnSelectionColor = Color.FromArgb(90,90,90);
         public Color btnOver = Color.FromArgb(60,60,60);
         public Color btnClick = Color.FromArgb(90, 90, 90);
         public ControlPanel(Home home_)
         {
+            ctrlPanel = "";
+            winSets = new List<WinSet>();
+            initializing = true;
+            allControls = new List<object>();
+            Console.WriteLine(settings_path);
             home = home_;
             allowIdleBox = initializeBox("allowIdleBox_pan1", "Allow idle after 2 hours of inactivity and between 00:00 and 8:00", new Point(16, 14 + 0 * 30), new Size(200, 26));
             allowIdleBox.Checked = Properties.Settings.Default.allowIdle;
@@ -138,6 +146,14 @@ namespace CyanSystemManager
                 Properties.Settings.Default.Save();
             };
             allControls.Add(checkSite);
+
+            Button exportConfig_btn = initializeButton("exportConfig_pan1", "Export", new Point(20, home.panel4.Height - 50), new Size(150, 35));
+            exportConfig_btn.MouseClick += (o, e) => Export();
+            allControls.Add(exportConfig_btn);
+
+            Button importConfig_btn = initializeButton("importConfig_pan1", "Import", new Point(20 + 150 + 15, home.panel4.Height - 50), new Size(150, 35));
+            importConfig_btn.MouseClick += (o, e) => Import();
+            allControls.Add(importConfig_btn);
 
             Button getPosition_btn = initializeButton("get_position_pan2", "Get positions", new Point(300, 6), new Size(300, 35));
             getPosition_btn.MouseClick += (o, e) => getPositions();
@@ -227,6 +243,55 @@ namespace CyanSystemManager
             }
             buttonClick(home.generalBtn, null);
             initializing = false;
+        }
+
+        private void Export()
+        {
+            string dir_path = getDirName();
+            if (dir_path == null || dir_path == "") return;
+            if (Directory.Exists(dir_path))
+            {
+                File.Copy(settings_path, Path.Combine(dir_path, "CyanSystemManager_settings_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".config"));
+            }
+        }
+
+        private void Import()
+        {
+            string file_name = getFileName();
+            if (File.Exists(file_name))
+            {
+                File.Copy(file_name, settings_path, true);
+                MessageBox.Show("Settings applied correctly! This application will restart now.");
+                Program.restart = true;
+                home.Closing(null, null);
+            }
+        }
+
+        private string getDirName()
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    return fbd.SelectedPath;
+                }
+            }
+            return "";
+        }
+
+        private string getFileName()
+        {
+            OpenFileDialog op1 = new OpenFileDialog();
+            op1.Filter = "User config|*.config";
+
+            DialogResult result = op1.ShowDialog();
+            if (result == DialogResult.OK) // Test result.
+            {
+                return op1.FileName;
+            }
+            return "";
         }
 
         private void getPositions()
@@ -393,6 +458,7 @@ namespace CyanSystemManager
                 foreach (Label obj in allControls.OfType<Label>()) objShow(obj, pan);
                 foreach (CheckBox obj in allControls.OfType<CheckBox>()) objShow(obj, pan);
                 foreach (TextBox obj in allControls.OfType<TextBox>()) objShow(obj, pan);
+                foreach (Button obj in allControls.OfType<Button>()) objShow(obj, pan);
             }
             else if(ctrlPanel == "startBtn")
             {

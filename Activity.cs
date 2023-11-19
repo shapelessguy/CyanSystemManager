@@ -113,7 +113,7 @@ namespace CyanSystemManager
         public static void startActivity(string name, object arg, KeyMode mode)
         {
             string argument = (string)arg;
-            if (timeToClose) return;
+            if (forceTermination) return;
             // after a key is pressed and captured by IntPtr, it has to be specified the function associated to the first
             //if (name == "examp") ExampleService.FunctionFromOutside();
 

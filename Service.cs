@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using NAudio.Utils;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using static CyanSystemManager.Utility;
 
 namespace CyanSystemManager
@@ -23,10 +25,16 @@ namespace CyanSystemManager
 
     public static class ServiceManager
     {
+        public static int generation = 0;
         public static bool canSave = false;
         public static bool timeToSave = false;
-        static public Service[] allServices = new Service[]
+
+        static public Service[] allServices;
+
+        static public void createServices()
         {
+            generation += 1;
+            allServices = new Service[]{
             //new Service(ServiceType.Example, "Example Service tag"), // Example_ of service
             new Service(ST.Start, "Start Service"),
             new Service(ST.Audio, "Audio Service"),
@@ -36,9 +44,8 @@ namespace CyanSystemManager
             new Service(ST.Shortcuts, "Shortcuts Service"),
             new Service(ST.Monitors, "Monitors Service"),
             new Service(ST.Timer, "Timer Service"),
-            new Service(ST.Arduino, "Arduino Service"),
-            //new Service(ST.HW_Monitor, "HW Monitor Service"),
-        };
+            new Service(ST.Arduino, "Arduino Service")};
+        }
 
         static public void loadActiveServices(bool andStart = false)
         {
@@ -50,7 +57,7 @@ namespace CyanSystemManager
                 if (andStart) allServices[i].startServiceAsWish();
             }
             System.Windows.Forms.Timer initialize = new System.Windows.Forms.Timer() { Enabled = true, Interval = 1000 };
-            initialize.Tick += (o, e) => { canSave = true; initialize.Dispose(); };
+            initialize.Tick += (o, e) => { canSave = true; initialize.Dispose(); canSave = false; };
         }
         static public void saveActiveServices()
         {
@@ -92,8 +99,10 @@ namespace CyanSystemManager
     public class Service
     {
         public bool startup = false;
+        public int generation;
         public bool dataLoaded = false;
         public State status = State.OFF;
+        public bool clear;
         public State statusFromBox = State.NEUTRAL;
         public string serviceType;
         public string friendlyName;
@@ -101,16 +110,18 @@ namespace CyanSystemManager
 
         public Service(string type, string friendlyName, object args = null)
         {
+
+            generation = ServiceManager.generation;
             this.serviceType = type;
-            if (serviceType == ST.Start) status = Service_Start.status;
-            else if (serviceType == ST.Audio) status = Service_Audio.status;
-            else if (serviceType == ST.Network) status = Service_Network.status;
-            else if (serviceType == ST.Notebook) status = Service_Notebook.status;
-            else if (serviceType == ST.CheckSite) status = Service_CheckSite.status;
-            else if (serviceType == ST.Shortcuts) status = Service_Shortcut.status;
-            else if (serviceType == ST.Monitors) status = Service_Monitor.status;
-            else if (serviceType == ST.Timer) status = Service_Timer.status;
-            else if (serviceType == ST.Arduino) status = Service_Arduino.status;
+            if (serviceType == ST.Start) { status = Service_Start.status; clear = Service_Start.clear; }
+            else if (serviceType == ST.Audio) { status = Service_Audio.status; clear = Service_Audio.clear; }
+            else if (serviceType == ST.Network) { status = Service_Network.status; clear = Service_Network.clear; }
+            else if (serviceType == ST.Notebook) { status = Service_Notebook.status; clear = Service_Notebook.clear; }
+            else if (serviceType == ST.CheckSite) { status = Service_CheckSite.status; clear = Service_CheckSite.clear; }
+            else if (serviceType == ST.Shortcuts) { status = Service_Shortcut.status; clear = Service_Shortcut.clear; }
+            else if (serviceType == ST.Monitors) { status = Service_Monitor.status; clear = Service_Monitor.clear; }
+            else if (serviceType == ST.Timer) { status = Service_Timer.status; clear = Service_Timer.clear; }
+            else if (serviceType == ST.Arduino) { status = Service_Arduino.status; clear = Service_Arduino.clear; }
             //else if (serviceType == ST.HW_Monitor) status = Service_HWMonitoring.status;
             this.friendlyName = friendlyName;
             this.args = args;
@@ -119,7 +130,7 @@ namespace CyanSystemManager
         public void run()
         {
             int iterations = 0;
-            while (!Program.timeToClose)
+            while (!Program.forceTermination)
             {
                 iterations++;
                 Thread.Sleep(200);
@@ -165,20 +176,20 @@ namespace CyanSystemManager
             else if (serviceType == ST.Arduino) Service_Arduino.startService();
             //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.startService();
         }
-        public void stopService()
+        public void stopService(bool dispose = false)
         {
             if (status == State.OFF) return;
             status = State.OFF;
             //if (serviceType == ServiceType.Example) ExampleService.stopService(); // stop service inside Example_ service
-            if (serviceType == ST.Start) Service_Start.stopService();
-            else if (serviceType == ST.Audio) Service_Audio.stopService();
-            else if (serviceType == ST.Network) Service_Network.stopService();
-            else if (serviceType == ST.Notebook) Service_Notebook.stopService();
-            else if (serviceType == ST.CheckSite) Service_CheckSite.stopService();
-            else if (serviceType == ST.Shortcuts) Service_Shortcut.stopService();
-            else if (serviceType == ST.Monitors) Service_Monitor.stopService();
-            else if (serviceType == ST.Timer) Service_Timer.stopService();
-            else if (serviceType == ST.Arduino) Service_Arduino.stopService();
+            if (serviceType == ST.Start) Service_Start.stopService(dispose);
+            else if (serviceType == ST.Audio) Service_Audio.stopService(dispose);
+            else if (serviceType == ST.Network) Service_Network.stopService(dispose);
+            else if (serviceType == ST.Notebook) Service_Notebook.stopService(dispose);
+            else if (serviceType == ST.CheckSite) Service_CheckSite.stopService(dispose);
+            else if (serviceType == ST.Shortcuts) Service_Shortcut.stopService(dispose);
+            else if (serviceType == ST.Monitors) Service_Monitor.stopService(dispose);
+            else if (serviceType == ST.Timer) Service_Timer.stopService(dispose);
+            else if (serviceType == ST.Arduino) Service_Arduino.stopService(dispose);
             //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.stopService();
         }
     }

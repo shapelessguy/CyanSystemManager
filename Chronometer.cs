@@ -20,6 +20,7 @@ namespace CyanSystemManager
                 if (lastPositionT != null) lastPositionT.Dispose();
             }
             catch (Exception) { }
+            Console.WriteLine("Chronometer disposed");
             alert = false;
         }
         public Chronometer()
@@ -47,22 +48,30 @@ namespace CyanSystemManager
         {
             try
             {
-                IntPtr win = GetForegroundWindow();
-                if (IsDisposed || win != Handle) { Close(); }
+                try
+                {
+                    IntPtr win = GetForegroundWindow();
+                    if (IsDisposed || win != Handle) { Close(); }
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
+            catch (Exception) { DisposeAll(); }
         }
         void RealTimer(object sender, EventArgs e)
         {
-            if (!alert)
+            try
             {
-                IntPtr win = this.Handle;
-                if (seconds == 0) { seconds = 59; minutes--; } else seconds--;
-                if (minutes == -1) { minutes = 59; hours--; }
-                if (hours == -1) { seconds = 0; minutes = 0; hours = 0; label1.Text = "ALERT"; Alarm(); }
+                if (!alert)
+                {
+                    IntPtr win = this.Handle;
+                    if (seconds == 0) { seconds = 59; minutes--; } else seconds--;
+                    if (minutes == -1) { minutes = 59; hours--; }
+                    if (hours == -1) { seconds = 0; minutes = 0; hours = 0; label1.Text = "ALERT"; Alarm(); }
+                }
+                if (alarmTime.Year > 2000) if ((int)(DateTime.Now.Subtract(alarmTime).TotalSeconds + 0.01f) > 2) Close();
+                if (label1.Text != "ALERT") label1.Text = SetLabelText(hours, minutes, seconds);
             }
-            if (alarmTime.Year > 2000) if((int)(DateTime.Now.Subtract(alarmTime).TotalSeconds+0.01f) > 2) Close();
-            if (label1.Text != "ALERT") label1.Text = SetLabelText(hours, minutes, seconds);
+            catch (Exception) { DisposeAll(); }
         }
 
         void KeyEnter(object sender, KeyEventArgs e)
@@ -85,16 +94,20 @@ namespace CyanSystemManager
         }
         void LastPosition(object sender, EventArgs e)
         {
-            hours = dateTimePicker1.Value.Hour;
-            minutes = dateTimePicker1.Value.Minute;
-            seconds = dateTimePicker1.Value.Second;
-            lastPositionT.Tick -= LastPosition;
-            focusLostT.Tick -= LostFocus_Timer;
-            focusLostT.Interval = 1000;
-            focusLostT.Tick += RealTimer;
-            dateTimePicker1.Hide();
-            label1.Text = SetLabelText(hours, minutes, seconds);
-            label1.Show();
+            try
+            {
+                hours = dateTimePicker1.Value.Hour;
+                minutes = dateTimePicker1.Value.Minute;
+                seconds = dateTimePicker1.Value.Second;
+                lastPositionT.Tick -= LastPosition;
+                focusLostT.Tick -= LostFocus_Timer;
+                focusLostT.Interval = 1000;
+                focusLostT.Tick += RealTimer;
+                dateTimePicker1.Hide();
+                label1.Text = SetLabelText(hours, minutes, seconds);
+                label1.Show();
+            }
+            catch (Exception) { DisposeAll(); }
         }
 
         string SetLabelText(int ore, int minuti, int secondi)
