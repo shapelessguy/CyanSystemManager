@@ -44,7 +44,7 @@ namespace CyanSystemManager
             runTimeSupport = new Thread(RunTime);
             runTimeSupport.Start();
         }
-        public void Closing(object sender, EventArgs e)
+        public void SafeClose(object sender, EventArgs e)
         {
             if (notifyIcon != null) notifyIcon.Visible = false;
             Program.forceTermination = true;
@@ -186,7 +186,7 @@ namespace CyanSystemManager
         private void Statistics_Click(object sender, EventArgs e) {new Statistics();}
         private void MenuExit_Click(object sender, EventArgs e)
         {
-            Closing(null, null);
+            SafeClose(null, null);
         }
 
         public static void registerHotkeys(string service)
@@ -226,7 +226,7 @@ namespace CyanSystemManager
         {
             if (m.Msg.Equals(WM_QUERYENDSESSION) || m.Msg.Equals(WM_ENDSESSION) || m.Msg.Equals(SHUTDOWN_NORETRY))
             {
-                Closing(null, null);
+                SafeClose(null, null);
             }
             if (m.Msg == 0x0312)
             {

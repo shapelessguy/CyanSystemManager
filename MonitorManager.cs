@@ -47,25 +47,19 @@ namespace CyanSystemManager
 
     public class MyMonitor
     {
-        public int id;
-        public string deviceName;
-        public int index = 0; // In case of same deciveName, this index helps in differentiating the two screens
+        public VT type;
+        public string id;
         public Screen screen;
         public Point position;
 
-        public MyMonitor(int id, string deviceName) { 
-            SetMonitor(id, deviceName, new Point(0, 0)); 
+        public MyMonitor(VT type, string id) { 
+            SetMonitor(type, id, new Point(0, 0));
         }
 
-        public MyMonitor(int id, string deviceName, int index) { 
-            this.index = index; 
-            SetMonitor(id, deviceName, new Point(0, 0)); 
-        }
-
-        private void SetMonitor(int id, string deviceName, Point position)
+        private void SetMonitor(VT type, string id, Point position)
         {
+            this.type = type;
             this.id = id;
-            this.deviceName = deviceName;
             this.position = position;
             UpdateScreen();
         }
@@ -79,23 +73,15 @@ namespace CyanSystemManager
             List<Screen> candidates = new List<Screen>();
             foreach (Monitor monitor in MonitorManager.allMonitors)
             {
-                if (this.deviceName == monitor.deviceName) candidates.Add(monitor.screen);
+                if (id == monitor.id) candidates.Add(monitor.screen);
             }
-            if (candidates.Count == 0)
-            {
-                screen = null;
-            }
-            else if (candidates.Count == 1)
+            if (candidates.Count == 1)
             {
                 screen = candidates[0];
             }
-            else if (candidates.Count <= index)
-            {
-                screen = null;
-            }
             else
             {
-                screen = candidates[index];
+                screen = null;
             }
         }
     }
@@ -113,12 +99,12 @@ namespace CyanSystemManager
                 List<Monitor> all_monitors_ = MonitorManager.getMonitorConfiguration();
                 if (MonitorManager.allMonitors.Count == 0) MonitorManager.allMonitors = all_monitors_;
             }
-            foreach (MyMonitor monitor in monitors) monitor.UpdateScreen(); 
+            foreach (MyMonitor monitor in monitors) monitor.UpdateScreen();
         }
 
-        public static MyMonitor Ref(int id)
+        public static MyMonitor Ref(VT type)
         {
-            foreach (MyMonitor monitor in monitors) { if (monitor.id == id) return monitor; }
+            foreach (MyMonitor monitor in monitors) { if (monitor.type == type) return monitor; }
             return null;
         }
 
@@ -129,8 +115,8 @@ namespace CyanSystemManager
             {
                 try
                 {
-                    string conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "multimonitor.cfg");
-                    string def_conf_path = Path.Combine(Path.GetDirectoryName(variablePath.multiMonitor), "defConfig.cfg");
+                    string conf_path = Path.Combine(Path.GetDirectoryName(Program.multimonitor_path), "multimonitor.cfg");
+                    string def_conf_path = Path.Combine(Path.GetDirectoryName(Program.multimonitor_path), "defConfig.cfg");
                     try
                     {
                         if (File.Exists(conf_path)) File.Delete(conf_path);
@@ -138,7 +124,7 @@ namespace CyanSystemManager
                     }
                     catch (Exception) { }
 
-                    cmdAsync(variablePath.multiMonitor, "/SaveConfig " + conf_path);
+                    cmdAsync("\"" + Program.multimonitor_path + "\"", "/SaveConfig " + "\"" + conf_path + "\"");
                     for (int i = 0; i < 20; i++)
                     {
                         Thread.Sleep(100);
@@ -153,8 +139,7 @@ namespace CyanSystemManager
                         }
                         catch (IOException)
                         {
-                            File.Delete(def_conf_path);
-                            File.Copy(conf_path, def_conf_path);
+                            File.Copy(conf_path, def_conf_path, true);
                         }
                     }
                     else conf_path = def_conf_path;
@@ -208,7 +193,7 @@ namespace CyanSystemManager
                     Service_Monitor.n_monitors = Screen.AllScreens.Length;
                     return temp_monitors;
                 }
-                catch (Exception e) { continue; }
+                catch (Exception) { continue; }
             }
             throw new Exception("Error while fetching monitor configuration.");
         }
@@ -242,13 +227,10 @@ namespace CyanSystemManager
     {
         public bool validate = false;
         public IntPtr handle;
-        public string name;
-        public string class_name = "none";
         public int x;
         public int y;
         public int width;
         public int height;
-        public Process[] all_processes;
         public static long last_update = 0;
 
         public Window(IntPtr handle, bool getText = true)
@@ -297,9 +279,6 @@ namespace CyanSystemManager
             this.handle = handle;
             StringBuilder lpString = new StringBuilder();
             if (getText) GetWindowText(handle, lpString, 100);
-            this.name = lpString.ToString();
-            //GetClassName(handle, lpString, 100);
-            //this.class_name = lpString.ToString();
             Rectangle lpRect = new Rectangle();
             GetWindowRect(handle, ref lpRect);
             this.x = lpRect.Left;
@@ -310,43 +289,42 @@ namespace CyanSystemManager
 
         }
 
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app)
         {
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
         }
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name, Screen screen, int x, int y)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app, Screen screen, int x, int y)
         {
             if (screen == null) return;
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
             Focus();
             SetPosition(screen, x, y);
         }
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name, Screen screen, Point point)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app, Screen screen, Point point)
         {
             if (screen == null) return;
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
             Focus();
             SetPosition(screen, point.X, point.Y);
         }
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name, int width, int height)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app, int width, int height)
         {
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
             Focus();
             SetSize(width, height);
         }
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name,
-                        Screen screen, Rectangle bounds)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app, Screen screen, Rectangle bounds)
         {
             if (screen == null) return;
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
             Focus();
             SetPosition(screen, bounds.X, bounds.Y);
             SetSize(bounds.Width, bounds.Height);
         }
-        public Window(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name, Screen screen, int x, int y, int width, int height)
+        public Window(IDictionary<IntPtr, string> OpenWindows, application app, Screen screen, int x, int y, int width, int height)
         {
             if (screen == null) return;
-            FindWindow(OpenWindows, partialname, class_name);
+            FindWindow(OpenWindows, app);
             ShowWindow(handle, 1);
             SetPosition(screen, x, y);
             SetSize(width, height);
@@ -375,70 +353,69 @@ namespace CyanSystemManager
             }
         }
 
-        public void FindWindow(IDictionary<IntPtr, string> OpenWindows, string[] partialname, string class_name)
+        public static HWND getHandleByWin(IDictionary<IntPtr, string> OpenWindows, application app)
         {
-            bool found = false;
-            // Console.WriteLine("FindWindow -> " + partialname + "    " + class_name);
-            handle = IntPtr.Zero;
+            HWND handle_ = IntPtr.Zero;
             foreach (KeyValuePair<IntPtr, string> window in OpenWindows)
             {
-                // Console.WriteLine("win -> " + window.Value);
-                bool containsall = true;
-                StringBuilder lpString = new StringBuilder("Class not found");
-                foreach (string stringa in partialname) if (!window.Value.Contains(stringa)) containsall = false;
-                if (partialname.Length == 0) containsall = false;
+                if (handle_ != IntPtr.Zero) break;
+                bool containsall = app.win.Length != 0;
+                foreach (string stringa in app.win) if (!window.Value.Contains(stringa)) containsall = false;
                 if (containsall)
                 {
-                    lpString = new StringBuilder("Class not found");
-                    if (class_name != "") GetClassName(window.Key, lpString, 300);
-                    if (lpString.ToString() == class_name || class_name == "")
-                    {
-                        handle = window.Key;
-                        name = window.Value;
-                        class_name = lpString.ToString();
-                        found = true;
-                    }
+                    handle_ = window.Key;
+                    break;
                 }
             }
+            return handle_;
+        }
 
-            if (!found)
+        public static HWND getHandleByProc(IDictionary<IntPtr, string> OpenWindows, application app)
+        {
+            HWND handle_ = IntPtr.Zero;
+            if ((DateTime.Now.Ticks - last_update) > 10000000 * 1)
             {
-                if (partialname.Length == 0)
+                last_update = DateTime.Now.Ticks;
+                Program.all_processes = Process.GetProcesses();
+            }
+            foreach (Process pList in Program.all_processes)
+            {
+                if (pList.MainWindowTitle != "")
                 {
-                    if ((DateTime.Now.Ticks - last_update) > 10000000 * 1)
+                    if (pList.ProcessName == app.proc_name)
                     {
-                        last_update = DateTime.Now.Ticks;
-                        all_processes = Process.GetProcesses();
-                        Console.WriteLine("update");
-                    }
-                    foreach (Process pList in all_processes)
-                    {
-                        if (pList.MainWindowTitle != "")
-                        {
-                            if (pList.ProcessName == class_name)
-                            {
-                                handle = pList.MainWindowHandle;
-                                name = pList.MainWindowTitle;
-                                class_name = "Class not found";
-                                found = true;
-                            }
-                        }
+                        handle_ = pList.MainWindowHandle;
+                        break;
                     }
                 }
             }
-            if (!found) validate = false;
-            this.class_name = class_name;
+            return handle_;
+        }
+
+        public static HWND getHandle(IDictionary<IntPtr, string> OpenWindows, application app)
+        {
+            HWND handle_ = IntPtr.Zero;
+            // Console.WriteLine("Searching " + app.name + " by windows");
+            handle_ = getHandleByWin(OpenWindows, app);
+            if (handle_ == IntPtr.Zero)
+            {
+                // Console.WriteLine("Searching " + app.name + " by processes");
+                handle_ = getHandleByProc(OpenWindows, app);
+            }
+            return handle_;
+        }
+
+        public void FindWindow(IDictionary<IntPtr, string> OpenWindows, application app)
+        {
+            handle = getHandle(OpenWindows, app);
             Rectangle lpRect = new Rectangle();
+            if (handle == IntPtr.Zero) { validate = false; return; }
             GetWindowRect(handle, ref lpRect);
-            this.x = lpRect.Left;
-            this.y = lpRect.Top;
-            this.width = lpRect.Right - lpRect.Left - x;
-            this.height = lpRect.Bottom - lpRect.Top - y;
-            // Console.WriteLine("Window Name: " + name);
-            // Console.WriteLine("Class -----> " + class_name);
-            //Focus();
+            x = lpRect.Left;
+            y = lpRect.Top;
+            width = lpRect.Right - lpRect.Left - x;
+            height = lpRect.Bottom - lpRect.Top - y;
             validate = true;
-            //Console.WriteLine(this.name + " -> " + this.handle);
         }
 
         static public void FindAllWindows(IDictionary<IntPtr, string> OpenWindows, List<string[]> partialnames)
@@ -577,51 +554,51 @@ namespace CyanSystemManager
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool IsIconic(IntPtr hWnd);
 
-        public static void SetWinOnTop(string[] partials, string class_name)
+        public static void SetWinOnTop(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             SetWindowPos(win.handle, IntPtr.Zero, 0, 0, 0, 0, TOPMOST_FLAGS);
         }
-        public static void FocusWin(string[] partials, string class_name)
+        public static void FocusWin(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             SetForegroundWindow(win.handle);
         }
-        public static void ShowNormalWin(string[] partials, string class_name)
+        public static void ShowNormalWin(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
         }
-        public static void HideWin(string[] partials, string class_name)
+        public static void HideWin(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_HIDE);
         }
-        public static void MaximizeWin(string[] partials, string class_name)
+        public static void MaximizeWin(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_MAXIMIZE);
         }
-        public static void MinimizeWin(string[] partials, string class_name)
+        public static void MinimizeWin(application app)
         {
             IDictionary<HWND, string> OpenWindows = GetOpenWindows();
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_MINIMIZE);
         }
-        public static void SetWinOnTop(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void SetWinOnTop(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             SetWindowPos(win.handle, IntPtr.Zero, 0, 0, 0, 0, TOPMOST_FLAGS);
         }
-        public static void FocusWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name, int delay = 0)
+        public static void FocusWin(IDictionary<HWND, string> OpenWindows, application app, int delay = 0)
         {
             try
             {
-                Window win = new Window(OpenWindows, partials, class_name);
+                Window win = new Window(OpenWindows, app);
                 if (IsIconic(win.handle))
                 {
                     ShowWindow(win.handle, 1);
@@ -639,30 +616,30 @@ namespace CyanSystemManager
             }
             catch (Exception) { }
         }
-        public static void ShowNormalWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void ShowNormalWin(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             
             ShowWindow(win.handle, SW_SHOWNORMAL);
         }
-        public static void MaximizeWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void MaximizeWin(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_MAXIMIZE);
         }
-        public static void HideWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void HideWin(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_HIDE);
         }
-        public static void CloseWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void CloseWin(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             SendMessage(win.handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
-        public static void MinimizeWin(IDictionary<HWND, string> OpenWindows, string[] partials, string class_name)
+        public static void MinimizeWin(IDictionary<HWND, string> OpenWindows, application app)
         {
-            Window win = new Window(OpenWindows, partials, class_name);
+            Window win = new Window(OpenWindows, app);
             ShowWindow(win.handle, SW_MINIMIZE);
         }
         public static IDictionary<HWND, string> GetOpenWindows()

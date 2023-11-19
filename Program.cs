@@ -12,11 +12,15 @@ namespace CyanSystemManager
         public static Home home;
         public static bool forceTermination = false;
         public static bool restart = true;
+        public static Process[] all_processes = null;
+        public static string multimonitor_path;
 
         [STAThread]
         static void Main(string[] args)
         {
             bool startup = false;
+            all_processes = Process.GetProcesses();
+            multimonitor_path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MultiMonitorTool", "MultiMonitorTool.exe");
             foreach (string arg in args) if (arg == "startup") startup = true;
 
             Application.EnableVisualStyles();

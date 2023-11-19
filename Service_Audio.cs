@@ -385,7 +385,6 @@ namespace CyanSystemManager
 
             if (device_name != "")
             {
-                Console.WriteLine("  --> Current audio device: " + device_name);
                 changedDevice = true;
             }
             else
@@ -394,6 +393,7 @@ namespace CyanSystemManager
             }
             getDefaultDevice();
             getAudioInfo();
+            Console.WriteLine("  --> Current audio device: " + audioInfo.defaultDevice.FriendlyName);
             changingDevice = false;
         }
 

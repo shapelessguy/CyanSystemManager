@@ -20,10 +20,27 @@ namespace CyanSystemManager
 
             public static string python = app_data_path + @"\Local\Programs\Python\Python311\pythonw.exe";
             public static string pyStatScript = documents_path + @"\Workspace PyCharm\University-Basic Projects\Statistics - CyanFusion\Analysis.pyw";
+
             public static string notebookPath = @"C:\ProgramData\Cyan\Notebook";
             public static string networkPath = @"C:\ProgramData\Cyan\NetworkLogs";
-            public static string multiMonitor = @"E:\Software\Controller\MultiMonitorTool\MultiMonitorTool.exe";
         }
+
+        public static List<AudioDevice> audioDevices = new List<AudioDevice>()
+        {
+            new AudioDevice(AT.None),
+            new AudioDevice(AT.Primary, new string[] { "Speakers (Realtek(R) Audio)" }),
+            new AudioDevice(AT.Headphones, new string[] { "Headphones (Soundcore Life Q30 Stereo)" }),
+            new AudioDevice(AT.Secondary, new string[] { "SAMSUNG (NVIDIA High Definition Audio)" }),
+            new AudioDevice(AT.Third, new string[] { "19LS4D-ZB" }),
+        };
+
+        public static List<MyMonitor> monitors = new List<MyMonitor>()
+        {
+            new MyMonitor(VT.Primary, "DEL41EE"),
+            new MyMonitor(VT.Ausiliary1, "HKC2413"),
+            new MyMonitor(VT.Ausiliary2, "HKC2413(2)"),
+            new MyMonitor(VT.Cinema, "SAM71B4"),
+        };
 
         public static class App
         {
@@ -46,7 +63,7 @@ namespace CyanSystemManager
                     new string[] { "Mozilla Firefox" },
                     "firefox",
                     drive_path + "\\Program Files\\Mozilla Firefox\\firefox.exe",
-                    false),
+                    "", false),
                 new application(
                     "NetMeter Evo",
                     new string[] { "NetMeter Evo" },
@@ -58,7 +75,7 @@ namespace CyanSystemManager
                     new string[] { "ClocX" },
                     "ClocX",
                     prog86_path + "\\ClocX\\ClocX.exe",
-                    true, "", "#32770"
+                    "", true
                     ),
                 new application(
                     "Outlook",
@@ -83,27 +100,28 @@ namespace CyanSystemManager
                     new string[] {},
                     "Spotify",
                     app_data_path + "\\Roaming\\Spotify\\Spotify.exe",
-                    true, "", "Spotify"
+                    ""
                     ),
                 new application(
                     "Microsoft Teams",
                     new string[] { "Microsoft Teams" }, "",
                     app_data_path + "\\Local\\Microsoft\\Teams\\Update.exe",
-                    false,
-                    " --processStart Teams.exe"
+                    " --processStart Teams.exe",
+                    false
                     ),
                 new application(
                     "WhatsApp",
                     new string[] { "WhatsApp" },
                     "WhatsApp",
-                    @"",
-                    false
+                    "",
+                    "", false
                     ),
                 new application(
                     "NordVPN",
                     new string[] { "NordVPN" },
                     "NordVPN",
                     @"",
+                    "",
                     false
                     ),
                 new application(
@@ -111,8 +129,8 @@ namespace CyanSystemManager
                     new string[] { "DeepL" },
                     "DeepL",
                     app_data_path + "\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DeepL.lnk",
-                    true,
-                    "run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml"
+                    "run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml",
+                    true
                     ),
                 new application(
                     "ChatGPT",
@@ -130,14 +148,14 @@ namespace CyanSystemManager
                     "Display Fusion",
                     new string[] { "Display Fusion" },
                     "",
-                    prog86_path + "\\DisplayFusion\\DisplayFusion.exe"
+                    prog86_path + "\\DisplayFusion\\DisplayFusion.exe", "", true, true
                     ),
                 new application(
                     "Discord",
                     new string[] { "Discord" },
                     "discord",
                     app_data_path + "\\Local\\Discord\\Update.exe",
-                    true
+                    ""
                     ),
             };
 
@@ -158,15 +176,6 @@ namespace CyanSystemManager
                 return out_;
             }
         }
-
-        public static List<AudioDevice> audioDevices = new List<AudioDevice>()
-        {
-            new AudioDevice(AT.None),
-            new AudioDevice(AT.Primary, new string[] { "Speakers (Realtek(R) Audio)" }),
-            new AudioDevice(AT.Headphones, new string[] { "Headphones (Soundcore Life Q30 Stereo)" }),
-            new AudioDevice(AT.Secondary, new string[] { "SAMSUNG (NVIDIA High Definition Audio)" }),
-            new AudioDevice(AT.Third, new string[] { "19LS4D-ZB" }),
-        };
 
         // This list is useful in order to bind a key to a specific activity
         public static List<BindDef> activityList = new List<BindDef>()
@@ -201,16 +210,6 @@ namespace CyanSystemManager
             new BindDef(ST.Monitors, "moveToMonitor", Keys.F15, KeyModifier.Shift),
         };
 
-
-
-        public static List<MyMonitor> monitors = new List<MyMonitor>()
-        {
-            new MyMonitor(1, "DEL41EE"),
-            new MyMonitor(2, "HKC2413", 0),
-            new MyMonitor(3, "HKC2413", 1),
-            new MyMonitor(4, "SAM71B4"),
-        };
-
         public static void apply()
         {
             for (int id = 0; id < activityList.Count; id++) activityList[id].id = id;
@@ -237,7 +236,6 @@ namespace CyanSystemManager
             if (!Directory.Exists(variablePath.notebookPath)) Console.WriteLine("Directory " + variablePath.notebookPath + " does not exist!");
             if (!File.Exists(variablePath.python)) Console.WriteLine("File " + variablePath.python + " does not exist!");
             if (!File.Exists(variablePath.pyStatScript)) Console.WriteLine("File " + variablePath.pyStatScript + " does not exist!");
-            if (!File.Exists(variablePath.multiMonitor)) Console.WriteLine("File " + variablePath.multiMonitor + " does not exist!");
             Console.WriteLine("--------------");
 
             foreach(var item in App.getApplications())

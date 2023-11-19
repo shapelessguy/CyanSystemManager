@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using Vanara.PInvoke;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
 
@@ -68,7 +71,7 @@ namespace CyanSystemManager
                     else if (command.type == ShortcutCom.SNAPSHOT) SNAPSHOT();
                     else if (command.type == ShortcutCom.UPSIZING) UPSIZING();
                 }
-                catch (Exception) { Console.WriteLine("Exception in shortcutRun"); }
+                catch (Exception e) { Console.WriteLine("Exception in shortcutRun\n" + e); }
             }
 
         }
@@ -80,7 +83,7 @@ namespace CyanSystemManager
             if (mode == 0)
             {
                 MonitorManager.GetMonitors();
-                MyMonitor bigMonitor = MonitorManager.Ref(2);
+                MyMonitor bigMonitor = MonitorManager.Ref(VT.Ausiliary1);
                 if (bigMonitor == null) return;
                 Point centralPoint = new Point(bigMonitor.screen.Bounds.Location.X + bigMonitor.screen.Bounds.Width/2, 
                                                 bigMonitor.screen.Bounds.Location.Y + bigMonitor.screen.Bounds.Height/2);
@@ -127,12 +130,12 @@ namespace CyanSystemManager
         }
         private static void LTRIG(int mode = 0)
         {
-            MyMonitor bigM = MonitorManager.Ref(2);
+            MyMonitor bigM = MonitorManager.Ref(VT.Ausiliary1);
             if (bigM == null) return;
-            MyMonitor mediumM = MonitorManager.Ref(1);
-            if(mediumM == null) mediumM = MonitorManager.Ref(3);
+            MyMonitor mediumM = MonitorManager.Ref(VT.Primary);
+            if(mediumM == null) mediumM = MonitorManager.Ref(VT.Ausiliary2);
             if (mediumM == null) return;
-            MyMonitor smallM = MonitorManager.Ref(3);
+            MyMonitor smallM = MonitorManager.Ref(VT.Ausiliary2);
 
             Point centralBig = new Point(bigM.screen.Bounds.X + bigM.screen.Bounds.Width / 2,
                                             bigM.screen.Bounds.Y + bigM.screen.Bounds.Height / 2);
@@ -148,7 +151,7 @@ namespace CyanSystemManager
                 //List<Rectangle> bounds = new List<Rectangle>();
                 if (ScreenSaverForm.active) { ScreenSaverForm.active = false; return; }
                 MonitorManager.GetMonitors();
-                foreach (MyMonitor monitor in monitors) if (monitor.id != 2)
+                foreach (MyMonitor monitor in monitors) if (monitor.type != VT.Cinema)
                     {
                         Program.home.Invoke((MethodInvoker)delegate {
                             ScreenSaverForm screenForm = new ScreenSaverForm() { Bounds = monitor.screen.Bounds};
@@ -186,9 +189,9 @@ namespace CyanSystemManager
             SetForegroundWindow(hWnd);
             
             MonitorManager.GetMonitors();
-            Screen smallMonitor = MonitorManager.Ref(3).screen;
-            Screen mediumMonitor = MonitorManager.Ref(1).screen;
-            Screen bigMonitor = MonitorManager.Ref(2).screen;
+            Screen smallMonitor = MonitorManager.Ref(VT.Ausiliary2).screen;
+            Screen mediumMonitor = MonitorManager.Ref(VT.Primary).screen;
+            Screen bigMonitor = MonitorManager.Ref(VT.Ausiliary1).screen;
 
             Rectangle lpRect = new Rectangle();
             Window.GetWindowRect(hWnd, ref lpRect);
@@ -200,24 +203,11 @@ namespace CyanSystemManager
             Thread.Sleep(100);
             SetWindowPos(hWnd, IntPtr.Zero, 0, 0, size.Width, size.Height, SWP_NOMOVE | 0x0004);
             SetWindowPos(hWnd, IntPtr.Zero, pnt.X, pnt.Y, size.Width, size.Height, SWP_NOSIZE | 0x0004);
-
-            return;
-            Window win = new Window(hWnd, false);
-            win = new Window(hWnd, bigMonitor, new Rectangle(100,100,1000,1000));
-            return;
-
-            if (bigMonitor != null && bigMonitor.WorkingArea.Contains(new Point(win.x, win.y)))
-            {
-                Rectangle bigMonitorArea = WindowWrapper.addMarginsTo(bigMonitor.Bounds, -100, -100, -100, -100);
-                win = new Window(hWnd, bigMonitor, bigMonitorArea);
-            }
-            
-
         }
 
-
-
-
-
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern IntPtr GetForegroundWindow();
+        [DllImport("kernel32.dll")]
+        static extern int GetProcessId(IntPtr handle);
     }
 }

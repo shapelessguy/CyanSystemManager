@@ -28,7 +28,7 @@ namespace CyanSystemManager
             pictureBox.MouseMove += (o, e) => { xCursor = PointToClient(Cursor.Position).X; window = parent; };
             timerUpdate = new Timer() { Enabled = true, Interval = 30 };
             timerUpdate.Tick += update;
-            pictureBox.Paint += Paint;
+            pictureBox.Paint += PicturePaint;
             pSize = pictureBox.Size;
         }
 
@@ -44,7 +44,7 @@ namespace CyanSystemManager
             Dispose();
         }
 
-        protected void Paint(object sender, PaintEventArgs e)
+        protected void PicturePaint(object sender, PaintEventArgs e)
         {
             DrawSystem(e.Graphics);
             if (parent == window) DrawCursor(e.Graphics);

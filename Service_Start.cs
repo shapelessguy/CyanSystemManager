@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Threading;
+using Vanara.PInvoke;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
@@ -77,28 +78,39 @@ namespace CyanSystemManager
 
             Dictionary<string, application> dict = App.getApplications();
             List<application> toStart = new List<application>();
+            IDictionary<IntPtr, string> OpenWindows = WindowWrapper.GetOpenWindows();
             foreach (var app in dict.Values.ToArray())
                 if (app.start) toStart.Add(app);
 
             foreach (var app in toStart)
-                nOp += TryToOpen(app.exe, app.proc_name, app.info, app.admin); nTot += 1;
+                nOp += TryToOpen(OpenWindows, app); nTot += 1;
 
             return new int[] { nOp, nTot };
         }
-        public static int TryToOpen(string path, string processName = "", string info = "", bool admin = false)
+        public static int TryToOpen(IDictionary<IntPtr, string> OpenWindows, application app)
         {
             try
             {
-                if (processName != "" && Process.GetProcessesByName(processName).Length > 0) return 0;
-                if (admin) {
+                if (app.proc_name != "" && Process.GetProcessesByName(app.proc_name).Length > 0)
+                {
+                    Console.WriteLine("Process '" + app.proc_name + "' already running.");
+                    return 0;
+                }
+                if (Window.getHandle(OpenWindows, app) != IntPtr.Zero)
+                {
+                    Console.WriteLine("Process '" + app.proc_name + "' already running.");
+                    return 0;
+                }
+
+                if (app.admin) {
                     try {
-                        Console.WriteLine("Executing '" + path + "' as admin user");
+                        Console.WriteLine("Executing '" + app.exe + "' as admin user");
                         Process process = new Process()
                         {
-                            StartInfo = new ProcessStartInfo(path, info)
+                            StartInfo = new ProcessStartInfo(app.exe, app.info)
                             {
                                 WindowStyle = ProcessWindowStyle.Normal,
-                                WorkingDirectory = Path.GetDirectoryName(path)
+                                WorkingDirectory = Path.GetDirectoryName(app.exe)
                             }
                         };
                         process.Start();
@@ -108,16 +120,19 @@ namespace CyanSystemManager
                 else
                     try
                     {
-                        ProcessHelper.RunAsRestrictedUser(path, info);
+                        if (Path.GetExtension(app.exe) == ".lnk") throw new Exception();
+                        ProcessHelper.RunAsRestrictedUser(app.exe, app.info);
+                        Console.WriteLine("'" + app.exe + "' executed as restricted user");
                     }
                     catch
                     {
-                        Process.Start("explorer.exe", path);
+                        Process.Start("explorer.exe", app.exe);
+                        Console.WriteLine("'" + app.exe + "' executed from explorer.exe");
                     }
                 return 1;
             }
             catch (Exception) {
-                Console.WriteLine("Error while trying to open " + path + ". Admin = " + admin);
+                Console.WriteLine("Error while trying to open " + app.exe + ". Admin = " + app.admin);
                 return 0; 
             }
         }
@@ -127,7 +142,7 @@ namespace CyanSystemManager
             int[] done_over_all = startUp();
             if (done_over_all[0] < done_over_all[1]/2) return;
             Thread.Sleep(10 * 1000);
-            Service_Audio.SetMasterVolume(0.18f);
+            if (Service_Audio.audioInfo.audioDevice.category == AT.Primary) Service_Audio.SetMasterVolume(0.18f);
             Thread.Sleep(10 * 1000);
             SortWindows.OrderWin();
             Thread.Sleep(10 * 1000);
@@ -156,7 +171,6 @@ namespace CyanSystemManager
         }
         private static void FocusWins(IDictionary<IntPtr, string> OpenWindows)
         {
-            int wait = 100;
             //WindowWrapper.FocusWin(OpenWindows, new string[] { "CyanVideos" }, "", wait);
             //WindowWrapper.FocusWin(OpenWindows, new string[] { "MSI Afterburner", "grafici" }, "", wait);
             //WindowWrapper.FocusWin(OpenWindows, new string[] { "Steam" }, "", wait);

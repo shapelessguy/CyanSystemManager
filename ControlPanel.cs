@@ -93,17 +93,9 @@ namespace CyanSystemManager
             winSets = new List<WinSet>();
             initializing = true;
             allControls = new List<object>();
-            Console.WriteLine(settings_path);
             home = home_;
-            allowIdleBox = initializeBox("allowIdleBox_pan1", "Allow idle after 2 hours of inactivity and between 00:00 and 8:00", new Point(16, 14 + 0 * 30), new Size(200, 26));
-            allowIdleBox.Checked = Properties.Settings.Default.allowIdle;
-            allowIdleBox.CheckedChanged += (o, e) => {
-                Properties.Settings.Default.allowIdle = allowIdleBox.Checked;
-                Properties.Settings.Default.Save(); 
-            };
-            allControls.Add(allowIdleBox);
 
-            runBox = initializeBox("runBox_pan1", "Run at startup", new Point(16, 14 + 1 * 30), new Size(200, 26));
+            runBox = initializeBox("runBox_pan1", "Run CyanSystemManager at startup", new Point(16, 14 + 0 * 30), new Size(200, 26));
             runBox.Checked = Properties.Settings.Default.runAtStartup;
             runBox.CheckedChanged += (o, e) => {
                 try
@@ -115,6 +107,14 @@ namespace CyanSystemManager
                 catch (Exception) { MessageBox.Show("Unkwnown error."); }
             };
             allControls.Add(runBox);
+
+            allowIdleBox = initializeBox("allowIdleBox_pan1", "Allow idle after 2 hours of inactivity and between 00:00 and 8:00", new Point(16, 14 + 1 * 30), new Size(200, 26));
+            allowIdleBox.Checked = Properties.Settings.Default.allowIdle;
+            allowIdleBox.CheckedChanged += (o, e) => {
+                Properties.Settings.Default.allowIdle = allowIdleBox.Checked;
+                Properties.Settings.Default.Save(); 
+            };
+            allControls.Add(allowIdleBox);
 
             startBox = initializeBox("startBox_pan1", "Execute applications at startup", new Point(16, 14 + 2 * 30), new Size(200, 26));
             startBox.Checked = Properties.Settings.Default.startOnReboot;
@@ -263,7 +263,7 @@ namespace CyanSystemManager
                 File.Copy(file_name, settings_path, true);
                 MessageBox.Show("Settings applied correctly! This application will restart now.");
                 Program.restart = true;
-                home.Closing(null, null);
+                home.SafeClose(null, null);
             }
         }
 
@@ -304,7 +304,7 @@ namespace CyanSystemManager
                 {
                     try
                     {
-                        Window win = new Window(OpenWindows, winset.app.win, winset.app.class_name);
+                        Window win = new Window(OpenWindows, winset.app);
                         int x = win.x;
                         int y = win.y;
                         int width = win.width;

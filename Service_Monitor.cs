@@ -79,10 +79,7 @@ namespace CyanSystemManager
         }
         private static void execProfile(string command)
         {
-            cmdAsync(variablePath.multiMonitor, command);
-            // Console.WriteLine(command);
-
-            // Thread.Sleep(4000); Sort();
+            cmdAsync(Program.multimonitor_path, command);
             if (commands.Count > 1) for (int i = commands.Count - 1; i > 0; i--) commands.RemoveAt(i);
         }
         private static void Centralize()
@@ -98,17 +95,17 @@ namespace CyanSystemManager
 
         private static void TurnOn()
         {
-            string command = " /TurnOn " + MonitorManager.Ref(1).screen.DeviceName + " "
-                                          + MonitorManager.Ref(2).screen.DeviceName + " "
-                                          + MonitorManager.Ref(3).screen.DeviceName + " ";
+            string command = " /TurnOn " + MonitorManager.Ref(VT.Primary).screen.DeviceName + " "
+                                          + MonitorManager.Ref(VT.Ausiliary1).screen.DeviceName + " "
+                                          + MonitorManager.Ref(VT.Ausiliary2).screen.DeviceName + " ";
             execProfile(command);
         }
 
         private static void TurnOff()
         {
-            string command = " /TurnOff " + MonitorManager.Ref(1).screen.DeviceName + " "
-                                          + MonitorManager.Ref(2).screen.DeviceName + " "
-                                          + MonitorManager.Ref(3).screen.DeviceName + " ";
+            string command = " /TurnOff " + MonitorManager.Ref(VT.Primary).screen.DeviceName + " "
+                                          + MonitorManager.Ref(VT.Ausiliary1).screen.DeviceName + " "
+                                          + MonitorManager.Ref(VT.Ausiliary2).screen.DeviceName + " ";
             execProfile(command);
         }
     }
@@ -131,15 +128,15 @@ namespace CyanSystemManager
         {
             foreach (Win win in this.collection)
             {
-                new Window(this.openWin, win.win, win.class_name, win.monitor, win.x, win.y, win.width, win.height);
+                new Window(this.openWin, win.app, win.monitor, win.x, win.y, win.width, win.height);
             }
         }
     }
 
     class Win
     {
+        public application app = null;
         public string[] win = null;
-        public string class_name = null;
         public Screen monitor = null;
         public int x = 0;
         public int y = 0;
@@ -147,8 +144,8 @@ namespace CyanSystemManager
         public int height = 0;
         public Win(application application, Screen monitor, int x, int y, int width, int height)
         {
+            this.app = application;
             this.win = application.win;
-            this.class_name = application.class_name;
             this.monitor = monitor;
             this.x = x;
             this.y = y;
@@ -167,8 +164,8 @@ namespace CyanSystemManager
         public static void defBrowsers()
         {
             browsers.Clear();
-            // browsers.Add(App.chrome.win, MonitorManager.Ref(2));
-            browsers.Add(App.getApp("Opera").win, MonitorManager.Ref(1));
+            // browsers.Add(App.chrome.win, MonitorManager.Ref(VT.Ausiliary1));
+            browsers.Add(App.getApp("Opera").win, MonitorManager.Ref(VT.Primary));
         }
 
         public static void OrderWin(int nTimes = 1) { for (int i = 0; i < nTimes; i++) OrderWin(); }
@@ -182,19 +179,19 @@ namespace CyanSystemManager
         {
             OpenWindows = WindowWrapper.GetOpenWindows();
 
-            monitor1 = MonitorManager.Ref(1).screen; // principal monitor
-            monitor2 = MonitorManager.Ref(2).screen; // secondary left
-            monitor3 = MonitorManager.Ref(3).screen; // secondary right
-            monitor_cin = MonitorManager.Ref(4).screen; // cinema monitor
+            monitor1 = MonitorManager.Ref(VT.Primary).screen; // principal monitor
+            monitor2 = MonitorManager.Ref(VT.Ausiliary1).screen; // secondary left
+            monitor3 = MonitorManager.Ref(VT.Ausiliary2).screen; // secondary right
+            monitor_cin = MonitorManager.Ref(VT.Cinema).screen; // cinema monitor
 
             Console.WriteLine("\nMonitors detected ->");
-            if (monitor1 != null) Console.WriteLine("monitor 1 (" + MonitorManager.Ref(1).deviceName + "): " + monitor1.Bounds);
+            if (monitor1 != null) Console.WriteLine("monitor 1 (" + MonitorManager.Ref(VT.Primary).id + "): " + monitor1.Bounds);
             else { Console.WriteLine("monitor1 not found"); }
-            if (monitor2 != null) Console.WriteLine("monitor 2 (" + MonitorManager.Ref(2).deviceName + "): " + monitor2.Bounds);
+            if (monitor2 != null) Console.WriteLine("monitor 2 (" + MonitorManager.Ref(VT.Ausiliary1).id + "): " + monitor2.Bounds);
             else { Console.WriteLine("monitor2 not found"); }
-            if (monitor3 != null) Console.WriteLine("monitor 3 (" + MonitorManager.Ref(3).deviceName + "): " + monitor3.Bounds);
+            if (monitor3 != null) Console.WriteLine("monitor 3 (" + MonitorManager.Ref(VT.Ausiliary2).id + "): " + monitor3.Bounds);
             else { Console.WriteLine("monitor3 not found"); }
-            if (monitor_cin != null) Console.WriteLine("monitor 4 (" + MonitorManager.Ref(4).deviceName + "): " + monitor_cin.Bounds);
+            if (monitor_cin != null) Console.WriteLine("monitor 4 (" + MonitorManager.Ref(VT.Cinema).id + "): " + monitor_cin.Bounds);
             else { Console.WriteLine("monitor4 not found"); }
 
             defBrowsers();
@@ -228,8 +225,8 @@ namespace CyanSystemManager
             col.addWin(App.clockX, monitor3, 1306, 8, 200, 200);
             col.addWin(App.skypeFB, monitor3, 1517, 0, 1, 1040); */
             col.SortNow();
-            WindowWrapper.CloseWin(OpenWindows, App.getApp("NordVPN").win, "");
-            WindowWrapper.CloseWin(OpenWindows, App.getApp("DeepL").win, "");
+            WindowWrapper.CloseWin(OpenWindows, App.getApp("NordVPN"));
+            WindowWrapper.CloseWin(OpenWindows, App.getApp("DeepL"));
         }
         private static void order_cinema()
         {

@@ -14,6 +14,14 @@ namespace CyanSystemManager
         Headphones = 3,
         Third = 4,
     }
+    public enum VT
+    {
+        Generic = 0,
+        Primary = 1,
+        Ausiliary1 = 2,
+        Ausiliary2 = 3,
+        Cinema = 4,
+    }
 
     public class application
     {
@@ -23,7 +31,6 @@ namespace CyanSystemManager
         public string info;
         public string proc_name;
         public bool start;
-        public string class_name;
         public bool admin;
         /// <summary>
         /// Instantiate an application.
@@ -33,8 +40,7 @@ namespace CyanSystemManager
         /// <param name="exe">Exe file needed for executing the application.</param>
         /// <param name="start">If true, the application will be executed at the startup.</param>
         /// <param name="info">Optional arguments for the execution of the application.</param>
-        /// <param name="class_name">Class name. Used in extreme case when the window cannot be found easily.</param>
-        public application(string name, string[] win, string proc_name, string exe, bool start = true, string info = "", string class_name = "", bool admin = false)
+        public application(string name, string[] win, string proc_name, string exe, string info = "", bool start = true, bool admin = false)
         {
             this.name = name;
             this.win = win;
@@ -42,7 +48,6 @@ namespace CyanSystemManager
             this.exe = exe;
             this.info = info;
             this.start = start;
-            this.class_name = class_name;
             this.admin = admin;
         }
     }
