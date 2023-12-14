@@ -20,7 +20,7 @@ namespace CyanSystemManager
                 if (lastPositionT != null) lastPositionT.Dispose();
             }
             catch (Exception) { }
-            Console.WriteLine("Chronometer disposed");
+            Program.Log("Chronometer disposed");
             alert = false;
         }
         public Chronometer()

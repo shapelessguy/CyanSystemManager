@@ -24,10 +24,12 @@ namespace CyanSystemManager
         static string pathLogsGar = Path.Combine(variablePath.networkPath, "Logs_gar.txt");
         public static void startService()
         {
-            Console.WriteLine("Starting netService..");
+            Program.Log("Starting netService..");
             now = DateTime.Now;
             prev_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
             listIP = ips.Values.ToList();
+            listIP_successes = new List<long>();
+            foreach (var ip in listIP) { listIP_successes.Add(0); }
             status = State.NEUTRAL;
             disc_modem = new DisconnectForm(Properties.Resources.forbidden);
             disc_wan = new DisconnectForm(Properties.Resources.global);
@@ -39,7 +41,7 @@ namespace CyanSystemManager
         }
         public static void stopService(bool dispose) 
         { 
-            Console.WriteLine("netService Stopped");
+            Program.Log("netService Stopped");
             HideDisconnect();
             status = State.OFF;
             clear = true;
@@ -54,6 +56,7 @@ namespace CyanSystemManager
         { "quad9_2", "149.112.112.112" },
         };
         private static List<string> listIP;
+        private static List<long> listIP_successes;
 
         private static void PingTimer()
         {
@@ -75,7 +78,7 @@ namespace CyanSystemManager
                 if (!act_data.SequenceEqual(prev_data))
                 {
                     iter_UpdateIP++;
-                    if (iter_UpdateIP > 60) { iter_UpdateIP = 0; FirebaseClass.UploadIP(); }  
+                    if (iter_UpdateIP >= 60) { iter_UpdateIP = 0; FirebaseClass.UploadIP(); }  
                     // upload ip ogni ora ... oppure ogni disconnessione (guarda sotto)
                     prev_data = new int[] { act_data[0], act_data[1], act_data[2], act_data[3], act_data[4] };
                     SaveGarancy(Fill0(act_data[0], 4) + Fill0(act_data[1], 2) + Fill0(act_data[2], 2) + Fill0(act_data[3], 2) + Fill0(act_data[4], 2));
@@ -90,6 +93,7 @@ namespace CyanSystemManager
                     {
                         PingReply PR1 = p1.Send(getIP(), 50, buffer, new PingOptions(30, true));
                         bP1 = PR1.Status.ToString() == "Success";
+                        listIP_successes[index] += 1;
                         p1.Dispose();
                     } catch (Exception) { p1.Dispose(); if (initialization) ShowDisconnect(disc_modem); initialization = false; }
                     try
@@ -134,7 +138,7 @@ namespace CyanSystemManager
                     status = State.ON;
                     continue;
                 }
-                catch (Exception) { Console.WriteLine("Exception"); }
+                catch (Exception) { Program.Log("Exception"); }
             }
             Program.home.Invoke((MethodInvoker)delegate { disc_wan.Hide(); });
             Program.home.Invoke((MethodInvoker)delegate { disc_modem.Hide(); });
@@ -170,7 +174,7 @@ namespace CyanSystemManager
         }
         private static void SaveLog(string stringa)
         {
-            //Console.WriteLine("Saving in Logs.txt");
+            //Program.Log("Saving in Logs.txt");
             if (!File.Exists(pathLogs)) File.CreateText(pathLogs);
             File.AppendAllText(pathLogs, stringa + Environment.NewLine);
         }
@@ -184,10 +188,21 @@ namespace CyanSystemManager
         static int index = 0;
         private static string getIP()
         {
-            if (index + 1 < listIP.Count) index += 1;
-            else index = 0;
-            //foreach (var value in listIP) Console.WriteLine(value);
-            return listIP[index];
+            for (int i= 0; i < listIP.Count; i++)
+            {
+                if (index + 1 < listIP.Count) index += 1;
+                else index = 0;
+                //foreach (var value in listIP) Program.Log(value);
+                if (listIP_successes.Max() > 10 && listIP_successes[index] < listIP_successes.Max() / 2)
+                {
+                    listIP.RemoveAt(index);
+                    listIP_successes.RemoveAt(index);
+                    Program.Log(listIP[index] + " has been removed from the hosts because irresponsive.");
+                    continue;
+                }
+                return listIP[index];
+            }
+            return string.Empty;
         }
     }
 
@@ -214,7 +229,7 @@ namespace CyanSystemManager
         }
         public void print()
         {
-            if (canPrint) Console.WriteLine(verbose());
+            if (canPrint) Program.Log(verbose());
         }
         public string verbose()
         {

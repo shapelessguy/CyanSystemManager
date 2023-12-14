@@ -4,6 +4,7 @@ using Firebase.Storage;
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static CyanSystemManager.Settings;
@@ -16,6 +17,7 @@ namespace CyanSystemManager
         static public FirebaseAuthLink token = null;
         static public FirebaseAuthProvider auth;
         static public bool connesso = false;
+        static public string serverIp = "";
 
         static public async Task<bool> CheckConnection()
         {
@@ -66,7 +68,7 @@ namespace CyanSystemManager
         static public async Task<string> CheckFirebaseCred(string firebaseUsername = "", string firebasePassword = "")
         {
             string result = await GetProvider();
-            if (!silent) Console.WriteLine(result);
+            if (!silent) Program.Log(result);
             bool tryAgain = true;
             int iteration = 0;
             string error = "Errore";
@@ -74,7 +76,7 @@ namespace CyanSystemManager
             {
                 iteration++;
                 if (iteration > 10) { return "Errore di autenticazione sconosciuto, riprova più tardi"; }
-                if (!silent) Console.WriteLine("Trying to authenticate.. iteration: {0}", iteration);
+                if (!silent) Program.Log("Trying to authenticate.. iteration: " + iteration);
                 try
                 {
                     if (firebaseUsername == "" && firebasePassword == "") token = await auth.SignInAnonymouslyAsync();
@@ -84,7 +86,7 @@ namespace CyanSystemManager
                 }
                 catch (FirebaseAuthException faException)
                 {
-                    if(!silent) Console.WriteLine("Error with authentication: " + faException.Reason.ToString());
+                    if(!silent) Program.Log("Error with authentication: " + faException.Reason.ToString());
                     if (faException.Reason.ToString() == "Undefined") error = "Undefined";
                     else if (faException.Reason.ToString() == "InvalidEmailAddress") error = "E-mail non valida";
                     else if (faException.Reason.ToString() == "UnknownEmailAddress") error = "E-mail non registrata";
@@ -94,7 +96,7 @@ namespace CyanSystemManager
                     tryAgain = false;
                     return error;
                 }
-                catch (Exception e) { if (!silent) Console.WriteLine("Error while checking FirebaseCreds\n" + e.Message); }
+                catch (Exception e) { if (!silent) Program.Log("Error while checking FirebaseCreds\n" + e.Message); }
             }
             while (tryAgain);
             return "false";
@@ -106,8 +108,8 @@ namespace CyanSystemManager
             {
                 var firebase = new FirebaseClient(firebaseUrl, new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) });
             }
-            catch (Exception ex) { Console.WriteLine("Issue while logging in Firebase\n" + ex); return false; }
-            if (!silent && token != null) Console.WriteLine("User Authenticated - " + token.User.Email);
+            catch (Exception ex) { Program.Log("Issue while logging in Firebase\n" + ex); return false; }
+            if (!silent && token != null) Program.Log("User Authenticated - " + token.User.Email);
             return true;
         }
 
@@ -122,10 +124,10 @@ namespace CyanSystemManager
             try
             {
                 await auth.ChangeUserPassword(token.FirebaseToken, pass);
-                Console.WriteLine("Password changed into: " + pass + " for the account: " + token.User.Email);
+                Program.Log("Password changed into: " + pass + " for the account: " + token.User.Email);
                 return true;
             }
-            catch (Exception e) { Console.WriteLine("Exception  "+e.Message); return false; }
+            catch (Exception e) { Program.Log("Exception  "+e.Message); return false; }
         }
         public static async Task CreateUser(string firebaseUsername, string firebasePassword)
         {
@@ -134,7 +136,7 @@ namespace CyanSystemManager
             {
                 token = await auth.CreateUserWithEmailAndPasswordAsync(firebaseUsername, firebasePassword, "User", false);
             }
-            catch (Exception e) { Console.WriteLine(e); Console.WriteLine(token); }
+            catch (Exception e) { Program.Log(e.ToString()); Program.Log(token.ToString()); }
             return;
         }
 
@@ -148,7 +150,7 @@ namespace CyanSystemManager
             try
             {
                 uploading = true;
-                if (!silent) Console.WriteLine("Uploading IP");
+                if (!silent) Program.Log("Uploading IP");
                 IP = new WebClient().DownloadString("http://icanhazip.com");
                 error = false;
                 Thread register = new Thread(Register);
@@ -171,27 +173,78 @@ namespace CyanSystemManager
 
         public static async Task UploadIP_onStorage()
         {
-            if (token == null) { Console.WriteLine("LogIn required."); return; }
+            if (token == null) { Program.Log("LogIn required."); return; }
             try
             {
                 string file_storage = Environment.MachineName + "/IP.txt";
                 string file_local = variablePath.networkPath + @"\IP.txt";
+                string file_storage_server = @"RaspberryPi-Cyan/ip_server.txt";
                 using (var sw = new StreamWriter(file_local)) { if (IP != "") sw.Write(IP); }
                 using (var stream = File.Open(file_local, FileMode.Open))
                 {
                     FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
                     var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage).PutAsync(stream);
                     await task;
+                    Thread t = ReadIP_Thread(file_storage_server);
+                    t.Start();
+                    t.Join();
+
+                    Thread.Sleep(100);
+                    serverIp = File.ReadAllText("ip_server.txt");
                 };
-                Console.WriteLine("IP has been uploaded -> " + DateTime.Now);
+                Program.Log("IP has been uploaded -> " + DateTime.Now);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error in uploading: " + e.Message);
+                Program.Log("Error in uploading: " + e.Message);
                 error = true;
                 return;
             }
             return;
+        }
+        public static async Task<FirebaseMetaData> GetMetadata_fromStorage(string file_storage)
+        {
+            if ((int)((DateTime.Now - FirebaseClass.token.Created).TotalSeconds) > 3500) { await FirebaseClass.CheckFirebaseCred("firebase_ip_server@gmail.com", "123456"); 
+                FirebaseClass.FireBaseLogIn(); }
+            if (token == null) { Program.Log("LogIn needed!"); return null; }
+            FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
+            FirebaseMetaData metadata = null;
+            var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage);
+            var task2 = task.GetMetaDataAsync().ContinueWith((Task<FirebaseMetaData> uriTask) => { try { metadata = uriTask.Result; } catch (Exception) { return; } });
+            await task2;
+            return metadata;
+        }
+        public static Thread ReadIP_Thread(string file_storage)
+        {
+            Thread thread = new Thread(Method);
+            void Method()
+            {
+                if (token == null) { Program.Log("LogIn needed!"); return; }
+                FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
+                string download_url = "";
+                FirebaseMetaData metadata = GetMetadata_fromStorage(file_storage).Result;
+                var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage);
+                var task1 = task.GetDownloadUrlAsync().ContinueWith((Task<string> uriTask) => { try { download_url = uriTask.Result.ToString(); } catch (Exception e) {
+                        Program.Log(e.ToString());
+                        Program.Log("File not found: " + file_storage); return; } });
+                task1.Wait();
+
+                using (var client = new WebClient())
+                {
+                    try
+                    {
+                        string file_local = "ip_server.txt";
+                        client.DownloadFile(new Uri(download_url), file_local);
+                    }
+                    catch (Exception)
+                    {
+                        Program.Log("Error in downloading the file " + file_storage);// try { File.Move(file_local + "b", file_local); } catch (Exception) { Program.Log(ex.Message); };
+                        return;
+                    }
+                }
+                return;
+            }
+            return thread;
         }
 
     }

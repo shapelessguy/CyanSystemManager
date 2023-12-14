@@ -41,7 +41,7 @@ namespace CyanSystemManager
         }
         public void Print()
         {
-            Console.WriteLine(id + "  -> [" + width + " . " + height + "]   p=(" + x + ", " + y + ")");
+            Log(id + "  -> [" + width + " . " + height + "]   p=(" + x + ", " + y + ")");
         }
     }
 
@@ -110,7 +110,7 @@ namespace CyanSystemManager
 
         public static List<Monitor> getMonitorConfiguration()
         {
-            Console.WriteLine("Get Monitor Configuration");
+            Log("Get Monitor Configuration");
             for (int repeat=0; repeat<10; repeat++)
             {
                 try
@@ -395,11 +395,11 @@ namespace CyanSystemManager
         public static HWND getHandle(IDictionary<IntPtr, string> OpenWindows, application app)
         {
             HWND handle_ = IntPtr.Zero;
-            // Console.WriteLine("Searching " + app.name + " by windows");
+            // Log("Searching " + app.name + " by windows");
             handle_ = getHandleByWin(OpenWindows, app);
             if (handle_ == IntPtr.Zero)
             {
-                // Console.WriteLine("Searching " + app.name + " by processes");
+                // Log("Searching " + app.name + " by processes");
                 handle_ = getHandleByProc(OpenWindows, app);
             }
             return handle_;

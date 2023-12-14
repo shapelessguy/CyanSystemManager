@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using static CyanSystemManager.Utility;
 using NAudio.CoreAudioApi;
 using Microsoft.Diagnostics.Tracing.Parsers.AspNet;
+using static Vanara.PInvoke.Kernel32.FILE_REMOTE_PROTOCOL_INFO;
 
 namespace CyanSystemManager
 {
@@ -87,7 +88,7 @@ namespace CyanSystemManager
                     "Outlook NEW",
                     new string[] { "Claudio Ciano - Outlook" },
                     "olk",
-                    documents_path + "\\Outlook.lnk"
+                    "C:\\Program Files\\WindowsApps" + "\\@OutlookForWindows&&x64" + "\\olk.exe"
                     ),
                 new application(
                     "Skype for Business",
@@ -197,12 +198,13 @@ namespace CyanSystemManager
             new BindDef(ST.Shortcuts, "snapshot", Keys.PrintScreen),
             new BindDef(ST.Shortcuts, "mediumUpSizing", Keys.F4, KeyModifier.Control|KeyModifier.Alt),
             new BindDef(ST.Timer, "timer", Keys.F15),
+            new BindDef(ST.Arduino, "arduino_menu", Keys.F16),
 
             new BindDef(ST.Notebook, "notebook", Keys.F14),
             new BindDef(ST.Audio, "AudioPrimary", Keys.F14, KeyModifier.Alt),
             new BindDef(ST.Audio, "AudioSecondary", Keys.F14, KeyModifier.Control),
             new BindDef(ST.Audio, "AudioHeadphones", Keys.F14, KeyModifier.Shift),
-            // new BindDef(ST.Audio, "AudioThird", Keys.F14, KeyModifier.Shift),
+            new BindDef(ST.Audio, "AudioThird", Keys.F14, KeyModifier.Shift),
 
             new BindDef(ST.Monitors, "centralize", Keys.F13),
             new BindDef(ST.Monitors, "TOM", Keys.F13, KeyModifier.Shift),
@@ -215,6 +217,7 @@ namespace CyanSystemManager
             for (int id = 0; id < activityList.Count; id++) activityList[id].id = id;
             if (!Directory.Exists(variablePath.notebookPath)) Directory.CreateDirectory(variablePath.notebookPath);
             if (!Directory.Exists(variablePath.networkPath)) Directory.CreateDirectory(variablePath.networkPath);
+            if (File.Exists("ip_server.txt")) FirebaseClass.serverIp = File.ReadAllText("ip_server.txt");
             if (!File.Exists(variablePath.python) || !File.Exists(variablePath.pyStatScript)) noStat = true;
 
             if (MonitorManager.allMonitors.Count == 0)
@@ -223,26 +226,26 @@ namespace CyanSystemManager
                 if (MonitorManager.allMonitors.Count == 0) MonitorManager.allMonitors = all_monitors_;
             }
 
-            Console.WriteLine("\nMonitors ->");
+            Program.Log("\nMonitors ->");
             foreach (var monitor in MonitorManager.allMonitors) { monitor.Print(); }
 
-            Console.WriteLine("\nAudio devices ->");
+            Program.Log("\nAudio devices ->");
             var enumerator = new MMDeviceEnumerator();
-            foreach (var endpoint in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)) Console.WriteLine(endpoint.FriendlyName);
+            foreach (var endpoint in enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)) Program.Log(endpoint.FriendlyName);
 
-            Console.WriteLine("\nSettings validation ->");
+            Program.Log("\nSettings validation ->");
 
-            if (!Directory.Exists(variablePath.networkPath)) Console.WriteLine("Directory " + variablePath.networkPath + " does not exist!");
-            if (!Directory.Exists(variablePath.notebookPath)) Console.WriteLine("Directory " + variablePath.notebookPath + " does not exist!");
-            if (!File.Exists(variablePath.python)) Console.WriteLine("File " + variablePath.python + " does not exist!");
-            if (!File.Exists(variablePath.pyStatScript)) Console.WriteLine("File " + variablePath.pyStatScript + " does not exist!");
-            Console.WriteLine("--------------");
+            if (!Directory.Exists(variablePath.networkPath)) Program.Log("Directory " + variablePath.networkPath + " does not exist!");
+            if (!Directory.Exists(variablePath.notebookPath)) Program.Log("Directory " + variablePath.notebookPath + " does not exist!");
+            if (!File.Exists(variablePath.python)) Program.Log("File " + variablePath.python + " does not exist!");
+            if (!File.Exists(variablePath.pyStatScript)) Program.Log("File " + variablePath.pyStatScript + " does not exist!");
+            Program.Log("--------------");
 
             foreach(var item in App.getApplications())
             {
-                if (item.Value.exe != "" && !File.Exists(item.Value.exe)) Console.WriteLine("File " + item.Value.exe + " does not exist!");
+                if (item.Value.exe != "" && !File.Exists(item.Value.exe)) Program.Log("File " + item.Value.exe + " does not exist!");
             }
-            Console.WriteLine("");
+            Program.Log("");
         }
     }
 }

@@ -42,7 +42,7 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Console.WriteLine("Exception in " + title); }
+                catch (Exception) { Log("Exception in " + title); }
             }
         }
         static public void Tree(Command command)
@@ -72,7 +72,7 @@ namespace CyanSystemManager
                         }
                 });
                 //prevTime = DateTime.Now;
-                //if (iterations % 50 == 0) { getTemp(); Console.WriteLine(DateTime.Now.Subtract(prevTime).TotalMinutes); }
+                //if (iterations % 50 == 0) { getTemp(); Log(DateTime.Now.Subtract(prevTime).TotalMinutes); }
             }
         }
 
@@ -81,7 +81,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(serviceType); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting " + title + "..");
+            Log("Starting " + title + "..");
 
             beforeStart();
             new Thread(threadRun).Start();
@@ -90,7 +90,7 @@ namespace CyanSystemManager
         static public void beforeStart() { }
         static public void stopService(bool dispose)
         {
-            Console.WriteLine(title + " stopped");
+            Log(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
@@ -99,11 +99,11 @@ namespace CyanSystemManager
         // Inside functions
         static private void shortSystemTimer()
         {
-            Console.WriteLine("normal");
+            Log("normal");
         }
         static private void longSystemTimer()
         {
-            Console.WriteLine("hold");
+            Log("hold");
         }
         static private void fastTimer()
         {

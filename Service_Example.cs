@@ -41,7 +41,7 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Console.WriteLine("Exception in "+title); }
+                catch (Exception) { Log("Exception in "+title); }
             }
         }
         static public void Tree(Command command)
@@ -54,7 +54,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(serviceType); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting "+ title + "..");
+            Log("Starting "+ title + "..");
 
             beforeStart();
             new Thread(threadRun).Start();
@@ -63,15 +63,15 @@ namespace CyanSystemManager
         static public void beforeStart() { }
         static public void stopService(bool dispose)
         {
-            Console.WriteLine(title + " stopped");
+            Log(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
             clear = true;
         }
         // Inside functions
-        static private void InternalFunction1() { Console.WriteLine("Do something"); }
-        static private void InternalFunction2() { Console.WriteLine("Do other stuff"); }
+        static private void InternalFunction1() { Log("Do something"); }
+        static private void InternalFunction2() { Log("Do other stuff"); }
         // //////////
     }
 }

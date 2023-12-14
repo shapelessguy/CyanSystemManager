@@ -28,13 +28,13 @@ namespace CyanSystemManager
 
         public VolFormHelper(int nScreen)
         {
+            messages = new List<VolSettings>();
             this.nScreen = nScreen;
             if (timerGeneralUpdate == null)
                 timerGeneralUpdate = new System.Threading.Timer(generalUpdate, null, generalInterval, Timeout.Infinite);
         }
         public void initializeForm(int screenId)
         {
-            messages = new List<VolSettings>();
             dispose = false;
             this.screenId = screenId;
             destroyed = false;
@@ -44,14 +44,6 @@ namespace CyanSystemManager
                 Program.home.Invoke((MethodInvoker)delegate { volForm = new VolForm(nScreen);});
                 Home.setTopAndTransparent(volForm.Handle);
                 volForm.Show();
-            }
-        }
-        public void destroyForm()
-        {
-            if(volForm!= null)
-            {
-                destroyed = true;
-                Program.home.Invoke((MethodInvoker)delegate { volForm.Hide(); });
             }
         }
         public void tempShow() {countDownHide = timeout; visible = true; }
@@ -104,8 +96,7 @@ namespace CyanSystemManager
                 }
                 prev_volume = act_volume;
             }
-            VolForm.actualSet = new VolSettings(volHist[iteration], Service_Audio.audioInfo.mute, 
-                Service_Audio.audioInfo.deviceName);
+            VolForm.actualSet = new VolSettings(volHist[iteration], Service_Audio.audioInfo.mute, Service_Audio.audioInfo.deviceName);
             iteration++;
             timerGeneralUpdate.Change(generalInterval, Timeout.Infinite);
         }
@@ -133,7 +124,7 @@ namespace CyanSystemManager
                     if (visible) { Show(); countDownHide--; } else { countDownHide = 0; Hide(); }
                     if (countDownHide <= 0) { countDownHide = 0; visible = false; }
                     else visible = true;
-                    if(visible) volForm.animate();
+                    if (visible) volForm.animate();
                 }
                 catch (Exception) { }
             }
@@ -160,6 +151,6 @@ namespace CyanSystemManager
             if ((int)(volume * 100) == (int)(set2.volume * 100)) equalVol = true;
             return equalVol && mute == set2.mute && deviceName == set2.deviceName;
         }
-        public void print() { Console.WriteLine(deviceName + "  mute:" + mute + "   vol:" + volume); }
+        public void print() { Program.Log(deviceName + "  mute:" + mute + "   vol:" + volume); }
     }
 }

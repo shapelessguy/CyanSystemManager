@@ -12,17 +12,20 @@ using System.IO.Ports;
 using System.ComponentModel.Design;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace CyanSystemManager
 {
     static public class Service_Arduino
     {
         static public string title = "arduinoService";
-        static public string serviceType = ST.None;
+        static public string serviceType = ST.Arduino;
         static public State status = State.OFF;
         static public SerialPort sp;
         static public bool connected;
         static public bool clear;
+        static private ArduinoMenu menu;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void turnAudio(bool on, bool keep=false) 
@@ -32,9 +35,10 @@ namespace CyanSystemManager
                 if (keep) addCommand(ArduinoCom.AUDIO_ON_KEEP); 
                 else addCommand(ArduinoCom.AUDIO_ON);
             }
-            else addCommand(ArduinoCom.AUDIO_OFF); 
+            else addCommand(ArduinoCom.AUDIO_OFF);
         }
         static public void turnLight(bool on) { if (on) addCommand(ArduinoCom.LIGHT_ON); else addCommand(ArduinoCom.LIGHT_OFF); }
+        static public void showMenu() { addCommand(ArduinoCom.SHOW_MENU); }
 
         // System is based on the interchange of messages
         static List<Command> commands = new List<Command>();
@@ -64,17 +68,17 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Console.WriteLine("Exception in " + title); }
+                catch (Exception) { Log("Exception in " + title); }
             }
         }
         static public void Tree(Command command)
         {
-            Console.WriteLine(command.type);
             if (command.type == ArduinoCom.AUDIO_ON) sp.WriteLine("AH");
             else if (command.type == ArduinoCom.AUDIO_ON_KEEP) sp.WriteLine("AK");
             else if (command.type == ArduinoCom.AUDIO_OFF) sp.WriteLine("AL");
             else if (command.type == ArduinoCom.LIGHT_ON) sp.WriteLine("LL");
             else if (command.type == ArduinoCom.LIGHT_OFF) sp.WriteLine("LH");
+            else if (command.type == ArduinoCom.SHOW_MENU) ArdShowMenu();
         }
         // /////////////
         static public void startService()
@@ -82,26 +86,49 @@ namespace CyanSystemManager
             status = State.NEUTRAL;
             InitializeSerialPortT();
             Home.registerHotkeys(serviceType); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting "+ title + "..");
+            Log("Starting "+ title + "..");
 
             connected = false;
 
             beforeStart();
             new Thread(threadRun).Start();
         }
-        static public void beforeStart() 
+        static public void beforeStart()
         {
+            menu = new ArduinoMenu();
         }
         static public void stopService(bool dispose)
         {
-            Console.WriteLine(title + " stopped");
+            Log(title + " stopped");
             status = State.OFF;
             new Thread(ClosePort).Start();
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
             clear = true;
         }
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
         // Inside functions
+        static private void ArdShowMenu()
+        {
+            if (menu.Visible) Program.home.Invoke((MethodInvoker)delegate { menu.Hide(); });
+            else Program.home.Invoke((MethodInvoker)delegate {
+                try
+                {
+                    Screen s = Screen.FromPoint(Cursor.Position);
+                    // float fill = 0.8f;
+                    // Point location = new Point(s.Bounds.X + (int)(s.Bounds.Width * (1 - fill) / 2), s.Bounds.Y + (int)(s.Bounds.Height * (1 - fill) / 2));
+                    // Size size = new Size((int)(s.Bounds.Width * fill), (int)(s.Bounds.Height * fill));
+                    Size size = new Size(1297, 740);
+                    Point location = new Point(s.Bounds.X + (int)((s.Bounds.Width - size.Width) / 2), s.Bounds.Y + (int)((s.Bounds.Height - size.Height) / 2));
+                    menu.Show();
+                    menu.Location = location;
+                    menu.Size = size;
+                    SetForegroundWindow(menu.Handle);
+                }
+                catch (Exception ex) { Log(ex.ToString()); }
+            });
+        }
         static private bool getAudioState()
         {
             Thread.Sleep(200);
@@ -124,14 +151,14 @@ namespace CyanSystemManager
         {
             if (sp != null)
             {
-                Console.WriteLine("Closing port");
+                Log("Closing port");
                 try
                 {
                     sp.Close();
                     //Thread.Sleep(1500);
                 }
                 catch (Exception) { }
-                Console.WriteLine("Disposing port");
+                Log("Disposing port");
                 try
                 {
                     sp.Dispose();
@@ -145,7 +172,7 @@ namespace CyanSystemManager
         static private void OpenPortThread(object portNum)
         {
             portNum = (int)portNum;
-            Console.WriteLine("Opening port: " + portNum);
+            Log("Opening port: " + portNum);
             try
             {
                 SerialPort port = new SerialPort("COM" + portNum, 9600, Parity.None, 8, StopBits.One);
@@ -156,10 +183,10 @@ namespace CyanSystemManager
                 string buf = port.ReadExisting();
                 string id_pass = buf.Replace(".", ",").Replace("\n", "").Replace("\r", "");
                 if (id_pass.Length > 17) id_pass = id_pass.Substring(id_pass.Length - 17, id_pass.Length);
-                Console.WriteLine("---------------------\nArduino ID:\n" + id_pass + "\n---------------------");
+                Log("---------------------\nArduino ID:\n" + id_pass + "\n---------------------");
                 if (id_pass == "cyanSystemManager")
                 {
-                    Console.WriteLine("| Connected to the port " + portNum + "!");
+                    Log("| Connected to the port " + portNum + "!");
                     connected = true;
                     sp = port;
                     ard_found = true;
@@ -167,14 +194,14 @@ namespace CyanSystemManager
                 else
                 {
                     port.Close();
-                    Console.WriteLine("| Connection to the port " + portNum + " failed");
+                    Log("| Connection to the port " + portNum + " failed");
                     ard_found = false;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("| Connection to the port " + portNum + " failed");
-                Console.WriteLine(ex.Message);
+                Log("| Connection to the port " + portNum + " failed");
+                Log(ex.Message);
                 ard_found = false;
             }
         }
@@ -190,7 +217,7 @@ namespace CyanSystemManager
         static private void InitializeSerialPortT()
         {
             ClosePort();
-            Console.WriteLine("Inizializing Port");
+            Log("Inizializing Port");
             connected = false;
             bool arduinoFound = false;
             for (int try_ = 0; try_ < 3; try_++)

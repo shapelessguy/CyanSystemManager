@@ -307,6 +307,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
+    <Compile Include="ArduinoMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArduinoMenu.Designer.cs">
+      <DependentUpon>ArduinoMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Chart.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -421,6 +427,9 @@
     </Compile>
     <Compile Include="VolFormGiulietto.cs" />
     <Compile Include="VolFormHelper.cs" />
+    <EmbeddedResource Include="ArduinoMenu.resx">
+      <DependentUpon>ArduinoMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Chart.resx">
       <DependentUpon>Chart.cs</DependentUpon>
     </EmbeddedResource>
@@ -477,6 +486,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\auto.png" />
+    <None Include="Resources\neon_on.png" />
+    <None Include="Resources\neon_off.png" />
     <None Include="App.config" />
     <Content Include="MultiMonitorTool\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

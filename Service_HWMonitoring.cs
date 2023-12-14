@@ -26,17 +26,17 @@ namespace CyanSystemManager
         public computerInfo() { }
         public void print()
         {
-            Console.WriteLine();
-            Console.Write("CPU load: "); foreach (var value in cpus) Console.Write(value + "  "); Console.WriteLine();
-            Console.WriteLine("CPU total load: " + cpuTot);
-            Console.Write("CPU temp: "); foreach (var value in cpusTemp) Console.Write(value + "  "); Console.WriteLine();
-            Console.WriteLine("CPU total temperature: " + cpuTempTot);
-            Console.WriteLine("GPU total load: " + gpuTot);
-            Console.WriteLine("GPU temp: : " + gpuTemp);
-            Console.WriteLine("GPU clock: " + gpuClock);
-            Console.WriteLine("GPU VRAM: " + gpuVRAM);
-            Console.WriteLine("Memory used/available: " + memoryUsed+"/"+totalMemoryAvailable);
-            Console.WriteLine("Processes/FPS: "); foreach (var item in fps) Console.WriteLine("  "+item.Key+": "+item.Value);
+            Program.Log("");
+            Console.Write("CPU load: "); foreach (var value in cpus) Console.Write(value + "  "); Program.Log("");
+            Log("CPU total load: " + cpuTot);
+            Console.Write("CPU temp: "); foreach (var value in cpusTemp) Console.Write(value + "  "); Program.Log("");
+            Log("CPU total temperature: " + cpuTempTot);
+            Log("GPU total load: " + gpuTot);
+            Log("GPU temp: : " + gpuTemp);
+            Log("GPU clock: " + gpuClock);
+            Log("GPU VRAM: " + gpuVRAM);
+            Log("Memory used/available: " + memoryUsed+"/"+totalMemoryAvailable);
+            Log("Processes/FPS: "); foreach (var item in fps) Log("  "+item.Key+": "+item.Value);
         }
         public computerInfo copy(computerInfo info)
         {
@@ -111,7 +111,7 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Console.WriteLine("Exception in " + title); }
+                catch (Exception) { Log("Exception in " + title); }
             }
         }
         static public void Tree(Command command) { }
@@ -120,7 +120,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(serviceType); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting " + title + "..");
+            Log("Starting " + title + "..");
 
             beforeStart();
             new Thread(threadRun).Start();
@@ -136,7 +136,7 @@ namespace CyanSystemManager
         }
         static public void stopService()
         {
-            Console.WriteLine(title + " stopped");
+            Log(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
@@ -156,7 +156,7 @@ namespace CyanSystemManager
                // {
                 //    Console.Write(computer.Hardware[i].Sensors[j].Name + "  " + computer.Hardware[i].Sensors[j].SensorType + "  ");
                 //    Console.Write(computer.Hardware[i].Sensors[j].Value);
-                //    Console.WriteLine();
+                //    Log();
                // }
 
                 List<int> values = new List<int>();

@@ -138,7 +138,7 @@ namespace CyanSystemManager
             }
             foreach (var chart in Charts.orderedList) if (Name == chart.name && chart.max > -1) max = chart.max;
             if(max == 0) foreach (var num in maxima) if (max > num) continue; else { max = num; break; }
-            //if (Name == "cpuTot") Console.WriteLine(max);
+            //if (Name == "cpuTot") Log(max);
             return max;
         }
         private void DrawCursor(Graphics g)

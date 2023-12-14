@@ -51,16 +51,6 @@ namespace CyanSystemManager
             this.devices = devices == null? new string[] { } : devices;
         }
     }
-    public class Command
-    {
-        public string type = "";
-        public object value = null;
-        public Command(string type, object value)
-        {
-            this.type = type;
-            this.value = value;
-        }
-    }
     public class AudioInfo
     {
         public int n = 0;
@@ -106,7 +96,7 @@ namespace CyanSystemManager
                                                 return audioInfo.audioDevice; }
         public static void tempAudio(object args)
         {
-            Console.WriteLine("playing " + status);
+            Log("playing " + status);
             suppressAllSounds = false;
             if (status == State.OFF) {
                 void playSound()
@@ -114,7 +104,7 @@ namespace CyanSystemManager
                     tempAudioRunning = true;
                     AudioArgs audio = (AudioArgs)args;
                     SoundPlayer sound = new SoundPlayer(audio.file);
-                    for (int i = 0; i < audio.iterations; i++) 
+                    for (int i = 0; i < audio.iterations; i++)
                         {  if (suppressAllSounds) { suppressAllSounds = false; break; } sound.PlaySync(); }
                     tempAudioRunning = false;
                 }
@@ -127,7 +117,7 @@ namespace CyanSystemManager
             if (status == State.OFF) return false;
             AudioDevice act_device = GetDevice();
             if (category == act_device.category) { changedDevice = true; return true; }
-            Console.WriteLine("Changing AudioDevice to " + category);
+            Log("Changing AudioDevice to " + category);
             addCommand(AudioCom.SET_DEV, category);
             int iter = 0, sleep = 50, lim1 = (2*1000)/sleep, lim2 = (5*1000)/sleep;
             while (!changingDevice && iter < lim1) { Thread.Sleep(sleep); iter++; } // waits for a maximum of 2 seconds
@@ -147,7 +137,7 @@ namespace CyanSystemManager
             audioInfo = new AudioInfo();
 
             status = State.NEUTRAL;
-            Console.WriteLine("Starting audioService..");
+            Log("Starting audioService..");
             Home.registerHotkeys(ST.Audio);
             if (volForms.Count == 0)
             {
@@ -160,7 +150,7 @@ namespace CyanSystemManager
             status = State.ON;
         }
         public static void stopService(bool dispose) {
-            Console.WriteLine("audioService stopped");
+            Log("audioService stopped");
             status = State.OFF;
             changingDevice = false;
             changedDevice = false;
@@ -172,15 +162,8 @@ namespace CyanSystemManager
         public static void activateAllForms()
         {
             if (status == State.OFF) return;
-            for (int i = 0; i < 3; i++) volForms[i].initializeForm(i);
-            activateForms();
-        }
-        static void activateForms()
-        {
-            if (status == State.OFF) return;
             int nScreens = Screen.AllScreens.Count();
-            for (int i = 0; i < nScreens; i++) volForms[i].initializeForm(i);
-            for (int i = nScreens; i < 3; i++) volForms[i].destroyForm();
+            for (int i = 0; i < nScreens; i++) { volForms[i].initializeForm(i); }
         }
 
         public static bool tempAudioRunning = false;
@@ -307,7 +290,7 @@ namespace CyanSystemManager
                 foreach (var d in all_devices)
                 {
                     if (d.FullName == dev_name) { audio_device = d; }
-                    if (d.IsDefaultDevice) { main_audio_device = d; Console.WriteLine(main_audio_device); }
+                    if (d.IsDefaultDevice) { main_audio_device = d; Log(main_audio_device.ToString()); }
                 }
                 prev_vol = audio_device.Volume;
                 audio_device.Volume = 20;
@@ -322,7 +305,7 @@ namespace CyanSystemManager
                         }
                         if (main_audio_device != audio_device)
                         {
-                            Console.WriteLine("CURRENT MAIN AUDIO --> " + main_dev_name);
+                            Log("CURRENT MAIN AUDIO --> " + main_dev_name);
                             ms = new MemoryStream(ReadToEnd(audioFile));
                             ws = new WaveFileReader(ms);
                             output = new WaveOutEvent();
@@ -331,7 +314,7 @@ namespace CyanSystemManager
                             output.Play();
                         }
 
-                        Console.WriteLine("PRIMARY AUDIO --> " + dev_name);
+                        Log("PRIMARY AUDIO --> " + dev_name);
                         ms2 = new MemoryStream(ReadToEnd(audioFile));
                         ws2 = new WaveFileReader(ms2);
                         output2 = new WaveOutEvent();
@@ -346,7 +329,7 @@ namespace CyanSystemManager
                     for (int i = commands.Count - 1; i >= 0; i--)
                         if (commands[i].type == AudioCom.TEMPAUDIO) commands.RemoveAt(i);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.Message); }
+                catch (Exception ex) { Log(ex.Message); }
                 if (prev_vol != -1) audio_device.Volume = prev_vol;
                 tempAudioRunning = false;
             }
@@ -362,7 +345,7 @@ namespace CyanSystemManager
             if (audioInfo.audioDevice == AudioDevices.getDevice(category))
             {
                 changedDevice = true; Thread.Sleep(150);
-                Console.WriteLine("  --> Current audio device: " + audioInfo.defaultDevice.FriendlyName);
+                Log("  --> Current audio device: " + audioInfo.defaultDevice.FriendlyName);
                 return;
             }
 
@@ -389,22 +372,23 @@ namespace CyanSystemManager
             }
             else
             {
-                Console.WriteLine("No device of category " + device.category + " has been found!");
+                Log("No device of category " + device.category + " has been found!");
             }
             getDefaultDevice();
-            getAudioInfo();
-            Console.WriteLine("  --> Current audio device: " + audioInfo.defaultDevice.FriendlyName);
+            getAudioInfo(true);
+            Log("  --> Current audio device: " + audioInfo.defaultDevice.FriendlyName);
+            SetVolume(9999);
             changingDevice = false;
         }
 
         static Timer timerSeek;
         static bool canSeek = true;
         static void Callback(Object state) { canSeek = true; timerSeek.Dispose(); }
-        static void getAudioInfo()
+        static void getAudioInfo(bool force = false)
         {
-            if(timerSeek!= null) timerSeek.Dispose();
+            if(timerSeek != null) timerSeek.Dispose();
             timerSeek = new Timer(Callback, null, 1000, Timeout.Infinite);
-            if (!canSeek) return;
+            if (!canSeek && !force) return;
             canSeek = false;
             getDefaultDevice();
             fillInfo();
@@ -469,13 +453,13 @@ namespace CyanSystemManager
             foreach (var channel in channels) levels += (int)(channel.VolumeLevelScalar*100) + " ";
             levels += "  - Master: " + (int)(audioInfo.defaultDevice.AudioEndpointVolume.MasterVolumeLevelScalar*100);
             levels += "   .. Device: " + audioInfo.defaultDevice.DeviceFriendlyName;
-            Console.WriteLine(levels);
+            Log(levels);
         }
 
         static DateTime previousCom = DateTime.Now;
         static void Vol(string arg, object value)
         {
-            activateForms();
+            activateAllForms();
             getAudioInfo();
             float val = (float)value;
             DateTime now = DateTime.Now;
@@ -505,11 +489,13 @@ namespace CyanSystemManager
         static void SetVolume(float volume)
         {
             if(audioInfo == null || audioInfo.channels == null || audioInfo.newDevice) getAudioInfo();
-            if (volume < 0f) volume = 0f; else if (volume > 1f) volume = 1f;
-            mapVolume(volume, audioInfo.channels, audioInfo.n);
-            audioInfo.masterVolume = volume;
+            if (volume != 9999)
+            {
+                if (volume < 0f) volume = 0f; else if (volume > 1f) volume = 1f;
+                mapVolume(volume, audioInfo.channels, audioInfo.n);
+                audioInfo.masterVolume = volume;
+            }
             submit();
-            //printVolumeLevels(audioInfo.channels);
         }
         static void submit()
         {
@@ -567,7 +553,7 @@ namespace CyanSystemManager
                 }
                 else { i += 1; }
                 if (commands.Count == 0) { audioThread.Change(msCycle, Timeout.Infinite); return; }
-                activateForms();
+                activateAllForms();
                 Stabilize();
                 Command command = commands[0];
                 commands.RemoveAt(0);
@@ -578,7 +564,7 @@ namespace CyanSystemManager
                 else if (command.type == AudioCom.VOL_NULL) noVol();
                 else if (command.type == AudioCom.TEMPAUDIO) playTempAudio(command.value);
             }
-            catch (Exception) { Console.WriteLine("Exception in audioRun"); }
+            catch (Exception) { Log("Exception in audioRun"); }
             audioThread.Change(msCycle, Timeout.Infinite);
         }
         public static void audioDeviceDiscovery()
@@ -586,9 +572,9 @@ namespace CyanSystemManager
             try
             {
                 all_devices = new CoreAudioController().GetPlaybackDevices();
-                Console.WriteLine("New audio devices");
+                Log("New audio devices");
             }
-            catch (Exception) { Console.WriteLine("Exception in audioDeviceDiscovery"); }
+            catch (Exception) { Log("Exception in audioDeviceDiscovery"); }
         }
 
         private static void Stabilize()

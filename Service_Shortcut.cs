@@ -20,7 +20,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(ST.Shortcuts);
-            Console.WriteLine("Starting shortcutService..");
+            Program.Log("Starting shortcutService..");
 
             Thread audioThread = new Thread(shortcutRun);
             audioThread.Start();
@@ -28,7 +28,7 @@ namespace CyanSystemManager
         }
         public static void stopService(bool dispose)
         {
-            Console.WriteLine("shortcutService stopped");
+            Program.Log("shortcutService stopped");
             status = State.OFF;
             Home.unregisterHotkeys(ST.Shortcuts);
             commands.Clear();
@@ -71,7 +71,7 @@ namespace CyanSystemManager
                     else if (command.type == ShortcutCom.SNAPSHOT) SNAPSHOT();
                     else if (command.type == ShortcutCom.UPSIZING) UPSIZING();
                 }
-                catch (Exception e) { Console.WriteLine("Exception in shortcutRun\n" + e); }
+                catch (Exception e) { Program.Log("Exception in shortcutRun\n" + e); }
             }
 
         }
@@ -182,7 +182,7 @@ namespace CyanSystemManager
         private static void UPSIZING()
         {
             IntPtr hWnd = WindowFromPoint(Cursor.Position);
-            Console.WriteLine("window -> " + hWnd);
+            Program.Log("window -> " + hWnd);
             SortWindows.OpenWindows = WindowWrapper.GetOpenWindows();
 
             //Window win = new Window(hWnd);

@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
+using Vanara.PInvoke;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
 using Timer = System.Windows.Forms.Timer;
@@ -81,8 +83,8 @@ namespace CyanSystemManager
             //string text = File.ReadAllText(file);
             //try { date = DateTime.FromFileTimeUtc(Convert.ToInt64(text)); } catch (Exception) { }
             //   difference = DateTime.Now.ToUniversalTime().Subtract(start_datetime).TotalSeconds;
-            //Console.WriteLine("Date: " + date.ToLocalTime());
-            //   Console.WriteLine("Difference: " + difference);
+            //Log("Date: " + date.ToLocalTime());
+            //   Log("Difference: " + difference);
             //}
             //catch (Exception) { }
 
@@ -234,13 +236,13 @@ namespace CyanSystemManager
                 // The below lines are useful in case you want to register multiple keys, which you can use 
                 // a switch with the id as argument, or if you want to know which key/modifier was pressed 
                 // for some particular reason.
-
                 Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);          // The key of the hotkey that was pressed.
                 KeyModifier modifier = (KeyModifier)((int)m.LParam & 0xFFFF);
+                writeKeyText(key, modifier == KeyModifier.Control, modifier == KeyModifier.Shift, modifier == KeyModifier.Alt);
                 int id = m.WParam.ToInt32();                                // The id of the hotkey that was pressed.
                 Binded bind = binded.findKey(key, modifier);
                 if (bind.key.name == "") return;
-
+                if (buttonPressed.Focused) { return; }
                 bind.activity.call();
 
             }
@@ -250,19 +252,20 @@ namespace CyanSystemManager
         {
             buttonPressed.Text = "";
             e.SuppressKeyPress = true;
-            Keys keyName = e.KeyCode;
-            bool Ctrl = e.Control;
-            bool Shift = e.Shift;
-            bool Alt = e.Alt;
+            Keys key = e.KeyCode;
+            writeKeyText(key, e.Control, e.Shift, e.Alt);
+        }
+        private void writeKeyText(Keys key, bool Ctrl, bool Shift, bool Alt)
+        {
             string modifiers = "";
-            if (Shift) modifiers += "Shift +";
-            if (Ctrl) modifiers += "Ctrl +";
-            if (Alt) modifiers += "Alt +";
+            if (Shift && key != Keys.ShiftKey) modifiers += "Shift +";
+            if (Ctrl && key != Keys.ControlKey) modifiers += "Ctrl +";
+            if (Alt && key != Keys.Menu) modifiers += "Alt +";
             modifiers += " ";
-            //if (modifiers.Length > 0) modifiers = modifiers.Substring(0, modifiers.Length - 2);
-
-            if (keyName == Keys.Menu || keyName == Keys.Shift || keyName == Keys.Control || keyName == Keys.ControlKey) return;
-            buttonPressed.Text = modifiers + keyName;
+            string key_str = key.ToString();
+            if (key_str.EndsWith("Key")) key_str = key_str.Substring(0, key_str.Length - 3);
+            if (key_str == "Menu") key_str = "Alt";
+            buttonPressed.Text = modifiers + key_str;
         }
         private void button1_Click(object sender, EventArgs e) {Close();}
 

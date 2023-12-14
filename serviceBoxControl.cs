@@ -46,7 +46,7 @@ namespace CyanSystemManager
                 }
                 if (runService != null && !started)
                 {
-                    //Console.WriteLine(runService.statusFromBox);
+                    //Log(runService.statusFromBox);
                     //if (runService.statusFromBox == State.ON) startup = true;
                     //serviceBox.Checked = startup;
                     //runService.statusFromBox = State.NEUTRAL;
@@ -80,7 +80,7 @@ namespace CyanSystemManager
                     }
                     else { check.BackgroundImage = Properties.Resources.checkNeutral; }
                 }
-                //Console.WriteLine(runService.status);
+                //Log(runService.status);
             };
         }
 

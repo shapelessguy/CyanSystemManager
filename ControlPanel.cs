@@ -402,7 +402,7 @@ namespace CyanSystemManager
                         string[] items = winSet.avail_monitors.ToArray();
                         if (((ComboBox)ctrl).DataSource == null) ((ComboBox)ctrl).DataSource = items;
                         ((ComboBox)ctrl).SelectedItem = winSet.monitor == null ? items[0] : winSet.monitor.id;
-                        //Console.WriteLine(winSet.monitor.id + "   " + ((ComboBox)ctrl).SelectedItem);
+                        //Log(winSet.monitor.id + "   " + ((ComboBox)ctrl).SelectedItem);
                     }
                     else if (ctrl.Name.Contains("_x_pan2"))
                     {
@@ -476,7 +476,7 @@ namespace CyanSystemManager
             Button button = (Button)sender;
             string name = button.Name;
             if (name == ctrlPanel) return;
-            //Console.WriteLine(name);
+            //Log(name);
             foreach (Button btn in home.panel2.Controls.OfType<Button>())
             {
                 if (btn.Name != name) btn.BackColor = btnBackColor;

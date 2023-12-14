@@ -55,7 +55,7 @@ namespace CyanSystemManager
                     else if (command.type == MonitorCom.TURN_ON_MONITORS) TurnOn();
                     else if (command.type == MonitorCom.SHUT_DOWN_MONITORS) TurnOff();
                 } 
-                catch (Exception) { Console.WriteLine("Exception in monitorRun"); }
+                catch (Exception) { Log("Exception in monitorRun"); }
             }
 
         }
@@ -63,7 +63,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(ST.Monitors); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting monitorService..");
+            Log("Starting monitorService..");
             MonitorManager.GetMonitors();
 
             new Thread(threadRun).Start();
@@ -71,7 +71,7 @@ namespace CyanSystemManager
         }
         public static void stopService(bool dispose)
         {
-            Console.WriteLine("monitorService stopped");
+            Log("monitorService stopped");
             status = State.OFF;
             Home.unregisterHotkeys(ST.Monitors);
             commands.Clear();
@@ -84,7 +84,7 @@ namespace CyanSystemManager
         }
         private static void Centralize()
         {
-            Console.WriteLine("1");
+            Log("1");
             string command = " /MoveWindow Primary All";
             execProfile(command);
         }
@@ -184,15 +184,15 @@ namespace CyanSystemManager
             monitor3 = MonitorManager.Ref(VT.Ausiliary2).screen; // secondary right
             monitor_cin = MonitorManager.Ref(VT.Cinema).screen; // cinema monitor
 
-            Console.WriteLine("\nMonitors detected ->");
-            if (monitor1 != null) Console.WriteLine("monitor 1 (" + MonitorManager.Ref(VT.Primary).id + "): " + monitor1.Bounds);
-            else { Console.WriteLine("monitor1 not found"); }
-            if (monitor2 != null) Console.WriteLine("monitor 2 (" + MonitorManager.Ref(VT.Ausiliary1).id + "): " + monitor2.Bounds);
-            else { Console.WriteLine("monitor2 not found"); }
-            if (monitor3 != null) Console.WriteLine("monitor 3 (" + MonitorManager.Ref(VT.Ausiliary2).id + "): " + monitor3.Bounds);
-            else { Console.WriteLine("monitor3 not found"); }
-            if (monitor_cin != null) Console.WriteLine("monitor 4 (" + MonitorManager.Ref(VT.Cinema).id + "): " + monitor_cin.Bounds);
-            else { Console.WriteLine("monitor4 not found"); }
+            Log("\nMonitors detected ->");
+            if (monitor1 != null) Log("monitor 1 (" + MonitorManager.Ref(VT.Primary).id + "): " + monitor1.Bounds);
+            else { Log("monitor1 not found"); }
+            if (monitor2 != null) Log("monitor 2 (" + MonitorManager.Ref(VT.Ausiliary1).id + "): " + monitor2.Bounds);
+            else { Log("monitor2 not found"); }
+            if (monitor3 != null) Log("monitor 3 (" + MonitorManager.Ref(VT.Ausiliary2).id + "): " + monitor3.Bounds);
+            else { Log("monitor3 not found"); }
+            if (monitor_cin != null) Log("monitor 4 (" + MonitorManager.Ref(VT.Cinema).id + "): " + monitor_cin.Bounds);
+            else { Log("monitor4 not found"); }
 
             defBrowsers();
             bool primaryProfile = monitor1 != null && monitor2 != null && monitor3 != null;
@@ -203,7 +203,7 @@ namespace CyanSystemManager
         }
         private static void order_primary()
         {
-            Console.WriteLine("Primary ordering!\n");
+            Log("Primary ordering!\n");
             browserToLocate = null;
             foreach (string[] key in browsers.Keys) if (browsers[key].screen == monitor1) browserToLocate = key;
             WinCol col = new WinCol(OpenWindows);
@@ -230,7 +230,7 @@ namespace CyanSystemManager
         }
         private static void order_cinema()
         {
-            Console.WriteLine("Cinema ordering!\n");
+            Log("Cinema ordering!\n");
         }
 
     }

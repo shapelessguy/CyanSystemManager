@@ -44,7 +44,7 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Console.WriteLine("Exception in " + title); }
+                catch (Exception) { Log("Exception in " + title); }
             }
         }
         static public void Tree(Command command)
@@ -56,7 +56,7 @@ namespace CyanSystemManager
         {
             status = State.NEUTRAL;
             Home.registerHotkeys(serviceType); // register Hotkeys needed by Example_ activities
-            Console.WriteLine("Starting " + title + "..");
+            Log("Starting " + title + "..");
 
             beforeStart();
             new Thread(threadRun).Start();
@@ -65,7 +65,7 @@ namespace CyanSystemManager
         static public void beforeStart() { }
         static public void stopService(bool dispose)
         {
-            Console.WriteLine(title + " stopped");
+            Log(title + " stopped");
             status = State.OFF;
             Home.unregisterHotkeys(serviceType);
             commands.Clear();
@@ -93,18 +93,18 @@ namespace CyanSystemManager
             {
                 if (app.proc_name != "" && Process.GetProcessesByName(app.proc_name).Length > 0)
                 {
-                    Console.WriteLine("Process '" + app.proc_name + "' already running.");
+                    Log("Process '" + app.proc_name + "' already running.");
                     return 0;
                 }
                 if (Window.getHandle(OpenWindows, app) != IntPtr.Zero)
                 {
-                    Console.WriteLine("Process '" + app.proc_name + "' already running.");
+                    Log("Process '" + app.proc_name + "' already running.");
                     return 0;
                 }
 
                 if (app.admin) {
                     try {
-                        Console.WriteLine("Executing '" + app.exe + "' as admin user");
+                        Log("Executing '" + app.exe + "' as admin user");
                         Process process = new Process()
                         {
                             StartInfo = new ProcessStartInfo(app.exe, app.info)
@@ -122,23 +122,23 @@ namespace CyanSystemManager
                     {
                         if (Path.GetExtension(app.exe) == ".lnk") throw new Exception();
                         ProcessHelper.RunAsRestrictedUser(app.exe, app.info);
-                        Console.WriteLine("'" + app.exe + "' executed as restricted user");
+                        Log("'" + app.exe + "' executed as restricted user");
                     }
                     catch
                     {
                         Process.Start("explorer.exe", app.exe);
-                        Console.WriteLine("'" + app.exe + "' executed from explorer.exe");
+                        Log("'" + app.exe + "' executed from explorer.exe");
                     }
                 return 1;
             }
             catch (Exception) {
-                Console.WriteLine("Error while trying to open " + app.exe + ". Admin = " + app.admin);
+                Log("Error while trying to open " + app.exe + ". Admin = " + app.admin);
                 return 0; 
             }
         }
         static private void Start(object args)
         {
-            Console.WriteLine("Starting system initialization.");
+            Log("Starting system initialization.");
             int[] done_over_all = startUp();
             if (done_over_all[0] < done_over_all[1]/2) return;
             Thread.Sleep(10 * 1000);

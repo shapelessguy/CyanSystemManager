@@ -14,33 +14,49 @@ namespace CyanSystemManager
         public static bool restart = true;
         public static Process[] all_processes = null;
         public static string multimonitor_path;
+        public static string log_path = "all_logs.txt";
 
         [STAThread]
         static void Main(string[] args)
         {
-            bool startup = false;
-            all_processes = Process.GetProcesses();
-            multimonitor_path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MultiMonitorTool", "MultiMonitorTool.exe");
-            foreach (string arg in args) if (arg == "startup") startup = true;
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            while (restart)
+            try
             {
-                restart = false;
-                Application.Run(home = new Home(startup));
-                startup = false;
-                if (restart)
+                if (!File.Exists(log_path)) { File.WriteAllText(log_path, ""); }
+                bool startup = false;
+                all_processes = Process.GetProcesses();
+                multimonitor_path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MultiMonitorTool", "MultiMonitorTool.exe");
+                foreach (string arg in args) if (arg == "startup") startup = true;
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                while (restart)
                 {
-                    ConfigurationManager.RefreshSection("appSettings");
-                    ConfigurationManager.RefreshSection("configuration");
-                    Properties.Settings.Default.Reload();
-                    Thread.Sleep(1500);
+                    restart = false;
+                    Application.Run(home = new Home(startup));
+                    startup = false;
+                    if (restart)
+                    {
+                        ConfigurationManager.RefreshSection("appSettings");
+                        ConfigurationManager.RefreshSection("configuration");
+                        Properties.Settings.Default.Reload();
+                        Thread.Sleep(1500);
+                    }
+                    forceTermination = false;
                 }
-                forceTermination = false;
+                killMainProcess();
+                Log("Program terminated");
             }
-            killMainProcess();
-            Console.WriteLine("Program terminated");
+            catch (Exception) 
+            {
+                MessageBox.Show("Cyan Manager has encoutered a problem!");
+            }
+        }
+
+        static public void Log(string text, string end=null)
+        {
+            if (end == null) end = Environment.NewLine;
+            File.AppendAllText(log_path, text + end);
+            Console.Write(text + end);
         }
 
         static public void killMainProcess()
@@ -49,7 +65,7 @@ namespace CyanSystemManager
             {
                 foreach (Process clsProcess in Process.GetProcesses())
                     if (clsProcess.ProcessName == Application.ProductName)
-                    { clsProcess.Kill(); Console.WriteLine("Process killed"); }
+                    { clsProcess.Kill(); Log("Process killed"); }
             }
             new Thread(kill).Start();
         }
@@ -69,7 +85,7 @@ namespace CyanSystemManager
                 using (StreamReader reader = process.StandardOutput)
                 {
                     string result = reader.ReadToEnd();
-                    Console.Write(result);
+                    Log(result, "");
                 }
             }
         }
@@ -91,7 +107,7 @@ namespace CyanSystemManager
                     using (StreamReader reader = process.StandardOutput)
                     {
                         string result = reader.ReadToEnd();
-                        Console.Write(result);
+                        Log(result, "");
                     }
                 }
             }

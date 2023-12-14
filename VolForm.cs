@@ -53,17 +53,6 @@ namespace CyanSystemManager
         }
         void FormLoad(object sender, EventArgs e) { locate(); Refresh(); HideForm(); }
 
-        public void animate(float volume, AudioInfo audioInfo)
-        {
-            if (!audioInfo.validated) return;
-            if (this == null) return;
-            Invoke((MethodInvoker)delegate {
-                actualSet = new VolSettings(volume, audioInfo.mute, audioInfo.deviceName);
-                Point location = locate();
-                if (style != Style.Classic) pictureBox.Image = actualVolImage;
-                else animate(actualSet);
-            });
-        }
         public void animate()
         {
             if (this == null) return;
@@ -138,7 +127,18 @@ namespace CyanSystemManager
                 {
                     actualVolImage = new Bitmap(pictureBox.Width, pictureBox.Height);
                     Graphics g = Graphics.FromImage(actualVolImage);
-                    if (style == Style.GiuloppisStyle) VolFormGiulietto.Draw(g, actualSet);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        try
+                        {
+                            if (style == Style.GiuloppisStyle) VolFormGiulietto.Draw(g, actualSet);
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            Thread.Sleep(10);
+                        }
+                    }
                     previousSet = actualSet;
                 }
                 Thread.Sleep(5);

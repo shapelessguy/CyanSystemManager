@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using static CyanSystemManager.Program;
 using static CyanSystemManager.Utility;
@@ -45,7 +47,29 @@ namespace CyanSystemManager
             this.name = name;
             this.win = win;
             this.proc_name = proc_name.Split(new string[] {"."}, System.StringSplitOptions.None)[0];
-            this.exe = exe;
+            string valid_exe = "";
+            foreach (var value in exe.Split(new string[] { "\\" }, System.StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (value.Substring(0, 1) != "@")
+                {
+                    if (valid_exe.Length == 0) valid_exe = value;
+                    else valid_exe += "\\" + value;
+                }
+                else
+                {
+                    string[] keys = value.Substring(1).Split(new string[] { "&&" }, System.StringSplitOptions.None);
+                    foreach (var dir in Directory.GetDirectories(valid_exe).Reverse())
+                    {
+                        bool continue_ = false;
+                        foreach (var key in keys) { if (!dir.Contains(key)) { continue_ = true; break; } }
+                        if (continue_) continue;
+                        valid_exe = dir;
+                        break;
+                    }
+                }
+            }
+            Log(valid_exe);
+            this.exe = valid_exe;
             this.info = info;
             this.start = start;
             this.admin = admin;
@@ -81,6 +105,7 @@ namespace CyanSystemManager
         static public string AUDIO_OFF = "AUDIO_OFF";
         static public string LIGHT_ON = "LIGHT_ON";
         static public string LIGHT_OFF = "LIGHT_OFF";
+        static public string SHOW_MENU = "SHOW_MENU";
     }
     public class ShortcutCom
     {
@@ -117,6 +142,7 @@ namespace CyanSystemManager
     {
         public static void startActivity(string name, object arg, KeyMode mode)
         {
+            if (Service_Shortcut.status != State.ON) return;
             string argument = (string)arg;
             if (forceTermination) return;
             // after a key is pressed and captured by IntPtr, it has to be specified the function associated to the first
@@ -149,6 +175,7 @@ namespace CyanSystemManager
             else if (name == "order") Service_Monitor.function(MonitorCom.SORT);
 
             else if (name == "timer") Service_Timer.TimerPressed();
+            else if (name == "arduino_menu") Service_Arduino.showMenu();
             else if (name == "notebook") Service_Notebook.OpenOrClose();
         }
     }

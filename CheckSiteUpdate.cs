@@ -53,7 +53,7 @@ namespace CyanSystemManager
         {
             if (CheckOp())
             {
-                if (verbose) Console.WriteLine("CheckSite -> Alarm activated");
+                if (verbose) Program.Log("CheckSite -> Alarm activated");
                 alarmBool = true;
             }
         }
@@ -69,20 +69,20 @@ namespace CyanSystemManager
                 {
                     htmlCode = client.DownloadString(site);
                 }
-                catch (Exception) { Console.WriteLine("Check site failed.");  return false; }
+                catch (Exception) { Program.Log("Check site failed.");  return false; }
 
                 if (File.Exists(localFileSite))
                 {
                     if(compareStrings(htmlCode, File.ReadAllText(localFileSite)))
                     {
-                        if (verbose) Console.WriteLine("CheckSite -> Same file");
+                        if (verbose) Program.Log("CheckSite -> Same file");
                         Program.home.Invoke((MethodInvoker)delegate { ShowInTaskbar = false; });
                         return false;
                     }
                 }
                 else
                 {
-                    if (verbose) Console.WriteLine("CheckSite -> New file");
+                    if (verbose) Program.Log("CheckSite -> New file");
                     using (StreamWriter sw = new StreamWriter(localFileSite))
                     {
                         sw.Write(htmlCode);
@@ -98,7 +98,7 @@ namespace CyanSystemManager
                         if (!ShowInTaskbar) ShowInTaskbar = true;
                     });
 
-                if (verbose) Console.WriteLine("CheckSite -> Updated file");
+                if (verbose) Program.Log("CheckSite -> Updated file");
                 using (StreamWriter sw = new StreamWriter(localFileSite))
                 {
                     sw.Write(htmlCode);
@@ -123,7 +123,7 @@ namespace CyanSystemManager
             }
 
             if (result != result2) return false;
-            if (result == "-") Console.WriteLine("Warning - Can't find the key block into the HTML file!");
+            if (result == "-") Program.Log("Warning - Can't find the key block into the HTML file!");
             return true;
             
         }

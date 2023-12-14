@@ -22,6 +22,16 @@ namespace CyanSystemManager
         static public string Arduino = "ARDUINO";
         static public string HW_Monitor = "HWMONITOR";
     }
+    public class Command
+    {
+        public string type = "";
+        public object value = null;
+        public Command(string type, object value)
+        {
+            this.type = type;
+            this.value = value;
+        }
+    }
 
     public static class ServiceManager
     {

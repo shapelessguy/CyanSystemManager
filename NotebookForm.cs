@@ -183,7 +183,7 @@ namespace CyanSystemManager
         bool firstLoad = false;
         private void LoadFile()
         {
-            //Console.WriteLine(string.Join(",", new string[]{ "a", "b" }) );
+            //Log(string.Join(",", new string[]{ "a", "b" }) );
             try
             {
                 if (fileName != "") richTextBox1.Enabled = true;
@@ -201,7 +201,7 @@ namespace CyanSystemManager
                 }
                 allowSave = true;
             }
-            catch (Exception e) { canSave = false; MessageBox.Show("EXCEPTION IN LOADING THE FILE"); Console.WriteLine(e.Message); }
+            catch (Exception e) { canSave = false; MessageBox.Show("EXCEPTION IN LOADING THE FILE"); Program.Log(e.Message); }
         }
 
         private void ChangeStyle(FontStyle style)

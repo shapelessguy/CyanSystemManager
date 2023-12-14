@@ -28,7 +28,7 @@ namespace CyanSystemManager
         }
         private void Statistics_Load()
         {
-            Console.WriteLine("Start loading");
+            Program.Log("Start loading");
             if (!File.Exists(pathLogsCSV)) File.CreateText(pathLogsCSV);
             if (File.Exists(pathLogs))
             {
@@ -37,8 +37,8 @@ namespace CyanSystemManager
                     status.Add(Status.LoadStatus(line));
                 }
             }
-            Console.WriteLine("Loaded data from logs.txt");
-            Console.WriteLine("Start writing on logs.csv");
+            Program.Log("Loaded data from logs.txt");
+            Program.Log("Start writing on logs.csv");
             using (StreamWriter sw = new StreamWriter(pathLogsCSV))
             {
                 sw.WriteLine("Date,modem,wan,persistance");
@@ -52,9 +52,9 @@ namespace CyanSystemManager
                     sw.WriteLine(stringa);
                 }
             }
-            Console.WriteLine("Wrote on file");
+            Program.Log("Wrote on file");
 
-            Console.WriteLine("Loading data from logs_gar");
+            Program.Log("Loading data from logs_gar");
             if (File.Exists(pathLogsGar))
             {
                 foreach (string line in File.ReadLines(pathLogsGar))
@@ -69,8 +69,8 @@ namespace CyanSystemManager
                         ));
                 }
             }
-            Console.WriteLine("Loaded data");
-            Console.WriteLine("Start writing on logs_gar.csv");
+            Program.Log("Loaded data");
+            Program.Log("Start writing on logs_gar.csv");
             bool Errors = true;
             while (Errors)
             {
@@ -90,7 +90,7 @@ namespace CyanSystemManager
                 }
                 catch (Exception) { System.Threading.Thread.Sleep(100); }
             }
-            Console.WriteLine("Wrote on file logs_gar.csv");
+            Program.Log("Wrote on file logs_gar.csv");
         }
     }
 }
