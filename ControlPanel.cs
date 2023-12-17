@@ -233,8 +233,8 @@ namespace CyanSystemManager
             }
             assignOptions();
 
-            foreach (Control ctrl in home.panel4.Controls) ctrl.Hide();
-            foreach (Button btn in home.panel2.Controls.OfType<Button>())
+            //foreach (Control ctrl in home.panel4.Controls) ctrl.Hide();
+            foreach (Button btn in home.menu_panel.Controls.OfType<Button>())
             {
                 btn.BackColor = btnBackColor; 
                 btn.MouseClick += buttonClick;
@@ -477,10 +477,10 @@ namespace CyanSystemManager
             string name = button.Name;
             if (name == ctrlPanel) return;
             //Log(name);
-            foreach (Button btn in home.panel2.Controls.OfType<Button>())
+            foreach (Button btn in home.menu_panel.Controls.OfType<Button>())
             {
                 if (btn.Name != name) btn.BackColor = btnBackColor;
-                else { btn.BackColor = btnSelectionColor; ctrlPanel = name; changePanel(); }
+                else if (btn.Name != "to_icon_menu") { btn.BackColor = btnSelectionColor; ctrlPanel = name; changePanel(); }
             }
         }
 

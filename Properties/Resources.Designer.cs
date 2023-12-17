@@ -288,6 +288,26 @@ namespace CyanSystemManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tv_off {
+            get {
+                object obj = ResourceManager.GetObject("tv_off", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tv_on {
+            get {
+                object obj = ResourceManager.GetObject("tv_on", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dim releasePath
         ///releasePath = &quot;RELEASEPATH&quot;
         ///Dim exePath

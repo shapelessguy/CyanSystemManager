@@ -198,7 +198,7 @@ namespace CyanSystemManager
             new BindDef(ST.Shortcuts, "snapshot", Keys.PrintScreen),
             new BindDef(ST.Shortcuts, "mediumUpSizing", Keys.F4, KeyModifier.Control|KeyModifier.Alt),
             new BindDef(ST.Timer, "timer", Keys.F15),
-            new BindDef(ST.Arduino, "arduino_menu", Keys.F16),
+            new BindDef(ST.Shortcuts, "menu", Keys.F16),
 
             new BindDef(ST.Notebook, "notebook", Keys.F14),
             new BindDef(ST.Audio, "AudioPrimary", Keys.F14, KeyModifier.Alt),

@@ -105,10 +105,10 @@ namespace CyanSystemManager
         static public string AUDIO_OFF = "AUDIO_OFF";
         static public string LIGHT_ON = "LIGHT_ON";
         static public string LIGHT_OFF = "LIGHT_OFF";
-        static public string SHOW_MENU = "SHOW_MENU";
     }
     public class ShortcutCom
     {
+        static public string SHOW_MENU = "SHOW_MENU";
         static public string ORDER = "orderWin";
         static public string A = "A";
         static public string X = "X";
@@ -152,6 +152,7 @@ namespace CyanSystemManager
             else if (name == "vol-") Service_Audio.MasterVolume(AudioCom.VOL_DOWN);
             else if (name == "noVol") Service_Audio.MasterVolume(AudioCom.VOL_NULL);
 
+            else if (name == "menu") Service_Shortcut.Show_Menu();
             else if (name == "A") Service_Shortcut.KeyPad(ShortcutCom.A);
             else if (name == "B") Service_Shortcut.KeyPad(ShortcutCom.B, mode);
             else if (name == "X") Service_Shortcut.KeyPad(ShortcutCom.X);
@@ -175,7 +176,6 @@ namespace CyanSystemManager
             else if (name == "order") Service_Monitor.function(MonitorCom.SORT);
 
             else if (name == "timer") Service_Timer.TimerPressed();
-            else if (name == "arduino_menu") Service_Arduino.showMenu();
             else if (name == "notebook") Service_Notebook.OpenOrClose();
         }
     }

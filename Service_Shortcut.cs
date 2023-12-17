@@ -38,6 +38,7 @@ namespace CyanSystemManager
         // //////////////   Functions of ShortcutService
         public static void TakeSnapshot() { addCommand(ShortcutCom.SNAPSHOT); }
         public static void UpSizing() { addCommand(ShortcutCom.UPSIZING); }
+        public static void Show_Menu() { addCommand(ShortcutCom.SHOW_MENU); }
         public static void KeyPad(string command, KeyMode keymode = KeyMode.Normal) { addCommand(command, keymode); }
 
         // //////////////
@@ -59,7 +60,8 @@ namespace CyanSystemManager
                     Command command = commands[0];
                     commands.RemoveAt(0);
                     int mode = 0;
-                    if (command.type == ShortcutCom.A) A(mode);
+                    if (command.type == ShortcutCom.SHOW_MENU) ShowMenu();
+                    else if (command.type == ShortcutCom.A) A(mode);
                     else if (command.type == ShortcutCom.X) X(mode);
                     else if (command.type == ShortcutCom.Y) Y(mode);
                     else if (command.type == ShortcutCom.B) B(mode, (KeyMode)command.value);
@@ -74,6 +76,26 @@ namespace CyanSystemManager
                 catch (Exception e) { Program.Log("Exception in shortcutRun\n" + e); }
             }
 
+        }
+
+        static private void ShowMenu()
+        {
+            if (Program.home.Visible) Program.home.Invoke((MethodInvoker)delegate { Program.home.Hide(); });
+            else Program.home.Invoke((MethodInvoker)delegate {
+                try
+                {
+                    Screen s = Screen.FromPoint(Cursor.Position);
+                    Size size = Program.home.Size;
+                    Point location = new Point(s.Bounds.X + (int)((s.Bounds.Width - size.Width) / 2), s.Bounds.Y + (int)((s.Bounds.Height - size.Height) / 2));
+                    Program.home.Show();
+                    Program.home.WindowState = FormWindowState.Normal;
+                    Program.home.Visible = true;
+                    Program.home.Location = location;
+                    Program.home.Size = size;
+                    SetForegroundWindow(Program.home.Handle);
+                }
+                catch (Exception ex) { Program.Log(ex.ToString()); }
+            });
         }
 
         static int updatedThreadID = 0;

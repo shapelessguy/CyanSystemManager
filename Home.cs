@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Media;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Vanara.PInvoke;
@@ -36,6 +41,11 @@ namespace CyanSystemManager
             Load += LoadHome;
             panel1.MouseMove += form_MouseMove;
             foreach (Control ctrl in panel1.Controls) if(ctrl.Name != "escBtn") ctrl.MouseMove += form_MouseMove;
+
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.CustomFormat = "HH:mm"; // Only use hours and minutes
+            dateTimePicker1.ShowUpDown = true;
+            dateTimePicker1.Value = new DateTime(2012, 05, 28, 22, 0, 0);
         }
         private void LoadHome(object o, EventArgs e)
         {
@@ -138,7 +148,6 @@ namespace CyanSystemManager
                     WindowState = FormWindowState.Normal; 
                     Visible = true;
                     SetForegroundWindow(this.Handle);
-                    buttonPressed.Focus();
                 } };
         }
         void TrayMenuContext()
@@ -257,15 +266,19 @@ namespace CyanSystemManager
         }
         private void writeKeyText(Keys key, bool Ctrl, bool Shift, bool Alt)
         {
-            string modifiers = "";
-            if (Shift && key != Keys.ShiftKey) modifiers += "Shift +";
-            if (Ctrl && key != Keys.ControlKey) modifiers += "Ctrl +";
-            if (Alt && key != Keys.Menu) modifiers += "Alt +";
-            modifiers += " ";
-            string key_str = key.ToString();
-            if (key_str.EndsWith("Key")) key_str = key_str.Substring(0, key_str.Length - 3);
-            if (key_str == "Menu") key_str = "Alt";
-            buttonPressed.Text = modifiers + key_str;
+            if (!buttonPressed.Focused) buttonPressed.Text = "";
+            else
+            {
+                string modifiers = "";
+                if (Shift && key != Keys.ShiftKey) modifiers += "Shift +";
+                if (Ctrl && key != Keys.ControlKey) modifiers += "Ctrl +";
+                if (Alt && key != Keys.Menu) modifiers += "Alt +";
+                modifiers += " ";
+                string key_str = key.ToString();
+                if (key_str.EndsWith("Key")) key_str = key_str.Substring(0, key_str.Length - 3);
+                if (key_str == "Menu") key_str = "Alt";
+                buttonPressed.Text = modifiers + key_str;
+            }
         }
         private void button1_Click(object sender, EventArgs e) {Close();}
 
@@ -283,6 +296,88 @@ namespace CyanSystemManager
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
+        }
+
+        private void menu_btn_Click(object sender, EventArgs e)
+        {
+            menu_panel.BringToFront();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            icon_panel.BringToFront();
+        }
+        private static readonly HttpClient client = new HttpClient();
+        private async Task<bool> sendHTTP(string topic, string arg)
+        {
+            try
+            {
+                var values = new Dictionary<string, string>
+                  {
+                      { topic, arg },
+                  };
+
+                var content = new FormUrlEncodedContent(values);
+
+                var response = await client.PostAsync("http://" + FirebaseClass.serverIp + ":10001/" + topic, content);
+
+                using (var sr = new StreamReader(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding("iso-8859-1")))
+                {
+                    var responseString = sr.ReadToEnd();
+                    Program.Log(responseString);
+                }
+            }
+            catch (Exception ex) { Program.Log(ex.Message); return false; }
+            return true;
+        }
+
+        private void emitSound()
+        {
+            using (var soundPlayer = new SoundPlayer(@"c:\Windows\Media\Windows Default.wav"))
+            {
+                soundPlayer.Play();
+            }
+        }
+
+        private async void plant_leds_on_btn_Click(object sender, EventArgs e)
+        {
+            emitSound();
+            await sendHTTP("lights", "on");
+        }
+
+        private async void plant_leds_off_btn_Click(object sender, EventArgs e)
+        {
+            emitSound();
+            await sendHTTP("lights", "off");
+        }
+
+        private async void plant_leds_auto_btn_Click(object sender, EventArgs e)
+        {
+            emitSound();
+            await sendHTTP("lights", "auto");
+        }
+
+        private async void plant_leds_autoset_btn_Click(object sender, EventArgs e)
+        {
+            string hour = dateTimePicker1.Value.Hour.ToString();
+            hour = hour.Length == 1 ? "0" + hour : hour;
+            string minute = dateTimePicker1.Value.Minute.ToString();
+            minute = minute.Length == 1 ? "0" + minute : minute;
+            string arg = "auto " + hour + ":" + minute;
+            emitSound();
+            await sendHTTP("lights", arg);
+        }
+
+        private async void tv_on_btn_Click(object sender, EventArgs e)
+        {
+            emitSound();
+            await sendHTTP("tv", "on");
+        }
+
+        private async void tv_off_btn_Click(object sender, EventArgs e)
+        {
+            emitSound();
+            await sendHTTP("tv", "off");
         }
     }
 }

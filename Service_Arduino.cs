@@ -25,7 +25,6 @@ namespace CyanSystemManager
         static public SerialPort sp;
         static public bool connected;
         static public bool clear;
-        static private ArduinoMenu menu;
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void turnAudio(bool on, bool keep=false) 
@@ -38,7 +37,6 @@ namespace CyanSystemManager
             else addCommand(ArduinoCom.AUDIO_OFF);
         }
         static public void turnLight(bool on) { if (on) addCommand(ArduinoCom.LIGHT_ON); else addCommand(ArduinoCom.LIGHT_OFF); }
-        static public void showMenu() { addCommand(ArduinoCom.SHOW_MENU); }
 
         // System is based on the interchange of messages
         static List<Command> commands = new List<Command>();
@@ -78,7 +76,6 @@ namespace CyanSystemManager
             else if (command.type == ArduinoCom.AUDIO_OFF) sp.WriteLine("AL");
             else if (command.type == ArduinoCom.LIGHT_ON) sp.WriteLine("LL");
             else if (command.type == ArduinoCom.LIGHT_OFF) sp.WriteLine("LH");
-            else if (command.type == ArduinoCom.SHOW_MENU) ArdShowMenu();
         }
         // /////////////
         static public void startService()
@@ -95,7 +92,6 @@ namespace CyanSystemManager
         }
         static public void beforeStart()
         {
-            menu = new ArduinoMenu();
         }
         static public void stopService(bool dispose)
         {
@@ -109,26 +105,6 @@ namespace CyanSystemManager
         [DllImport("user32.dll")]
         internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
         // Inside functions
-        static private void ArdShowMenu()
-        {
-            if (menu.Visible) Program.home.Invoke((MethodInvoker)delegate { menu.Hide(); });
-            else Program.home.Invoke((MethodInvoker)delegate {
-                try
-                {
-                    Screen s = Screen.FromPoint(Cursor.Position);
-                    // float fill = 0.8f;
-                    // Point location = new Point(s.Bounds.X + (int)(s.Bounds.Width * (1 - fill) / 2), s.Bounds.Y + (int)(s.Bounds.Height * (1 - fill) / 2));
-                    // Size size = new Size((int)(s.Bounds.Width * fill), (int)(s.Bounds.Height * fill));
-                    Size size = new Size(1297, 740);
-                    Point location = new Point(s.Bounds.X + (int)((s.Bounds.Width - size.Width) / 2), s.Bounds.Y + (int)((s.Bounds.Height - size.Height) / 2));
-                    menu.Show();
-                    menu.Location = location;
-                    menu.Size = size;
-                    SetForegroundWindow(menu.Handle);
-                }
-                catch (Exception ex) { Log(ex.ToString()); }
-            });
-        }
         static private bool getAudioState()
         {
             Thread.Sleep(200);

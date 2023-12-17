@@ -1,4 +1,5 @@
 ﻿using NAudio.Utils;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -67,7 +68,7 @@ namespace CyanSystemManager
                 if (andStart) allServices[i].startServiceAsWish();
             }
             System.Windows.Forms.Timer initialize = new System.Windows.Forms.Timer() { Enabled = true, Interval = 1000 };
-            initialize.Tick += (o, e) => { canSave = true; initialize.Dispose(); canSave = false; };
+            initialize.Tick += (o, e) => { canSave = true; initialize.Dispose(); };
         }
         static public void saveActiveServices()
         {
