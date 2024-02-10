@@ -46,6 +46,7 @@ namespace CyanSystemManager
             dateTimePicker1.CustomFormat = "HH:mm"; // Only use hours and minutes
             dateTimePicker1.ShowUpDown = true;
             dateTimePicker1.Value = new DateTime(2012, 05, 28, 22, 0, 0);
+            Size = new Size(1276, 764);
         }
         private void LoadHome(object o, EventArgs e)
         {
@@ -72,37 +73,6 @@ namespace CyanSystemManager
 
         private void RunTime()
         {
-            //DateTime date = DateTime.UtcNow;
-            //double difference = 9999999;
-            //string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);
-            //string directory = Path.Combine(path, "StartUp_Time");
-            //string file = Path.Combine(directory, "time.txt");
-            //Thread.Sleep(400);
-            //try
-            // {
-            //    Environment.SetEnvironmentVariable("Test1", "Value1");
-            //   string start_time = Environment.GetEnvironmentVariable("StartTime");
-            //start_time = "03/21/2022-16:01:28,08";
-            //   DateTime start_datetime = new DateTime(
-            //       Convert.ToUInt16(start_time.Substring(6, 4)),
-            //       Convert.ToUInt16(start_time.Substring(0, 2)),
-            //       Convert.ToUInt16(start_time.Substring(3, 2)),
-            //       Convert.ToUInt16(start_time.Substring(11, 2)),
-            //       Convert.ToUInt16(start_time.Substring(14, 2)),
-            //       Convert.ToUInt16(start_time.Substring(17, 2))).ToUniversalTime();
-            //string text = File.ReadAllText(file);
-            //try { date = DateTime.FromFileTimeUtc(Convert.ToInt64(text)); } catch (Exception) { }
-            //   difference = DateTime.Now.ToUniversalTime().Subtract(start_datetime).TotalSeconds;
-            //Log("Date: " + date.ToLocalTime());
-            //   Log("Difference: " + difference);
-            //}
-            //catch (Exception) { }
-
-
-            //bool is_Startup = difference < 120;
-            //MessageBox.Show(date + "    " + difference + "    " + is_Startup);
-
-            // MessageBox.Show(startup + "   " + Properties.Settings.Default.startOnReboot);
             if(startup && Properties.Settings.Default.startOnReboot) Service_Start.SystemStart(true);
         }
 
@@ -144,7 +114,7 @@ namespace CyanSystemManager
             };
             TrayMenuContext();
             notifyIcon.MouseClick += (o, e) => { if (e.Button == MouseButtons.Left)
-                { 
+                {
                     WindowState = FormWindowState.Normal; 
                     Visible = true;
                     SetForegroundWindow(this.Handle);
@@ -153,36 +123,22 @@ namespace CyanSystemManager
         void TrayMenuContext()
         {
             notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-
             notifyIcon.ContextMenuStrip.Items.Add("Sort Windows", Properties.Resources.managerPNG, Sort_Click);
-
-            notifyIcon.ContextMenuStrip.Items.Add("Audio (Arduino)", Properties.Resources.managerPNG);
             notifyIcon.ContextMenuStrip.Items.Add("Start now!", Properties.Resources.managerPNG, Now_Click);
             notifyIcon.ContextMenuStrip.Items.Add("Net Stats", Properties.Resources.managerPNG, Statistics_Click);
             notifyIcon.ContextMenuStrip.Items.Add("Exit", Properties.Resources.managerPNG, MenuExit_Click);
 
 
-            ToolStripMenuItem audio = null, start = null, network = null;
+            ToolStripMenuItem start = null, network = null;
             foreach (ToolStripMenuItem v in Home.notifyIcon.ContextMenuStrip.Items)
             {
-                if (v.ToString() == "Audio (Arduino)") audio = v;
-                else if (v.ToString() == "Start now!") start = v;
+                if (v.ToString() == "Start now!") start = v;
                 else if (v.ToString() == "Net Stats") network = v;
             }
-            audio.DropDownItems.Add("ON (keep)", Properties.Resources.managerPNG, turnAudioOnKeep_Click);
-            audio.DropDownItems.Add("ON", Properties.Resources.managerPNG, turnAudioOn_Click);
-            audio.DropDownItems.Add("OFF", Properties.Resources.managerPNG, turnAudioOff_Click);
-
-            audio.Enabled = false;
             start.Enabled = false;
             network.Enabled = false;
         }
         private void Sort_Click(object sender, EventArgs e) { Service_Monitor.sort(); }
-        private void turnLightOn_Click(object sender, EventArgs e) { Service_Arduino.turnLight(true); }
-        private void turnLightOff_Click(object sender, EventArgs e) { Service_Arduino.turnLight(false); }
-        private void turnAudioOnKeep_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(true, true); }
-        private void turnAudioOn_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(true); }
-        private void turnAudioOff_Click(object sender, EventArgs e) { Service_Arduino.turnAudio(false); }
         private void Now_Click(object sender, EventArgs e) { Service_Start.SystemStart(false); }
         private void YeReboot_Click(object sender, EventArgs e) {Reboot_Click(true); }
         private void NoReboot_Click(object sender, EventArgs e) {Reboot_Click(false);}
@@ -319,6 +275,7 @@ namespace CyanSystemManager
 
                 var content = new FormUrlEncodedContent(values);
 
+                Console.WriteLine("http://" + FirebaseClass.serverIp + ":10001/" + topic);
                 var response = await client.PostAsync("http://" + FirebaseClass.serverIp + ":10001/" + topic, content);
 
                 using (var sr = new StreamReader(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding("iso-8859-1")))

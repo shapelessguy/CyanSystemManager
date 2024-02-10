@@ -128,25 +128,35 @@ namespace CyanSystemManager
         // //////////////
         static Timer audioThread;
         static IEnumerable<CoreAudioDevice> all_devices;
-        public static void startService()
+        static DateTime prev;
+        static List<Command> commands;
+        static int i;
+        static int i_to;
+        static int n_audio_devices;
+        static int n_video_devices;
+
+        public static void init()
         {
+            if (commands != null) commands.Clear();
+            if (volForms != null) foreach (var form in volForms) form.Dispose();
             suppressAllSounds = false;
             changingDevice = false;
             changedDevice = false;
             volForms = new List<VolFormHelper>();
+            commands = new List<Command>();
             audioInfo = new AudioInfo();
+            i = 0; i_to = (int)(1000 / msCycle);
+        }
 
+        public static void startService()
+        {
+            init();
+            n_audio_devices = -1;
+            n_video_devices = -1;
             status = State.NEUTRAL;
             Log("Starting audioService..");
             Home.registerHotkeys(ST.Audio);
-            if (volForms.Count == 0)
-            {
-                createVolForms();
-                activateAllForms();
-                getAudioInfo();
-
-                audioThread = new Timer(audioRun, null, msCycle, Timeout.Infinite);
-            }
+            if (volForms.Count == 0) audioThread = new Timer(audioRun, null, msCycle, Timeout.Infinite);
             status = State.ON;
         }
         public static void stopService(bool dispose) {
@@ -155,15 +165,18 @@ namespace CyanSystemManager
             changingDevice = false;
             changedDevice = false;
             Home.unregisterHotkeys(ST.Audio);
+            foreach (var form in volForms) form.Dispose();
             commands.Clear();
             clear = true;
         }
-        static void createVolForms() { for (int i = 0; i < 10; i++) volForms.Add(new VolFormHelper(i)); }
+        static void createVolForms() {
+            int nScreens = Screen.AllScreens.Count();
+            for (int i = 0; i < nScreens; i++) volForms.Add(new VolFormHelper(i)); 
+        }
         public static void activateAllForms()
         {
             if (status == State.OFF) return;
-            int nScreens = Screen.AllScreens.Count();
-            for (int i = 0; i < nScreens; i++) { volForms[i].initializeForm(i); }
+            for (int i = 0; i < volForms.Count(); i++) { volForms[i].initializeForm(i); }
         }
 
         public static bool tempAudioRunning = false;
@@ -535,21 +548,37 @@ namespace CyanSystemManager
             return true;
         }
 
-        static DateTime prev;
-        static List<Command> commands = new List<Command>();
-        static int i = 0; static int i_to = (int)(1000 / msCycle);
-        static int n_devices = 0;
+        private static void resetVolForms()
+        {
+            home.Invoke((MethodInvoker)delegate {
+                init();
+                createVolForms();
+                activateAllForms();
+                getAudioInfo();
+            });
+        }
         public static void audioRun(Object ob)
         {
             if (Program.forceTermination) return;
             if (status == State.OFF) { Thread.Sleep(50); audioThread.Change(msCycle, Timeout.Infinite); return; }
             try
             {
-                if (i == i_to)
+                if (i == i_to || n_video_devices == -1)
                 {
                     i = 0;
-                    int n = (new MMDeviceEnumerator()).EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).Count;
-                    if (n != n_devices) { n_devices = n; audioDeviceDiscovery(); }
+                    int n_audio_devs = (new MMDeviceEnumerator()).EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).Count;
+                    int n_video_devs = Screen.AllScreens.Count();
+
+                    if (n_audio_devs != n_audio_devices)
+                    {
+                        audioDeviceDiscovery();
+                        n_audio_devices = n_audio_devs;
+                    }
+                    if (n_video_devs != n_video_devices)
+                    {
+                        n_video_devices = n_video_devs;
+                        resetVolForms();
+                    }
                 }
                 else { i += 1; }
                 if (commands.Count == 0) { audioThread.Change(msCycle, Timeout.Infinite); return; }

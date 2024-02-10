@@ -36,6 +36,9 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.icon_panel = new System.Windows.Forms.FlowLayoutPanel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.plant_leds_auto_btn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -44,11 +47,14 @@
             this.plant_leds_on_btn = new System.Windows.Forms.Button();
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
             this.tv_off_btn = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.tv_on_btn = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
             this.menu_btn = new System.Windows.Forms.Button();
             this.menu_panel = new System.Windows.Forms.Panel();
             this.to_icon_menu = new System.Windows.Forms.Button();
@@ -152,6 +158,9 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.label6);
+            this.panel5.Controls.Add(this.label5);
+            this.panel5.Controls.Add(this.label4);
             this.panel5.Controls.Add(this.plant_leds_auto_btn);
             this.panel5.Controls.Add(this.label3);
             this.panel5.Controls.Add(this.dateTimePicker1);
@@ -164,6 +173,48 @@
             this.panel5.Size = new System.Drawing.Size(416, 347);
             this.panel5.TabIndex = 30;
             // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.SystemColors.Control;
+            this.label6.Location = new System.Drawing.Point(69, 195);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(77, 24);
+            this.label6.TabIndex = 32;
+            this.label6.Text = "UV auto";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.SystemColors.Control;
+            this.label5.Location = new System.Drawing.Point(287, 21);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(60, 24);
+            this.label5.TabIndex = 31;
+            this.label5.Text = "UV off";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.SystemColors.Control;
+            this.label4.Location = new System.Drawing.Point(74, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 24);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "UV on";
+            // 
             // plant_leds_auto_btn
             // 
             this.plant_leds_auto_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -173,10 +224,10 @@
             this.plant_leds_auto_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.auto;
             this.plant_leds_auto_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.plant_leds_auto_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.plant_leds_auto_btn.Location = new System.Drawing.Point(24, 192);
+            this.plant_leds_auto_btn.Location = new System.Drawing.Point(38, 219);
             this.plant_leds_auto_btn.Margin = new System.Windows.Forms.Padding(0);
             this.plant_leds_auto_btn.Name = "plant_leds_auto_btn";
-            this.plant_leds_auto_btn.Size = new System.Drawing.Size(163, 140);
+            this.plant_leds_auto_btn.Size = new System.Drawing.Size(129, 113);
             this.plant_leds_auto_btn.TabIndex = 29;
             this.plant_leds_auto_btn.UseVisualStyleBackColor = false;
             this.plant_leds_auto_btn.Click += new System.EventHandler(this.plant_leds_auto_btn_Click);
@@ -189,7 +240,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.Control;
-            this.label3.Location = new System.Drawing.Point(283, 210);
+            this.label3.Location = new System.Drawing.Point(269, 219);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 24);
             this.label3.TabIndex = 28;
@@ -203,7 +254,7 @@
             this.dateTimePicker1.CalendarFont = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker1.Location = new System.Drawing.Point(287, 237);
+            this.dateTimePicker1.Location = new System.Drawing.Point(273, 246);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(85, 31);
             this.dateTimePicker1.TabIndex = 27;
@@ -218,10 +269,10 @@
             this.plant_leds_off_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.neon_off;
             this.plant_leds_off_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.plant_leds_off_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.plant_leds_off_btn.Location = new System.Drawing.Point(237, 18);
+            this.plant_leds_off_btn.Location = new System.Drawing.Point(251, 45);
             this.plant_leds_off_btn.Margin = new System.Windows.Forms.Padding(0);
             this.plant_leds_off_btn.Name = "plant_leds_off_btn";
-            this.plant_leds_off_btn.Size = new System.Drawing.Size(163, 140);
+            this.plant_leds_off_btn.Size = new System.Drawing.Size(129, 113);
             this.plant_leds_off_btn.TabIndex = 25;
             this.plant_leds_off_btn.UseVisualStyleBackColor = false;
             this.plant_leds_off_btn.Click += new System.EventHandler(this.plant_leds_off_btn_Click);
@@ -234,7 +285,7 @@
             this.plant_leds_autoset_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.plant_leds_autoset_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.plant_leds_autoset_btn.ForeColor = System.Drawing.Color.White;
-            this.plant_leds_autoset_btn.Location = new System.Drawing.Point(246, 271);
+            this.plant_leds_autoset_btn.Location = new System.Drawing.Point(238, 280);
             this.plant_leds_autoset_btn.Margin = new System.Windows.Forms.Padding(0);
             this.plant_leds_autoset_btn.Name = "plant_leds_autoset_btn";
             this.plant_leds_autoset_btn.Size = new System.Drawing.Size(148, 26);
@@ -252,10 +303,10 @@
             this.plant_leds_on_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.neon_on;
             this.plant_leds_on_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.plant_leds_on_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.plant_leds_on_btn.Location = new System.Drawing.Point(24, 18);
+            this.plant_leds_on_btn.Location = new System.Drawing.Point(38, 45);
             this.plant_leds_on_btn.Margin = new System.Windows.Forms.Padding(0);
             this.plant_leds_on_btn.Name = "plant_leds_on_btn";
-            this.plant_leds_on_btn.Size = new System.Drawing.Size(163, 140);
+            this.plant_leds_on_btn.Size = new System.Drawing.Size(129, 113);
             this.plant_leds_on_btn.TabIndex = 24;
             this.plant_leds_on_btn.UseVisualStyleBackColor = false;
             this.plant_leds_on_btn.Click += new System.EventHandler(this.plant_leds_on_btn_Click);
@@ -270,13 +321,29 @@
             // 
             // panel7
             // 
+            this.panel7.Controls.Add(this.label8);
             this.panel7.Controls.Add(this.tv_off_btn);
+            this.panel7.Controls.Add(this.label7);
             this.panel7.Controls.Add(this.tv_on_btn);
             this.panel7.Location = new System.Drawing.Point(837, 1);
             this.panel7.Margin = new System.Windows.Forms.Padding(1);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(416, 347);
             this.panel7.TabIndex = 32;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.SystemColors.Control;
+            this.label8.Location = new System.Drawing.Point(179, 180);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(59, 24);
+            this.label8.TabIndex = 34;
+            this.label8.Text = "TV off";
             // 
             // tv_off_btn
             // 
@@ -287,13 +354,27 @@
             this.tv_off_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tv_off_btn.BackgroundImage")));
             this.tv_off_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.tv_off_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.tv_off_btn.Location = new System.Drawing.Point(79, 186);
+            this.tv_off_btn.Location = new System.Drawing.Point(84, 204);
             this.tv_off_btn.Margin = new System.Windows.Forms.Padding(0);
             this.tv_off_btn.Name = "tv_off_btn";
-            this.tv_off_btn.Size = new System.Drawing.Size(281, 146);
+            this.tv_off_btn.Size = new System.Drawing.Size(248, 123);
             this.tv_off_btn.TabIndex = 26;
             this.tv_off_btn.UseVisualStyleBackColor = false;
             this.tv_off_btn.Click += new System.EventHandler(this.tv_off_btn_Click);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.SystemColors.Control;
+            this.label7.Location = new System.Drawing.Point(176, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(62, 24);
+            this.label7.TabIndex = 33;
+            this.label7.Text = "TV on";
             // 
             // tv_on_btn
             // 
@@ -304,10 +385,10 @@
             this.tv_on_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tv_on_btn.BackgroundImage")));
             this.tv_on_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.tv_on_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.tv_on_btn.Location = new System.Drawing.Point(79, 12);
+            this.tv_on_btn.Location = new System.Drawing.Point(84, 40);
             this.tv_on_btn.Margin = new System.Windows.Forms.Padding(0);
             this.tv_on_btn.Name = "tv_on_btn";
-            this.tv_on_btn.Size = new System.Drawing.Size(281, 146);
+            this.tv_on_btn.Size = new System.Drawing.Size(248, 123);
             this.tv_on_btn.TabIndex = 25;
             this.tv_on_btn.UseVisualStyleBackColor = false;
             this.tv_on_btn.Click += new System.EventHandler(this.tv_on_btn_Click);
@@ -330,6 +411,7 @@
             // 
             // panel10
             // 
+            this.panel10.Controls.Add(this.label9);
             this.panel10.Controls.Add(this.menu_btn);
             this.panel10.Location = new System.Drawing.Point(837, 350);
             this.panel10.Margin = new System.Windows.Forms.Padding(1);
@@ -337,19 +419,33 @@
             this.panel10.Size = new System.Drawing.Size(416, 347);
             this.panel10.TabIndex = 33;
             // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.SystemColors.Control;
+            this.label9.Location = new System.Drawing.Point(169, 85);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(95, 25);
+            this.label9.TabIndex = 35;
+            this.label9.Text = "Services";
+            // 
             // menu_btn
             // 
             this.menu_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.menu_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.menu_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("menu_btn.BackgroundImage")));
+            this.menu_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.setting;
             this.menu_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.menu_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.menu_btn.Location = new System.Drawing.Point(68, 100);
+            this.menu_btn.Location = new System.Drawing.Point(108, 113);
             this.menu_btn.Margin = new System.Windows.Forms.Padding(0);
             this.menu_btn.Name = "menu_btn";
-            this.menu_btn.Size = new System.Drawing.Size(281, 146);
+            this.menu_btn.Size = new System.Drawing.Size(208, 169);
             this.menu_btn.TabIndex = 26;
             this.menu_btn.UseVisualStyleBackColor = false;
             this.menu_btn.Click += new System.EventHandler(this.menu_btn_Click);
@@ -493,7 +589,9 @@
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
             this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
             this.menu_panel.ResumeLayout(false);
             this.menu_panel.PerformLayout();
             this.panel3.ResumeLayout(false);
@@ -533,6 +631,12 @@
         private System.Windows.Forms.Button menu_btn;
         public System.Windows.Forms.Panel menu_panel;
         private System.Windows.Forms.Button to_icon_menu;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label9;
     }
 }
 

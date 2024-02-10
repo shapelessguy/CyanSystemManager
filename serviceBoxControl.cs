@@ -58,23 +58,20 @@ namespace CyanSystemManager
                 if(actualState != previousState)
                 {
                     previousState = actualState;
-                    ToolStripMenuItem audio = null, start = null, network = null;
+                    ToolStripMenuItem start = null, network = null;
                     foreach (ToolStripMenuItem v in Home.notifyIcon.ContextMenuStrip.Items)
                     {
-                        if (v.ToString() == "Audio (Arduino)") audio = v;
-                        else if (v.ToString() == "Start now!") start = v;
+                        if (v.ToString() == "Start now!") start = v;
                         else if (v.ToString() == "Net Stats") network = v;
                     }
 
                     if (actualState == State.ON) { 
                         check.BackgroundImage = Properties.Resources.checkTrue;
-                        if (runService.friendlyName == "Arduino Service") audio.Enabled = true;
                         if (runService.friendlyName == "Start Service") start.Enabled = true;
                         if (runService.friendlyName == "Network Service") network.Enabled = true;
                     }
                     else if (actualState == State.OFF) { 
                         check.BackgroundImage = Properties.Resources.checkFalse;
-                        if (runService.friendlyName == "Arduino Service") audio.Enabled = false;
                         if (runService.friendlyName == "Start Service") start.Enabled = false;
                         if (runService.friendlyName == "Network Service") network.Enabled = false;
                     }

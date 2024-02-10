@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Tools;
 using static CyanSystemManager.Utility;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CyanSystemManager
 {
@@ -28,6 +29,7 @@ namespace CyanSystemManager
 
         public VolFormHelper(int nScreen)
         {
+            //Console.WriteLine("nre volForm");
             messages = new List<VolSettings>();
             this.nScreen = nScreen;
             if (timerGeneralUpdate == null)
@@ -35,6 +37,7 @@ namespace CyanSystemManager
         }
         public void initializeForm(int screenId)
         {
+            //Console.WriteLine("initializeForm  " + screenId);
             dispose = false;
             this.screenId = screenId;
             destroyed = false;

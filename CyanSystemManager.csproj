@@ -497,6 +497,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\setting.png" />
     <None Include="Resources\tv_on.png" />
     <None Include="Resources\tv_off.png" />
     <None Include="Resources\10473474.png" />
