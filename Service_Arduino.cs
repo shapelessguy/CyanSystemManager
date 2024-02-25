@@ -15,9 +15,100 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Interop;
+using Newtonsoft.Json.Linq;
 
 namespace CyanSystemManager
 {
+    class Session
+    {
+
+        public const int KEYEVENTF_EXTENTEDKEY = 1;
+        public const int KEYEVENTF_KEYUP = 0;
+        public const int VK_MEDIA_NEXT_TRACK = 0xB0;
+        public const int VK_MEDIA_PLAY_PAUSE = 0xB3;
+        public const int VK_MEDIA_PREV_TRACK = 0xB1;
+
+        [DllImport("user32.dll")]
+        public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, IntPtr extraInfo);
+
+
+        string session_name = "DEFAULT";
+        int auto_minutes = 0;
+        public Session() { }
+        public void changeSession(string session_name)
+        {
+            this.session_name = session_name;
+            Service_Display.ShowMsg(new MsgSettings("Session: " + session_name));
+            auto_minutes = 0;
+        }
+        public void on()
+        {
+            if (session_name == "LIGHTS UV")
+            {
+                home.plant_leds_on_btn_Click(null, null);
+            }
+            else if (session_name == "TV")
+            {
+                home.tv_on_btn_Click(null, null);
+            }
+        }
+        public void off()
+        {
+            if (session_name == "LIGHTS UV")
+            {
+                home.plant_leds_off_btn_Click(null, null);
+            }
+            else if (session_name == "TV")
+            {
+                home.tv_off_btn_Click(null, null);
+            }
+        }
+        public void up()
+        {
+            if (session_name == "DEFAULT")
+            {
+                Service_Audio.MasterVolume(AudioCom.VOL_UP);
+                Service_Audio.MasterVolume(AudioCom.VOL_UP);
+                Service_Audio.MasterVolume(AudioCom.VOL_UP);
+            }
+            else if (session_name == "LIGHTS UV")
+            {
+                auto_minutes += 30;
+                Service_Display.ShowMsg(new MsgSettings("AUTO: " + auto_minutes.ToString() + " min"));
+            }
+        }
+        public void down()
+        {
+            if (session_name == "DEFAULT")
+            {
+                Service_Audio.MasterVolume(AudioCom.VOL_DOWN);
+                Service_Audio.MasterVolume(AudioCom.VOL_DOWN);
+                Service_Audio.MasterVolume(AudioCom.VOL_DOWN);
+            }
+            else if (session_name == "LIGHTS UV")
+            {
+                auto_minutes -= 30;
+                Service_Display.ShowMsg(new MsgSettings("AUTO: " + auto_minutes.ToString() + " min"));
+            }
+        }
+        public void ok()
+        {
+            if (session_name == "DEFAULT")
+            {
+                keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENTEDKEY, IntPtr.Zero);
+                Service_Display.ShowMsg(new MsgSettings("PLAY / PAUSE"));
+            }
+            else if (session_name == "LIGHTS UV")
+            {
+                string minutes = "NOW";
+                DateTime currentTime = DateTime.Now;
+                DateTime newTime = currentTime.AddMinutes(auto_minutes);
+                home.plant_leds_auto_set(newTime.Hour, newTime.Minute);
+                if (auto_minutes != 0) minutes = "at " + newTime.ToString("HH:mm");
+                Service_Display.ShowMsg(new MsgSettings("AUTO: " + minutes + " CONFIRMED"));
+            }
+        }
+    }
     static public class Service_Arduino
     {
         static public string title = "arduinoService";
@@ -26,6 +117,7 @@ namespace CyanSystemManager
         static public SerialPort sp;
         static public bool connected;
         static public bool clear;
+        static private Session cur_session = new Session();
 
         // Functions of Example_Service --> they should be called from outside the service
 
@@ -90,6 +182,7 @@ namespace CyanSystemManager
 
             beforeStart();
             new Thread(threadRun).Start();
+            new Thread(SessionHandler).Start();
         }
         static public void beforeStart()
         {
@@ -184,7 +277,6 @@ namespace CyanSystemManager
         }
         static public bool OpenPort(int portNum)
         {
-            Console.WriteLine("openport");
             ard_found = false;
             Thread thread = new Thread(new ParameterizedThreadStart(OpenPortThread));
             thread.Start(portNum);
@@ -218,11 +310,24 @@ namespace CyanSystemManager
             else stopService(false);
         }
 
+        private static void SessionHandler()
+        {
+            while (!forceTermination && status != State.OFF)
+            {
+                try
+                {
+
+                    Thread.Sleep(100);
+                }
+                catch (Exception ex) { Log("Exception in " + title); Log(ex.ToString()); Log(ex.Message); }
+            }
+        }
+
         private static void handleValue(string value)
         {
             if (value == "1")
             {
-
+                cur_session.changeSession("LIGHTS UV");
             }
             else if (value == "2")
             {
@@ -230,7 +335,7 @@ namespace CyanSystemManager
             }
             else if (value == "3")
             {
-
+                cur_session.changeSession("TV");
             }
             else if (value == "4")
             {
@@ -258,15 +363,15 @@ namespace CyanSystemManager
             }
             else if (value == "*")
             {
-
+                cur_session.off();
             }
             else if (value == "0")
             {
-
+                cur_session.changeSession("DEFAULT");
             }
             else if (value == "#")
             {
-
+                cur_session.on();
             }
             else if (value == "left")
             {
@@ -278,17 +383,16 @@ namespace CyanSystemManager
             }
             else if (value == "up")
             {
-
+                cur_session.up();
             }
             else if (value == "down")
             {
-
+                cur_session.down();
             }
             else if (value == "ok")
             {
-
+                cur_session.ok();
             }
-            Service_Display.ShowMsg(new MsgSettings(value));
         }
         // //////////
     }

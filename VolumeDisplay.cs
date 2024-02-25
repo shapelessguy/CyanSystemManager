@@ -57,7 +57,6 @@ namespace CyanSystemManager
             this.screen = screen;
             Show();
             Location = screen.Bounds.Location;
-            Console.WriteLine(Location.X + " - " + Location.Y);
             new Thread(handleVisibility).Start();
         }
 
@@ -122,12 +121,13 @@ namespace CyanSystemManager
                     // The sweep angle is proportional to the current volume level (0 to 360 degrees).
                     float sweepAngle = (float)(360 * set.volume);
                     // You can adjust the pen thickness as needed.
-                    Pen volumePen = new Pen(Brushes.Red, 30);
+                    Brush color = set.mute? Brushes.DarkGray : Brushes.Red;
+                    Pen volumePen = new Pen(color, 30);
                     // The arc is drawn just inside the circle's bounds.
                     e.Graphics.DrawArc(volumePen, circleBounds, -90, sweepAngle); // Start from the top (-90 degrees).
 
                     string volumeText = set.deviceName;
-                    string volumeInt = ((int)Math.Round(set.volume * 100)).ToString();
+                    string volumeInt = set.mute ? "MUTE" : ((int)Math.Round(set.volume * 100)).ToString();
 
                     // Define the font and text formatting
                     Font textFont = new Font("Arial", 18, FontStyle.Bold);
@@ -146,7 +146,8 @@ namespace CyanSystemManager
                     e.Graphics.DrawString(volumeText, textFont, Brushes.White, textPosition, stringFormat);
 
                     // Calculate the text position (to the right of the circle)
-                    PointF VolPosition = new PointF(centerX + (int)(diameter / 2) - 20, centerY + diameter / 2); // Adjust as needed
+                    int offset = set.mute ? -40 : -20;
+                    PointF VolPosition = new PointF(centerX + (int)(diameter / 2) + offset, centerY + diameter / 2); // Adjust as needed
                     PointF VolShadowPosition = new PointF(VolPosition.X + 2, VolPosition.Y + 2); // Shadow position, slightly offset
 
                     // Draw the shadow text (black)
@@ -165,7 +166,7 @@ namespace CyanSystemManager
                     stringFormat.LineAlignment = StringAlignment.Center;
 
                     // Calculate the text position (to the right of the circle)
-                    PointF VolPosition = new PointF(30, 50); // Adjust as needed
+                    PointF VolPosition = new PointF(50, 30); // Adjust as needed
                     PointF VolShadowPosition = new PointF(VolPosition.X + 2, VolPosition.Y + 2); // Shadow position, slightly offset
 
                     // Draw the shadow text (black)

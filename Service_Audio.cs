@@ -16,6 +16,7 @@ using NAudio.Wave;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Diagnostics;
 using System.Management;
+using System.Runtime.InteropServices;
 
 namespace CyanSystemManager
 {
@@ -75,6 +76,17 @@ namespace CyanSystemManager
 
     public static class Service_Audio
     {
+
+        public const int KEYEVENTF_EXTENTEDKEY = 1;
+        public const int KEYEVENTF_KEYUP = 0;
+        public const int VK_MEDIA_NEXT_TRACK = 0xB0;
+        public const int VK_MEDIA_PLAY_PAUSE = 0xB3;
+        public const int VK_MEDIA_PREV_TRACK = 0xB1;
+
+        [DllImport("user32.dll")]
+        public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, IntPtr extraInfo);
+
+
         static public State status = State.OFF;
         static public bool clear;
         static public bool suppressAllSounds;
@@ -572,8 +584,7 @@ namespace CyanSystemManager
                 commands.RemoveAt(0);
                 if (command.type == AudioCom.SET_VOL) SetVolume((float)command.value);
                 else if (command.type == AudioCom.SET_DEV) setDefaultDevice((AT)command.value);
-                else if (command.type == AudioCom.VOL_UP || command.type == AudioCom.VOL_DOWN)
-                    Vol(command.type, command.value);
+                else if (command.type == AudioCom.VOL_UP || command.type == AudioCom.VOL_DOWN) Vol(command.type, command.value);
                 else if (command.type == AudioCom.VOL_NULL) noVol();
                 else if (command.type == AudioCom.TEMPAUDIO) playTempAudio(command.value);
             }

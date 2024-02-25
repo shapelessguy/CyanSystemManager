@@ -16,6 +16,7 @@ using System.Windows.Interop;
 using Vanara.PInvoke;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
+using static Vanara.PInvoke.User32;
 using Timer = System.Windows.Forms.Timer;
 
 namespace CyanSystemManager
@@ -304,25 +305,40 @@ namespace CyanSystemManager
             return true;
         }
 
-        private async void plant_leds_on_btn_Click(object sender, EventArgs e)
+        public async void plant_leds_on_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("lights", "on");
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: ON"));
         }
 
-        private async void plant_leds_off_btn_Click(object sender, EventArgs e)
+        public async void plant_leds_off_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("lights", "off");
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: OFF"));
         }
 
-        private async void plant_leds_auto_btn_Click(object sender, EventArgs e)
+        public async void plant_leds_auto_set(int hour_, int minute_)
+        {
+            if (hour_ == 0 && minute_ == 0)
+            {
+                plant_leds_auto_btn_Click(null, null);
+                return;
+            }
+            string hour = hour_.ToString();
+            string minute = minute_.ToString();
+            hour = hour.Length == 1 ? "0" + hour : hour;
+            minute = minute.Length == 1 ? "0" + minute : minute;
+            string arg = "auto " + hour + ":" + minute;
+            await sendHTTP("lights", arg);
+        }
+
+        public async void plant_leds_auto_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("lights", "auto");
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO"));
         }
 
-        private async void plant_leds_autoset_btn_Click(object sender, EventArgs e)
+        public async void plant_leds_autoset_btn_Click(object sender, EventArgs e)
         {
             string hour = dateTimePicker1.Value.Hour.ToString();
             hour = hour.Length == 1 ? "0" + hour : hour;
@@ -333,13 +349,13 @@ namespace CyanSystemManager
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO " + hour + ":" + minute));
         }
 
-        private async void tv_on_btn_Click(object sender, EventArgs e)
+        public async void tv_on_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("tv", "on");
             Service_Display.ShowMsg(new MsgSettings("TV: ON"));
         }
 
-        private async void tv_off_btn_Click(object sender, EventArgs e)
+        public async void tv_off_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("tv", "off");
             Service_Display.ShowMsg(new MsgSettings("TV: OFF"));

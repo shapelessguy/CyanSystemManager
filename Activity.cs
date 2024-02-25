@@ -88,6 +88,7 @@ namespace CyanSystemManager
         static public string VOL_UP = "VOL+";
         static public string VOL_DOWN = "VOL-";
         static public string VOL_NULL = "VOLNULL";
+        static public string PLAY_PAUSE = "PLAYPAUSE";
         static public string SET_DEV = "SetDev";
         static public string SET_VOL = "SetVol";
 
