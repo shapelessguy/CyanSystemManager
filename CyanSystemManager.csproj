@@ -392,6 +392,7 @@
     </Compile>
     <Compile Include="Service_CheckSite.cs" />
     <Compile Include="Service_Arduino.cs" />
+    <Compile Include="Service_Display.cs" />
     <Compile Include="Service_Example.cs" />
     <Compile Include="FirebaseClass.cs" />
     <Compile Include="Home.cs">
@@ -433,14 +434,10 @@
       <DependentUpon>NotebookStyleT.cs</DependentUpon>
     </Compile>
     <Compile Include="Utility.cs" />
-    <Compile Include="VolForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="VolumeDisplay.cs" />
+    <Compile Include="VolumeDisplay.Designer.cs">
+      <DependentUpon>VolumeDisplay.cs</DependentUpon>
     </Compile>
-    <Compile Include="VolForm.Designer.cs">
-      <DependentUpon>VolForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VolFormGiulietto.cs" />
-    <Compile Include="VolFormHelper.cs" />
     <EmbeddedResource Include="Chart.resx">
       <DependentUpon>Chart.cs</DependentUpon>
     </EmbeddedResource>
@@ -481,8 +478,8 @@
     <EmbeddedResource Include="ShowBlockListForm.resx">
       <DependentUpon>ShowBlockListForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VolForm.resx">
-      <DependentUpon>VolForm.cs</DependentUpon>
+    <EmbeddedResource Include="VolumeDisplay.resx">
+      <DependentUpon>VolumeDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="packages.config" />

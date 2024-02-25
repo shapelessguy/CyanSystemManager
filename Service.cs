@@ -12,6 +12,7 @@ namespace CyanSystemManager
     {
         //static public string Example = "EXAMPLE"; // Example_ of service type
         static public string None = "NONE";
+        static public string Display = "DISPLAY";
         static public string Start = "START";
         static public string Audio = "AUDIO";
         static public string Network = "NETWORK";
@@ -47,6 +48,7 @@ namespace CyanSystemManager
             generation += 1;
             allServices = new Service[]{
             //new Service(ServiceType.Example, "Example Service tag"), // Example_ of service
+            new Service(ST.Display, "Display Service"),
             new Service(ST.Start, "Start Service"),
             new Service(ST.Audio, "Audio Service"),
             new Service(ST.Network, "Network Service"),
@@ -124,7 +126,8 @@ namespace CyanSystemManager
 
             generation = ServiceManager.generation;
             this.serviceType = type;
-            if (serviceType == ST.Start) { status = Service_Start.status; clear = Service_Start.clear; }
+            if (serviceType == ST.Display) { status = Service_Display.status; clear = Service_Display.clear; }
+            else if (serviceType == ST.Start) { status = Service_Start.status; clear = Service_Start.clear; }
             else if (serviceType == ST.Audio) { status = Service_Audio.status; clear = Service_Audio.clear; }
             else if (serviceType == ST.Network) { status = Service_Network.status; clear = Service_Network.clear; }
             else if (serviceType == ST.Notebook) { status = Service_Notebook.status; clear = Service_Notebook.clear; }
@@ -153,7 +156,8 @@ namespace CyanSystemManager
         {
             status = State.OFF;
             //if (serviceType == ServiceType.Example) status = ExampleService.status; // get status from Example_ static class!
-            if (serviceType == ST.Start) status = Service_Start.status;
+            if (serviceType == ST.Display) status = Service_Display.status;
+            else if (serviceType == ST.Start) status = Service_Start.status;
             else if (serviceType == ST.Audio) status = Service_Audio.status;
             else if (serviceType == ST.Network) status = Service_Network.status;
             else if (serviceType == ST.Notebook) status = Service_Notebook.status;
@@ -176,7 +180,8 @@ namespace CyanSystemManager
             if (status != State.OFF) return;
             status = State.NEUTRAL;
             //if (serviceType == ServiceType.Example) ExampleService.startService(); // start service inside Example_ service
-            if (serviceType == ST.Start) Service_Start.startService();
+            if (serviceType == ST.Display) Service_Display.startService();
+            else if (serviceType == ST.Start) Service_Start.startService();
             else if (serviceType == ST.Audio) Service_Audio.startService();
             else if (serviceType == ST.Network) Service_Network.startService();
             else if (serviceType == ST.Notebook) Service_Notebook.startService();
@@ -192,7 +197,8 @@ namespace CyanSystemManager
             if (status == State.OFF) return;
             status = State.OFF;
             //if (serviceType == ServiceType.Example) ExampleService.stopService(); // stop service inside Example_ service
-            if (serviceType == ST.Start) Service_Start.stopService(dispose);
+            if (serviceType == ST.Display) Service_Display.stopService(dispose);
+            else if (serviceType == ST.Start) Service_Start.stopService(dispose);
             else if (serviceType == ST.Audio) Service_Audio.stopService(dispose);
             else if (serviceType == ST.Network) Service_Network.stopService(dispose);
             else if (serviceType == ST.Notebook) Service_Notebook.stopService(dispose);

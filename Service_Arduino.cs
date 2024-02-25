@@ -14,6 +14,7 @@ using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Windows.Interop;
 
 namespace CyanSystemManager
 {
@@ -27,16 +28,6 @@ namespace CyanSystemManager
         static public bool clear;
 
         // Functions of Example_Service --> they should be called from outside the service
-        static public void turnAudio(bool on, bool keep=false) 
-        { 
-            if (on) 
-            { 
-                if (keep) addCommand(ArduinoCom.AUDIO_ON_KEEP); 
-                else addCommand(ArduinoCom.AUDIO_ON);
-            }
-            else addCommand(ArduinoCom.AUDIO_OFF);
-        }
-        static public void turnLight(bool on) { if (on) addCommand(ArduinoCom.LIGHT_ON); else addCommand(ArduinoCom.LIGHT_OFF); }
 
         // System is based on the interchange of messages
         static List<Command> commands = new List<Command>();
@@ -46,21 +37,31 @@ namespace CyanSystemManager
             commands.Add(new Command(type, value));
         }
         // run Example thread -> Interpret commands and call the appropriate functions inside the service
-        static int ping_time = 2; // every 2 seconds
-        static int ping = 40 * ping_time;
         static public void threadRun()
         {
-
-            //Thread.Sleep(10000);
-            //if (!active) { stopService(); }
+            // List<string> values = new List<string>();
+            long index = 0;
+            long prev_value_idx = -1;
 
             while (!forceTermination && status != State.OFF)
             {
                 try
                 {
-                    ping -= 1;
+                    index += 1;
                     Thread.Sleep(25);
-                    if (ping < 0) { pingAudioDevice(); ping = 40 * ping_time; }
+                    string value = readDevice();
+                    if (value != null)
+                    {
+                        if (index - prev_value_idx <= 5)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            handleValue(value);
+                        }
+                        prev_value_idx = index;
+                    }
                     if (commands.Count == 0) continue;
                     Command command = commands[0];
                     commands.RemoveAt(0);
@@ -71,11 +72,11 @@ namespace CyanSystemManager
         }
         static public void Tree(Command command)
         {
-            if (command.type == ArduinoCom.AUDIO_ON) sp.WriteLine("AH");
-            else if (command.type == ArduinoCom.AUDIO_ON_KEEP) sp.WriteLine("AK");
-            else if (command.type == ArduinoCom.AUDIO_OFF) sp.WriteLine("AL");
-            else if (command.type == ArduinoCom.LIGHT_ON) sp.WriteLine("LL");
-            else if (command.type == ArduinoCom.LIGHT_OFF) sp.WriteLine("LH");
+            // if (command.type == ArduinoCom.AUDIO_ON) sp.WriteLine("AH");
+            // else if (command.type == ArduinoCom.AUDIO_ON_KEEP) sp.WriteLine("AK");
+            // else if (command.type == ArduinoCom.AUDIO_OFF) sp.WriteLine("AL");
+            // else if (command.type == ArduinoCom.LIGHT_ON) sp.WriteLine("LL");
+            // else if (command.type == ArduinoCom.LIGHT_OFF) sp.WriteLine("LH");
         }
         // /////////////
         static public void startService()
@@ -105,23 +106,14 @@ namespace CyanSystemManager
         [DllImport("user32.dll")]
         internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
         // Inside functions
-        static private bool getAudioState()
-        {
-            Thread.Sleep(200);
-            sp.WriteLine("AS");
-            Thread.Sleep(200);
-            string state_str = sp.ReadExisting().Replace(".", ",").Replace("\n", "").Replace("\r", "");
-            bool state = state_str[state_str.Length - 1] == '1' ? true : false;
-            Properties.Settings.Default.audioStatus = state;
-            return state;
-        }
-        static private void pingAudioDevice()
+        static private string readDevice()
         {
             if (sp != null)
             {
-                sp.WriteLine("p");
-                Thread.Sleep(200);
+                string msg = sp.ReadExisting().Replace("\n", "").Replace("\r", "");
+                if (msg != null && msg != "") return msg;
             }
+            return null;
         }
         static private void ClosePort()
         {
@@ -153,14 +145,23 @@ namespace CyanSystemManager
             {
                 SerialPort port = new SerialPort("COM" + portNum, 9600, Parity.None, 8, StopBits.One);
                 port.Open();
-                Thread.Sleep(200);
-                port.WriteLine("Q");
-                Thread.Sleep(300);
-                string buf = port.ReadExisting();
+                Thread.Sleep(100);
+                port.WriteLine("H");
+                Thread.Sleep(100);
+                string buf = "";
+                int attempts = 10;
+                while (attempts-- > 0 && buf == "")
+                {
+                    buf += port.ReadExisting();
+                    Thread.Sleep(100); // Give some time for data to arrive
+                }
+                //Thread.Sleep(300);
+                //string buf = port.ReadExisting();
                 string id_pass = buf.Replace(".", ",").Replace("\n", "").Replace("\r", "");
-                if (id_pass.Length > 17) id_pass = id_pass.Substring(id_pass.Length - 17, id_pass.Length);
-                Log("---------------------\nArduino ID:\n" + id_pass + "\n---------------------");
-                if (id_pass == "cyanSystemManager")
+                //Console.WriteLine("IDPASS:" + id_pass + "|");
+                //if (id_pass.Length > 17) id_pass = id_pass.Substring(id_pass.Length - 17, id_pass.Length);
+                //Log("---------------------\nArduino ID:\n" + id_pass + "\n---------------------");
+                if (id_pass == "H received")
                 {
                     Log("| Connected to the port " + portNum + "!");
                     connected = true;
@@ -183,10 +184,12 @@ namespace CyanSystemManager
         }
         static public bool OpenPort(int portNum)
         {
+            Console.WriteLine("openport");
             ard_found = false;
             Thread thread = new Thread(new ParameterizedThreadStart(OpenPortThread));
             thread.Start(portNum);
             thread.Join(2000);
+            thread.Abort();
             return ard_found;
         }
 
@@ -213,6 +216,79 @@ namespace CyanSystemManager
             }
             if (connected) status = State.ON;
             else stopService(false);
+        }
+
+        private static void handleValue(string value)
+        {
+            if (value == "1")
+            {
+
+            }
+            else if (value == "2")
+            {
+
+            }
+            else if (value == "3")
+            {
+
+            }
+            else if (value == "4")
+            {
+
+            }
+            else if (value == "5")
+            {
+
+            }
+            else if (value == "6")
+            {
+
+            }
+            else if (value == "7")
+            {
+
+            }
+            else if (value == "8")
+            {
+
+            }
+            else if (value == "9")
+            {
+
+            }
+            else if (value == "*")
+            {
+
+            }
+            else if (value == "0")
+            {
+
+            }
+            else if (value == "#")
+            {
+
+            }
+            else if (value == "left")
+            {
+
+            }
+            else if (value == "right")
+            {
+
+            }
+            else if (value == "up")
+            {
+
+            }
+            else if (value == "down")
+            {
+
+            }
+            else if (value == "ok")
+            {
+
+            }
+            Service_Display.ShowMsg(new MsgSettings(value));
         }
         // //////////
     }

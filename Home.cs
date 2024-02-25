@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using Vanara.PInvoke;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
@@ -25,8 +26,8 @@ namespace CyanSystemManager
         static public NotifyIcon notifyIcon;
         static public BindElements binded;
         static public List<serviceBoxControl> serviceControls;
-        static public Thread runTimeSupport;
         static bool startup = false;
+        static public Size winSize = new Size(100, 100);
 
         public Home(bool start)
         {
@@ -47,15 +48,20 @@ namespace CyanSystemManager
             dateTimePicker1.ShowUpDown = true;
             dateTimePicker1.Value = new DateTime(2012, 05, 28, 22, 0, 0);
             Size = new Size(1276, 764);
+            winSize = Size;
         }
         private void LoadHome(object o, EventArgs e)
         {
             createNotify();
             createServiceControls();
-            ServiceManager.loadActiveServices(true);
 
-            runTimeSupport = new Thread(RunTime);
-            runTimeSupport.Start();
+            ServiceManager.loadActiveServices(true);
+            if (startup && Properties.Settings.Default.startOnReboot)
+            {
+                _ = sendHTTP("tv", "on");
+                new Thread(SystemStart).Start();
+                // Thread.Sleep(3000);
+            }
         }
         public void SafeClose(object sender, EventArgs e)
         {
@@ -71,9 +77,9 @@ namespace CyanSystemManager
             timerClose.Tick += (o, ea) => { Close(); };
         }
 
-        private void RunTime()
+        private void SystemStart()
         {
-            if(startup && Properties.Settings.Default.startOnReboot) Service_Start.SystemStart(true);
+            Service_Start.SystemStart(true);
         }
 
         private void createServiceControls()
@@ -264,7 +270,7 @@ namespace CyanSystemManager
             icon_panel.BringToFront();
         }
         private static readonly HttpClient client = new HttpClient();
-        private async Task<bool> sendHTTP(string topic, string arg)
+        public static async Task<bool> sendHTTP(string topic, string arg)
         {
             try
             {
@@ -284,34 +290,36 @@ namespace CyanSystemManager
                     Program.Log(responseString);
                 }
             }
-            catch (Exception ex) { Program.Log(ex.Message); return false; }
-            return true;
-        }
-
-        private void emitSound()
-        {
-            using (var soundPlayer = new SoundPlayer(@"c:\Windows\Media\Windows Default.wav"))
+            catch (TaskCanceledException ex)
             {
-                soundPlayer.Play();
+                Program.Log("Request timed out: " + ex.Message);
+                // Handle timeout-specific logic here
+                return false;
             }
+            catch (Exception ex)
+            {
+                Program.Log("HTTP request failed: " + ex.Message);
+                return false;
+            }
+            return true;
         }
 
         private async void plant_leds_on_btn_Click(object sender, EventArgs e)
         {
-            emitSound();
             await sendHTTP("lights", "on");
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS: ON"));
         }
 
         private async void plant_leds_off_btn_Click(object sender, EventArgs e)
         {
-            emitSound();
             await sendHTTP("lights", "off");
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS: OFF"));
         }
 
         private async void plant_leds_auto_btn_Click(object sender, EventArgs e)
         {
-            emitSound();
             await sendHTTP("lights", "auto");
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO"));
         }
 
         private async void plant_leds_autoset_btn_Click(object sender, EventArgs e)
@@ -321,20 +329,20 @@ namespace CyanSystemManager
             string minute = dateTimePicker1.Value.Minute.ToString();
             minute = minute.Length == 1 ? "0" + minute : minute;
             string arg = "auto " + hour + ":" + minute;
-            emitSound();
             await sendHTTP("lights", arg);
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO " + hour + ":" + minute));
         }
 
         private async void tv_on_btn_Click(object sender, EventArgs e)
         {
-            emitSound();
             await sendHTTP("tv", "on");
+            Service_Display.ShowMsg(new MsgSettings("TV: ON"));
         }
 
         private async void tv_off_btn_Click(object sender, EventArgs e)
         {
-            emitSound();
             await sendHTTP("tv", "off");
+            Service_Display.ShowMsg(new MsgSettings("TV: OFF"));
         }
     }
 }

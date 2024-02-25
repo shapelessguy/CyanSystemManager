@@ -75,7 +75,6 @@ namespace CyanSystemManager
         public static int[] startUp()
         {
             int nOp = 0, nTot = 0;
-
             Dictionary<string, application> dict = App.getApplications();
             List<application> toStart = new List<application>();
             IDictionary<IntPtr, string> OpenWindows = WindowWrapper.GetOpenWindows();

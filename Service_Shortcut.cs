@@ -85,13 +85,13 @@ namespace CyanSystemManager
                 try
                 {
                     Screen s = Screen.FromPoint(Cursor.Position);
-                    Size size = Program.home.Size;
-                    Point location = new Point(s.Bounds.X + (int)((s.Bounds.Width - size.Width) / 2), s.Bounds.Y + (int)((s.Bounds.Height - size.Height) / 2));
                     Program.home.Show();
                     Program.home.WindowState = FormWindowState.Normal;
                     Program.home.Visible = true;
+                    Program.home.Size = Home.winSize;
+                    Point location = new Point(s.Bounds.X + (int)((s.Bounds.Width - Program.home.Size.Width) / 2), s.Bounds.Y + 
+                        (int)((s.Bounds.Height - Program.home.Size.Height) / 2));
                     Program.home.Location = location;
-                    Program.home.Size = size;
                     SetForegroundWindow(Program.home.Handle);
                 }
                 catch (Exception ex) { Program.Log(ex.ToString()); }

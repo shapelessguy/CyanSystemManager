@@ -98,13 +98,14 @@ namespace CyanSystemManager
 
         static public string TEMPAUDIO = "tempAudio";
     }
-    public class ArduinoCom
+    public class DisplayCom
     {
-        static public string AUDIO_ON_KEEP = "AUDIO_ON_KEEP";
-        static public string AUDIO_ON = "AUDIO_ON";
-        static public string AUDIO_OFF = "AUDIO_OFF";
-        static public string LIGHT_ON = "LIGHT_ON";
-        static public string LIGHT_OFF = "LIGHT_OFF";
+        static public string VOL_UP = "VOL+";
+        static public string VOL_DOWN = "VOL-";
+        static public string VOL_NULL = "VOLNULL";
+        static public string SET_VOL = "SETVOL";
+        static public string SHOW_VOL = "SHOWVOL";
+        static public string SHOW = "SHOW";
     }
     public class ShortcutCom
     {

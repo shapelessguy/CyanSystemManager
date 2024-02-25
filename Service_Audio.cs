@@ -80,7 +80,6 @@ namespace CyanSystemManager
         static public bool suppressAllSounds;
         static public bool changingDevice;
         static public bool changedDevice;
-        public static List<VolFormHelper> volForms;
         static public AudioInfo audioInfo;
         static MMDeviceEnumerator devEnum;
         static private int msCycle = 20;
@@ -138,11 +137,9 @@ namespace CyanSystemManager
         public static void init()
         {
             if (commands != null) commands.Clear();
-            if (volForms != null) foreach (var form in volForms) form.Dispose();
             suppressAllSounds = false;
             changingDevice = false;
             changedDevice = false;
-            volForms = new List<VolFormHelper>();
             commands = new List<Command>();
             audioInfo = new AudioInfo();
             i = 0; i_to = (int)(1000 / msCycle);
@@ -156,7 +153,7 @@ namespace CyanSystemManager
             status = State.NEUTRAL;
             Log("Starting audioService..");
             Home.registerHotkeys(ST.Audio);
-            if (volForms.Count == 0) audioThread = new Timer(audioRun, null, msCycle, Timeout.Infinite);
+            audioThread = new Timer(audioRun, null, msCycle, Timeout.Infinite);
             status = State.ON;
         }
         public static void stopService(bool dispose) {
@@ -165,18 +162,8 @@ namespace CyanSystemManager
             changingDevice = false;
             changedDevice = false;
             Home.unregisterHotkeys(ST.Audio);
-            foreach (var form in volForms) form.Dispose();
             commands.Clear();
             clear = true;
-        }
-        static void createVolForms() {
-            int nScreens = Screen.AllScreens.Count();
-            for (int i = 0; i < nScreens; i++) volForms.Add(new VolFormHelper(i)); 
-        }
-        public static void activateAllForms()
-        {
-            if (status == State.OFF) return;
-            for (int i = 0; i < volForms.Count(); i++) { volForms[i].initializeForm(i); }
         }
 
         public static bool tempAudioRunning = false;
@@ -472,7 +459,6 @@ namespace CyanSystemManager
         static DateTime previousCom = DateTime.Now;
         static void Vol(string arg, object value)
         {
-            activateAllForms();
             getAudioInfo();
             float val = (float)value;
             DateTime now = DateTime.Now;
@@ -512,8 +498,9 @@ namespace CyanSystemManager
         }
         static void submit()
         {
-            VolFormHelper.messages.Add(new VolSettings(audioInfo.masterVolume, audioInfo.mute, audioInfo.deviceName));
-            foreach (var form in volForms) form.tempShow();
+            Service_Display.ShowVol(new VolSettings(audioInfo.masterVolume, audioInfo.mute, audioInfo.deviceName));
+            // VolFormHelper.messages.Add(new VolSettings(audioInfo.masterVolume, audioInfo.mute, audioInfo.deviceName));
+            // foreach (var form in volForms) form.tempShow();
         }
 
         static void addCommand(string type, object value)
@@ -552,8 +539,6 @@ namespace CyanSystemManager
         {
             home.Invoke((MethodInvoker)delegate {
                 init();
-                createVolForms();
-                activateAllForms();
                 getAudioInfo();
             });
         }
@@ -582,7 +567,6 @@ namespace CyanSystemManager
                 }
                 else { i += 1; }
                 if (commands.Count == 0) { audioThread.Change(msCycle, Timeout.Infinite); return; }
-                activateAllForms();
                 Stabilize();
                 Command command = commands[0];
                 commands.RemoveAt(0);
