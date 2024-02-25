@@ -43,7 +43,11 @@ namespace CyanSystemManager
         }
         public void on()
         {
-            if (session_name == "LIGHTS UV")
+            if (session_name == "DEFAULT")
+            {
+                home.audio_on_off_btn_Click(null, null);
+            }
+            else if (session_name == "LIGHTS UV")
             {
                 home.plant_leds_on_btn_Click(null, null);
             }
@@ -54,7 +58,11 @@ namespace CyanSystemManager
         }
         public void off()
         {
-            if (session_name == "LIGHTS UV")
+            if (session_name == "DEFAULT")
+            {
+                home.audio_effect_btn_Click(null, null);
+            }
+            else if (session_name == "LIGHTS UV")
             {
                 home.plant_leds_off_btn_Click(null, null);
             }

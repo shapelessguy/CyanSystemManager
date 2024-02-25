@@ -57,12 +57,7 @@ namespace CyanSystemManager
             createServiceControls();
 
             ServiceManager.loadActiveServices(true);
-            if (startup && Properties.Settings.Default.startOnReboot)
-            {
-                _ = sendHTTP("tv", "on");
-                new Thread(SystemStart).Start();
-                // Thread.Sleep(3000);
-            }
+            if (startup && Properties.Settings.Default.startOnReboot)  new Thread(SystemStart).Start();
         }
         public void SafeClose(object sender, EventArgs e)
         {
@@ -359,6 +354,18 @@ namespace CyanSystemManager
         {
             await sendHTTP("tv", "off");
             Service_Display.ShowMsg(new MsgSettings("TV: OFF"));
+        }
+
+        public async void audio_on_off_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "on/off");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: ON/OFF"));
+        }
+
+        public async void audio_effect_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "effect");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: EFFECT"));
         }
     }
 }
