@@ -7,6 +7,7 @@ namespace CyanSystemManager
     public partial class Chronometer : Form
     {
         public bool alert = false;
+        private bool entered = false;
         Timer focusLostT, alarmT, recoverT, lastPositionT;
         int hours, minutes, seconds;
 
@@ -23,12 +24,17 @@ namespace CyanSystemManager
             Program.Log("Chronometer disposed");
             alert = false;
         }
-        public Chronometer()
+        public Chronometer(TimerArgs args)
         {
             InitializeComponent();
             Visible = true;
             initializeTimers();
             FormClosing += (o, e) => { DisposeAll(); };
+            if (args != null)
+            {
+                setTimer(args.hours, args.minutes, 0);
+                if (args.title != null) textBox1.Text = args.title;
+            }
         }
 
         void initializeTimers()
@@ -42,6 +48,7 @@ namespace CyanSystemManager
             this.TopMost = true;
             focusLostT.Tick += LostFocus_Timer;
             dateTimePicker1.KeyDown += KeyEnter;
+            textBox1.KeyDown += KeyEnter;
         }
 
         void LostFocus_Timer(object sender, EventArgs e)
@@ -74,22 +81,32 @@ namespace CyanSystemManager
             catch (Exception) { DisposeAll(); }
         }
 
+        void setTimer(int hours, int minutes, int seconds)
+        {
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
+            entered = true;
+            if (hours == 0 && minutes == 0 && seconds == 0)
+            { SendKeys.Send("{RIGHT}"); lastPositionT.Tick += LastPosition; return; }
+            focusLostT.Tick -= LostFocus_Timer;
+            focusLostT.Interval = 1000;
+            focusLostT.Tick += RealTimer;
+            dateTimePicker1.Hide();
+            label1.Text = SetLabelText(hours, minutes, seconds);
+            label1.Show();
+        }
+
         void KeyEnter(object sender, KeyEventArgs e)
         {
+            if (entered) return;
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
                 hours = dateTimePicker1.Value.Hour;
                 minutes = dateTimePicker1.Value.Minute;
                 seconds = dateTimePicker1.Value.Second;
-                if (hours == 0 && minutes == 0 && seconds == 0) 
-                    { SendKeys.Send("{RIGHT}"); lastPositionT.Tick += LastPosition; return; }
-                focusLostT.Tick -= LostFocus_Timer;
-                focusLostT.Interval = 1000;
-                focusLostT.Tick += RealTimer;
-                dateTimePicker1.Hide();
-                label1.Text = SetLabelText(hours, minutes, seconds);
-                label1.Show();
+                setTimer(hours, minutes, seconds);
             }
         }
         void LastPosition(object sender, EventArgs e)

@@ -108,12 +108,7 @@ namespace CyanSystemManager
             }
             else if (session_name == "LIGHTS UV")
             {
-                string minutes = "NOW";
-                DateTime currentTime = DateTime.Now;
-                DateTime newTime = currentTime.AddMinutes(auto_minutes);
-                home.plant_leds_auto_set(newTime.Hour, newTime.Minute);
-                if (auto_minutes != 0) minutes = "at " + newTime.ToString("HH:mm");
-                Service_Display.ShowMsg(new MsgSettings("AUTO: " + minutes + " CONFIRMED"));
+                home.plants_leds_auto_in_set(auto_minutes);
             }
         }
     }
@@ -190,7 +185,6 @@ namespace CyanSystemManager
 
             beforeStart();
             new Thread(threadRun).Start();
-            new Thread(SessionHandler).Start();
         }
         static public void beforeStart()
         {
@@ -224,14 +218,12 @@ namespace CyanSystemManager
                 try
                 {
                     sp.Close();
-                    //Thread.Sleep(1500);
                 }
                 catch (Exception) { }
                 Log("Disposing port");
                 try
                 {
                     sp.Dispose();
-                    //Thread.Sleep(1500);
                 }
                 catch (Exception) { }
                 sp = null;
@@ -251,17 +243,13 @@ namespace CyanSystemManager
                 Thread.Sleep(100);
                 string buf = "";
                 int attempts = 10;
-                while (attempts-- > 0 && buf == "")
+                for (int i=0; i < attempts; i++)
                 {
                     buf += port.ReadExisting();
+                    if (buf != "") break;
                     Thread.Sleep(100); // Give some time for data to arrive
                 }
-                //Thread.Sleep(300);
-                //string buf = port.ReadExisting();
                 string id_pass = buf.Replace(".", ",").Replace("\n", "").Replace("\r", "");
-                //Console.WriteLine("IDPASS:" + id_pass + "|");
-                //if (id_pass.Length > 17) id_pass = id_pass.Substring(id_pass.Length - 17, id_pass.Length);
-                //Log("---------------------\nArduino ID:\n" + id_pass + "\n---------------------");
                 if (id_pass == "H received")
                 {
                     Log("| Connected to the port " + portNum + "!");
@@ -316,19 +304,6 @@ namespace CyanSystemManager
             }
             if (connected) status = State.ON;
             else stopService(false);
-        }
-
-        private static void SessionHandler()
-        {
-            while (!forceTermination && status != State.OFF)
-            {
-                try
-                {
-
-                    Thread.Sleep(100);
-                }
-                catch (Exception ex) { Log("Exception in " + title); Log(ex.ToString()); Log(ex.Message); }
-            }
         }
 
         private static void handleValue(string value)

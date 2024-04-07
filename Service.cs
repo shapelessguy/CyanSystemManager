@@ -23,6 +23,7 @@ namespace CyanSystemManager
         static public string Timer = "TIMER";
         static public string Arduino = "ARDUINO";
         static public string HW_Monitor = "HWMONITOR";
+        static public string Server = "SERVER";
     }
     public class Command
     {
@@ -57,8 +58,9 @@ namespace CyanSystemManager
             new Service(ST.Shortcuts, "Shortcuts Service"),
             new Service(ST.Monitors, "Monitors Service"),
             new Service(ST.Timer, "Timer Service"),
-            new Service(ST.Arduino, "Arduino Service")};
-        }
+            new Service(ST.Arduino, "Arduino Service"),
+            new Service(ST.Server, "Server Service")};
+    }
 
         static public void loadActiveServices(bool andStart = false)
         {
@@ -136,7 +138,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Monitors) { status = Service_Monitor.status; clear = Service_Monitor.clear; }
             else if (serviceType == ST.Timer) { status = Service_Timer.status; clear = Service_Timer.clear; }
             else if (serviceType == ST.Arduino) { status = Service_Arduino.status; clear = Service_Arduino.clear; }
-            //else if (serviceType == ST.HW_Monitor) status = Service_HWMonitoring.status;
+            else if (serviceType == ST.Server) { status = Service_Server.status; clear = Service_Server.clear; }
             this.friendlyName = friendlyName;
             this.args = args;
             new Thread(run).Start();
@@ -166,7 +168,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Monitors) status = Service_Monitor.status;
             else if (serviceType == ST.Timer) status = Service_Timer.status;
             else if (serviceType == ST.Arduino) status = Service_Arduino.status;
-            //else if (serviceType == ST.HW_Monitor) status = Service_HWMonitoring.status; 
+            else if (serviceType == ST.Server) status = Service_Server.status; 
             if (statusFromBox != State.NEUTRAL)
             {
                 if (statusFromBox == State.ON) Program.home.Invoke((MethodInvoker)delegate { startService(); }); 
@@ -190,7 +192,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Monitors) Service_Monitor.startService();
             else if (serviceType == ST.Timer) Service_Timer.startService();
             else if (serviceType == ST.Arduino) Service_Arduino.startService();
-            //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.startService();
+            else if (serviceType == ST.Server) Service_Server.startService();
         }
         public void stopService(bool dispose = false)
         {
@@ -207,7 +209,7 @@ namespace CyanSystemManager
             else if (serviceType == ST.Monitors) Service_Monitor.stopService(dispose);
             else if (serviceType == ST.Timer) Service_Timer.stopService(dispose);
             else if (serviceType == ST.Arduino) Service_Arduino.stopService(dispose);
-            //else if (serviceType == ST.HW_Monitor) Service_HWMonitoring.stopService();
+            else if (serviceType == ST.Server) Service_Server.stopService(dispose);
         }
     }
 }

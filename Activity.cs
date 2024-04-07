@@ -107,6 +107,7 @@ namespace CyanSystemManager
         static public string SET_VOL = "SETVOL";
         static public string SHOW_VOL = "SHOWVOL";
         static public string SHOW = "SHOW";
+        static public string SHOW_INDICATOR = "SHOWINDICATOR";
     }
     public class ShortcutCom
     {

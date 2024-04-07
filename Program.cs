@@ -14,6 +14,7 @@ namespace CyanSystemManager
         public static bool restart = true;
         public static Process[] all_processes = null;
         public static string multimonitor_path;
+        public static string soundview_path;
         public static string log_path = "all_logs.txt";
 
         [STAThread]
@@ -25,6 +26,7 @@ namespace CyanSystemManager
                 bool startup = false;
                 all_processes = Process.GetProcesses();
                 multimonitor_path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "MultiMonitorTool", "MultiMonitorTool.exe");
+                soundview_path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SoundVolumeView", "SoundVolumeView.exe");
                 foreach (string arg in args) if (arg == "startup") startup = true;
 
                 Application.EnableVisualStyles();

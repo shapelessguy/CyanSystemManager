@@ -6,9 +6,22 @@ using static CyanSystemManager.Utility;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.ConstrainedExecution;
+using System.Configuration;
 
 namespace CyanSystemManager
 {
+    public class TimerArgs
+    {
+        public int hours = 0;
+        public int minutes = 0;
+        public string title = null;
+        public TimerArgs(int minutes, string title=null) 
+        {
+            this.hours = minutes / 60;
+            this.minutes = minutes % 60;
+            this.title = title;
+        }
+    }
     static public class Service_Timer
     {
         static public string title = "timerService";
@@ -18,6 +31,7 @@ namespace CyanSystemManager
 
         // Functions of Example_Service --> they should be called from outside the service
         static public void TimerPressed() { addCommand(TimerCom.TIMER); }
+        static public void createTimer(TimerArgs args) { addCommand(TimerCom.TIMER, args); }
         static public void ShortTimerPressed() { addCommand(TimerCom.SHORTPRESS); }
         static public void LongTimerPressed() { addCommand(TimerCom.LONGPRESS); }
 
@@ -47,7 +61,7 @@ namespace CyanSystemManager
         }
         static public void Tree(Command command)
         {
-            if (command.type == TimerCom.TIMER) fastTimer();
+            if (command.type == TimerCom.TIMER) fastTimer(command.value);
             else if (command.type == TimerCom.SHORTPRESS) shortSystemTimer();
             else if (command.type == TimerCom.LONGPRESS) longSystemTimer();
         }
@@ -105,9 +119,11 @@ namespace CyanSystemManager
         {
             Log("hold");
         }
-        static private void fastTimer()
+        static private void fastTimer(Object args=null)
         {
-            Program.home.Invoke((MethodInvoker)delegate { new Chronometer(); });
+            TimerArgs args_ = null;
+            if (args != null) args_ = (TimerArgs)args;
+            Program.home.Invoke((MethodInvoker)delegate { new Chronometer(args_); });
         }
         // //////////
     }

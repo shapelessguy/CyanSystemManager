@@ -29,6 +29,7 @@ namespace CyanSystemManager
         static public void SetVol(float vol) { addCommand(DisplayCom.SET_VOL, vol); }
         static public void ShowVol(VolSettings vol_settings) { addCommand(DisplayCom.SHOW_VOL, vol_settings); }
         static public void ShowMsg(MsgSettings msg) { addCommand(DisplayCom.SHOW, msg); }
+        static public void ShowIndicator(IndicatorSettings indicator) { addCommand(DisplayCom.SHOW_INDICATOR, indicator); }
 
         // System is based on the interchange of messages
         static List<Command> commands = new List<Command>();
@@ -61,6 +62,7 @@ namespace CyanSystemManager
             else if (command.type == DisplayCom.SET_VOL) ShowSetVol((float)command.value);
             else if (command.type == DisplayCom.SHOW_VOL) ShowVol_((VolSettings)command.value);
             else if (command.type == DisplayCom.SHOW) ShowMessage((MsgSettings)command.value);
+            else if (command.type == DisplayCom.SHOW_INDICATOR) Show_Indicator((IndicatorSettings)command.value);
         }
         // /////////////
         static public void startService()
@@ -116,6 +118,14 @@ namespace CyanSystemManager
             }
             emitSound();
         }
+        static private void Show_Indicator(IndicatorSettings indicator)
+        {
+            foreach (var form in vol_forms)
+            {
+                Program.home.Invoke((MethodInvoker)delegate { form.submit(indicator); });
+            }
+            if (indicator.type == "START_WAITING") emitSound();
+        }
         // //////////
 
         static private void createDeleteForms()
@@ -130,7 +140,7 @@ namespace CyanSystemManager
                     {
                         n_screens = n_screens_;
                         Program.home.Invoke((MethodInvoker)delegate {
-                            foreach (var vol_form in vol_forms) { vol_form.DisposeAll(); }
+                            foreach (var vol_form in vol_forms) vol_form.DisposeAll();
                             vol_forms.Clear();
                             foreach (var screen in Screen.AllScreens) vol_forms.Add(new VolumeDisplay(screen));
                         });

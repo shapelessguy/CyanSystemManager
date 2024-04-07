@@ -39,6 +39,15 @@ namespace CyanSystemManager
         }
         public void print() { Program.Log("Message: " + message); }
     }
+    public class IndicatorSettings
+    {
+        public string type;
+        public IndicatorSettings(string type)
+        {
+            this.type = type;
+        }
+        public void print() { Program.Log("Type: " + type); }
+    }
 
     public partial class VolumeDisplay : Form
     {
@@ -46,6 +55,7 @@ namespace CyanSystemManager
         public Screen screen;
         int cycle_index = 0;
         private List<Object> settingsQueue = new List<Object>();
+        private string indicator_type = "";
 
         private const int WS_EX_TRANSPARENT = 0x20;
         private const int WS_EX_LAYERED = 0x80000;
@@ -89,8 +99,24 @@ namespace CyanSystemManager
             }
         }
 
+        private void DrawIndicator(PaintEventArgs e)
+        {
+            if (indicator_type != "")
+            {
+                Color color = Color.White;
+                if (indicator_type == "START_WAITING") color = Color.Red;
+                else if (indicator_type == "START_SPEAKING") color = Color.Blue;
+                Brush redBrush = new SolidBrush(color);
+                float circleDiameter = 30.0f;
+                PointF circlePosition = new PointF(10, 10);
+                e.Graphics.FillEllipse(redBrush, circlePosition.X, circlePosition.Y, circleDiameter, circleDiameter);
+                redBrush.Dispose();
+            }
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
+            Location = screen.Bounds.Location;
             base.OnPaint(e);
 
             // Set high-quality rendering for smooth graphics.
@@ -175,12 +201,17 @@ namespace CyanSystemManager
                     // Draw the main text (white)
                     e.Graphics.DrawString(set.message, textFont, Brushes.White, VolShadowPosition, stringFormat);
                 }
+                else if (set_obj is IndicatorSettings)
+                {
+                    IndicatorSettings set = (IndicatorSettings)set_obj;
+                    if (set.type == "START_WAITING") indicator_type = set.type;
+                    else if (set.type == "END_WAITING") indicator_type = "";
+                    else if (set.type == "START_SPEAKING") indicator_type = set.type;
+                    else if (set.type == "END_SPEAKING") indicator_type = "";
+                }
                 settingsQueue.Clear();
             }
-            else
-            {
-
-            }
+            DrawIndicator(e);
         }
 
         protected override CreateParams CreateParams
@@ -197,33 +228,7 @@ namespace CyanSystemManager
         {
             dispose = true;
             Dispose();
-        }
-
-        void FormLoad(object sender, EventArgs e)
-        {
-            Refresh();
-        }
-
-        private void killMainProcess()
-        {
-            void kill()
-            {
-                Thread.Sleep(1000);
-                Close();
-            }
-            new Thread(kill).Start();
-        }
-
-        private static int WM_QUERYENDSESSION = 0x11;
-        private static int WM_ENDSESSION = 0x16;
-        public const uint SHUTDOWN_NORETRY = 0x00000001;
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg.Equals(WM_QUERYENDSESSION) || m.Msg.Equals(WM_ENDSESSION) || m.Msg.Equals(SHUTDOWN_NORETRY))
-            {
-                killMainProcess();
-            }
-            base.WndProc(ref m);
+            Console.WriteLine("Disposing");
         }
     }
 }

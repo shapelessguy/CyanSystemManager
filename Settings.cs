@@ -20,7 +20,12 @@ namespace CyanSystemManager
             static readonly string prog86_path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
             public static string python = app_data_path + @"\Local\Programs\Python\Python311\pythonw.exe";
-            public static string pyStatScript = documents_path + @"\Workspace PyCharm\University-Basic Projects\Statistics - CyanFusion\Analysis.pyw";
+            public static string pyStatScript = documents_path + @"\WorkPySpace\Python-Projects\StatisticsCyanFusion\Analysis.pyw";
+            public static string pyWgScript = documents_path + @"\WorkPySpace\sharedCode\WG\cleaning_plan_sequence.pyw";
+            public static string pyVacWgJson = documents_path + @"\WorkPySpace\sharedCode\WG\vacations.json";
+            public static string pySwapWgJson = documents_path + @"\WorkPySpace\sharedCode\WG\swaps.json";
+            public static string pyCalendarWg = documents_path + @"\WorkPySpace\sharedCode\WG\calendar.txt";
+            public static string chatbot = documents_path + @"\WorkC#Space\ExeWrapper\ExeWrapper\bin\Debug\net6.0\CyanChatBot.exe";
 
             public static string notebookPath = @"C:\ProgramData\Cyan\Notebook";
             public static string networkPath = @"C:\ProgramData\Cyan\NetworkLogs";
@@ -137,7 +142,7 @@ namespace CyanSystemManager
                     "ChatGPT",
                     new string[] { "ChatGPT" },
                     "ChatGPT",
-                    documents_path + "\\Workspace PyCharm\\miscellaneous\\OpenAI\\ChatGPT.lnk"
+                    documents_path + "\\WorkPySpace\\miscellaneous\\OpenAI\\ChatGPT.lnk"
                     ),
                 new application(
                     "MSI Afterburner",
@@ -206,7 +211,7 @@ namespace CyanSystemManager
             new BindDef(ST.Audio, "AudioHeadphones", Keys.F14, KeyModifier.Shift),
             new BindDef(ST.Audio, "AudioThird", Keys.F14, KeyModifier.Shift),
 
-            new BindDef(ST.Monitors, "centralize", Keys.F13),
+            // new BindDef(ST.Monitors, "centralize", Keys.F13),
             new BindDef(ST.Monitors, "TOM", Keys.F13, KeyModifier.Shift),
             new BindDef(ST.Monitors, "SDM", Keys.F13, KeyModifier.Control),
             new BindDef(ST.Monitors, "moveToMonitor", Keys.F15, KeyModifier.Shift),
@@ -239,6 +244,7 @@ namespace CyanSystemManager
             if (!Directory.Exists(variablePath.notebookPath)) Program.Log("Directory " + variablePath.notebookPath + " does not exist!");
             if (!File.Exists(variablePath.python)) Program.Log("File " + variablePath.python + " does not exist!");
             if (!File.Exists(variablePath.pyStatScript)) Program.Log("File " + variablePath.pyStatScript + " does not exist!");
+            if (!File.Exists(variablePath.chatbot)) Program.Log("File " + variablePath.chatbot + " does not exist!");
             Program.Log("--------------");
 
             foreach(var item in App.getApplications())

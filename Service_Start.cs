@@ -44,7 +44,7 @@ namespace CyanSystemManager
                     commands.RemoveAt(0);
                     Tree(command);
                 }
-                catch (Exception) { Log("Exception in " + title); }
+                catch (Exception e) { Log("Exception in " + title); Log(e.Message); }
             }
         }
         static public void Tree(Command command)

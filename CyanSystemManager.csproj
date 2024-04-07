@@ -393,6 +393,7 @@
     <Compile Include="Service_CheckSite.cs" />
     <Compile Include="Service_Arduino.cs" />
     <Compile Include="Service_Display.cs" />
+    <Compile Include="Service_Server.cs" />
     <Compile Include="Service_Example.cs" />
     <Compile Include="FirebaseClass.cs" />
     <Compile Include="Home.cs">
@@ -494,6 +495,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\calendar.png" />
+    <None Include="Resources\vacation.png" />
+    <None Include="Resources\notepad.png" />
+    <None Include="Resources\pngwing.com.png" />
+    <None Include="Resources\png-transparent-child-friends-love-game-child-thumbnail.png" />
     <None Include="Resources\setting.png" />
     <None Include="Resources\tv_on.png" />
     <None Include="Resources\tv_off.png" />
@@ -503,6 +509,9 @@
     <None Include="Resources\neon_off.png" />
     <None Include="App.config" />
     <Content Include="MultiMonitorTool\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SoundVolumeView\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

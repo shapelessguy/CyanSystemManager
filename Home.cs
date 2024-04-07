@@ -14,8 +14,10 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Vanara.PInvoke;
+using Windows.UI.Xaml.Media.Animation;
 using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Vanara.PInvoke.User32;
 using Timer = System.Windows.Forms.Timer;
 
@@ -29,6 +31,7 @@ namespace CyanSystemManager
         static public List<serviceBoxControl> serviceControls;
         static bool startup = false;
         static public Size winSize = new Size(100, 100);
+        static System.Threading.Timer keepAlive;
 
         public Home(bool start)
         {
@@ -50,7 +53,32 @@ namespace CyanSystemManager
             dateTimePicker1.Value = new DateTime(2012, 05, 28, 22, 0, 0);
             Size = new Size(1276, 764);
             winSize = Size;
+            new Thread(monitorMemConsumption).Start();
+            keepAlive = new System.Threading.Timer(Callback, null, 10000, Timeout.Infinite);
         }
+
+        static async void Callback(Object state) {
+            await sendHTTP("audio", "pingvol", false);
+            keepAlive.Change(10000, Timeout.Infinite);
+        }
+
+        private async void monitorMemConsumption()
+        {
+            await sendHTTP("audio", "on");
+            while (!Program.forceTermination)
+            {
+                Process currentProcess = Process.GetCurrentProcess();
+                float totalBytesOfMemoryUsed = (float)(currentProcess.WorkingSet64 / 1024.0 / 1024.0);
+                // Console.WriteLine($"Memory Used: {totalBytesOfMemoryUsed} MB");
+                if (totalBytesOfMemoryUsed > 173)
+                {
+                    Program.restart = true;
+                    Program.home.Invoke((MethodInvoker)delegate { SafeClose(null, null); });
+                }
+                Thread.Sleep(1000);
+            }
+        }
+
         private void LoadHome(object o, EventArgs e)
         {
             createNotify();
@@ -58,6 +86,19 @@ namespace CyanSystemManager
 
             ServiceManager.loadActiveServices(true);
             if (startup && Properties.Settings.Default.startOnReboot)  new Thread(SystemStart).Start();
+            ProcessStartInfo startInfo = new ProcessStartInfo(variablePath.chatbot)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            foreach(var p in Program.all_processes)
+            {
+                if (p.ProcessName == "CyanChatBot") p.Kill();
+            }
+            Process chatbot = Process.Start(startInfo);
+            FirebaseClass.UploadIP();
         }
         public void SafeClose(object sender, EventArgs e)
         {
@@ -69,6 +110,7 @@ namespace CyanSystemManager
                 service.stopService(true);
             }
 
+            keepAlive.Dispose();
             Timer timerClose = new Timer() { Enabled = true, Interval = 2000 };
             timerClose.Tick += (o, ea) => { Close(); };
         }
@@ -266,29 +308,25 @@ namespace CyanSystemManager
             icon_panel.BringToFront();
         }
         private static readonly HttpClient client = new HttpClient();
-        public static async Task<bool> sendHTTP(string topic, string arg)
+        public static async Task<bool> sendHTTP(string topic, string arg, bool verbose=true)
         {
             try
             {
-                var values = new Dictionary<string, string>
-                  {
-                      { topic, arg },
-                  };
-
+                var values = new Dictionary<string, string> {{ topic, arg }};
                 var content = new FormUrlEncodedContent(values);
 
-                Console.WriteLine("http://" + FirebaseClass.serverIp + ":10001/" + topic);
+                if (verbose) Console.WriteLine("http://" + FirebaseClass.serverIp + ":10001/" + topic);
                 var response = await client.PostAsync("http://" + FirebaseClass.serverIp + ":10001/" + topic, content);
 
                 using (var sr = new StreamReader(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding("iso-8859-1")))
                 {
                     var responseString = sr.ReadToEnd();
-                    Program.Log(responseString);
+                    if (verbose) Program.Log(responseString);
                 }
             }
             catch (TaskCanceledException ex)
             {
-                Program.Log("Request timed out: " + ex.Message);
+                if (verbose) Program.Log("Request timed out: " + ex.Message);
                 // Handle timeout-specific logic here
                 return false;
             }
@@ -312,13 +350,8 @@ namespace CyanSystemManager
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: OFF"));
         }
 
-        public async void plant_leds_auto_set(int hour_, int minute_)
+        public async void plant_leds_auto_womsg_set(int hour_, int minute_)
         {
-            if (hour_ == 0 && minute_ == 0)
-            {
-                plant_leds_auto_btn_Click(null, null);
-                return;
-            }
             string hour = hour_.ToString();
             string minute = minute_.ToString();
             hour = hour.Length == 1 ? "0" + hour : hour;
@@ -326,11 +359,36 @@ namespace CyanSystemManager
             string arg = "auto " + hour + ":" + minute;
             await sendHTTP("lights", arg);
         }
+        public async void plant_leds_auto_set(int hour_, int minute_)
+        {
+            string hour = hour_.ToString();
+            string minute = minute_.ToString();
+            hour = hour.Length == 1 ? "0" + hour : hour;
+            minute = minute.Length == 1 ? "0" + minute : minute;
+            string arg = "auto " + hour + ":" + minute;
+            await sendHTTP("lights", arg);
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS AUTO: " + "at " + hour + ":" + minute + " CONFIRMED"));
+        }
+
+        public async void plants_leds_auto_in_set(int auto_minutes)
+        {
+            string minutes = "NOW";
+            DateTime currentTime = DateTime.Now;
+            DateTime newTime = currentTime.AddMinutes(auto_minutes);
+            if (auto_minutes == 0) plant_leds_auto();
+            else plant_leds_auto_womsg_set(newTime.Hour, newTime.Minute);
+            if (auto_minutes != 0) minutes = "at " + newTime.ToString("HH:mm");
+            Service_Display.ShowMsg(new MsgSettings("LIGHTS AUTO: " + minutes + " CONFIRMED"));
+        }
 
         public async void plant_leds_auto_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("lights", "auto");
             Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO"));
+        }
+        public async void plant_leds_auto()
+        {
+            await sendHTTP("lights", "auto");
         }
 
         public async void plant_leds_autoset_btn_Click(object sender, EventArgs e)
@@ -356,16 +414,96 @@ namespace CyanSystemManager
             Service_Display.ShowMsg(new MsgSettings("TV: OFF"));
         }
 
+        public async void audio_on_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "on");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: ON"));
+        }
+
+        public async void audio_off_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "off");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: OFF"));
+        }
+
         public async void audio_on_off_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("audio", "on/off");
             Service_Display.ShowMsg(new MsgSettings("AUDIO: ON/OFF"));
         }
 
+        private async void input_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "input");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: INPUT"));
+        }
+
+        private async void level_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "level");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: LEVEL"));
+        }
+
+        private async void minus_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "vol-");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL -"));
+        }
+
+        private async void plus_btn_Click(object sender, EventArgs e)
+        {
+            await sendHTTP("audio", "vol+");
+            Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL +"));
+        }
+
         public async void audio_effect_btn_Click(object sender, EventArgs e)
         {
             await sendHTTP("audio", "effect");
             Service_Display.ShowMsg(new MsgSettings("AUDIO: EFFECT"));
+        }
+        public static void OpenFile(string filePath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = filePath, // Directly specify the file path
+                UseShellExecute = true, // Let the system decide the application based on file association
+            };
+
+            try
+            {
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show($"Failed to open the file: {ex.Message}");
+            }
+        }
+
+        private void wg_btn_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Executing py script");
+            Program.cmd(variablePath.python, variablePath.pyWgScript, true);
+            string clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            if (clipboardText.Substring(0, 10) == "Exception:")
+            {
+                Clipboard.Clear();
+                System.Windows.Forms.MessageBox.Show(clipboardText);
+            }
+        }
+
+        private void vac_wg_btn_Click(object sender, EventArgs e)
+        {
+            OpenFile(variablePath.pyVacWgJson);
+        }
+
+        private void swap_wg_btn_Click(object sender, EventArgs e)
+        {
+            OpenFile(variablePath.pySwapWgJson);
+        }
+
+        private void show_wg_btn_Click(object sender, EventArgs e)
+        {
+            OpenFile(variablePath.pyCalendarWg);
         }
     }
 }
