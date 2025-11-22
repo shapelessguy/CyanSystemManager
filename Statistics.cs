@@ -24,7 +24,7 @@ namespace CyanSystemManager
         private void Stat()
         {
             Statistics_Load();
-            Program.cmd(variablePath.python, variablePath.pyStatScript, true);
+            // Program.cmd(variablePath.python, variablePath.pyStatScript, true);
         }
         private void Statistics_Load()
         {

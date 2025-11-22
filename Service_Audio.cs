@@ -425,7 +425,7 @@ namespace CyanSystemManager
                     {
                         if (dev.FriendlyName == dev_opt)
                         {
-                            Console.WriteLine(dev_opt + " device set as Default!");
+                            Program.Log(dev_opt + " device set as Default!");
                             device_name = dev.FriendlyName;
                             dev.setDefault();
                             break;
@@ -566,7 +566,7 @@ namespace CyanSystemManager
         }
         static void submit()
         {
-            Console.WriteLine("Command sent");
+            Program.Log("Command sent");
             Service_Display.ShowVol(new VolSettings(audioInfo.masterVolume, audioInfo.mute, audioInfo.deviceName));
         }
 
@@ -640,7 +640,7 @@ namespace CyanSystemManager
                 {
                     all_devices.Add(new AudioDevice_(device.FriendlyName, device.ID));
                 }
-                Console.WriteLine("---");
+                Program.Log("---");
             }
             catch (Exception e) { Log("Exception in audioDeviceDiscovery.\n" + e.Message); }
         }

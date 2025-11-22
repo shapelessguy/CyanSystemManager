@@ -25,12 +25,13 @@ namespace CyanSystemManager
         {
             serverThread = new Thread(threadRun);
             serverThread.Start();
+            new Thread(getServerIP).Start();
         }
 
         private void threadRun()
         {
             listener.Start();
-            Console.WriteLine("Server started. Listening on " + url);
+            Program.Log("Server started. Listening on " + url);
 
             while (!forceTermination)
             {
@@ -48,7 +49,7 @@ namespace CyanSystemManager
                             {
                                 string postData = reader.ReadToEnd();
                                 ProcessRequest(postData);
-                                Console.WriteLine($"Received POST data: {postData}");
+                                Program.Log($"Received POST data: {postData}");
                             }
                         }
                     }
@@ -57,7 +58,7 @@ namespace CyanSystemManager
                         string message = request.QueryString["message"];
                         if (!string.IsNullOrEmpty(message))
                         {
-                            Console.WriteLine($"Received message: {message}");
+                            Program.Log($"Received message: {message}");
                         }
                     }
 
@@ -68,14 +69,35 @@ namespace CyanSystemManager
                     output.Write(buffer, 0, buffer.Length);
                     output.Close();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine("Exception caught: " + ex.ToString());
+                    // Console.WriteLine("Exception caught: " + ex.ToString());
                 }
             }
 
             listener.Stop();
-            Console.WriteLine("Server stopped.");
+            Program.Log("Server stopped.");
+        }
+
+        private void getServerIP()
+        {
+            int server_ip_downloading_period = 60; // in seconds
+            int index = 0;
+            while (!forceTermination)
+            {
+                index += 1;
+                if (index > 10 * server_ip_downloading_period)
+                {
+                    try
+                    {
+                        Console.WriteLine("Assigning");
+                        FirebaseClass.AssignServerIP();
+                    }
+                    catch { }
+                    index = 0;
+                }
+                Thread.Sleep(100);
+            }
         }
 
         public void Stop()
@@ -135,10 +157,14 @@ namespace CyanSystemManager
             else if (request == "TV_OFF") home.tv_off_btn_Click(null, null);
             else if (request == "AUDIO_ON") home.audio_on_btn_Click(null, null);
             else if (request == "AUDIO_OFF") home.audio_off_btn_Click(null, null);
-            else if (request == "START_SPEAKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
-            else if (request == "END_SPEAKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
             else if (request == "START_WAITING") Service_Display.ShowIndicator(new IndicatorSettings(request));
             else if (request == "END_WAITING") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "START_THINKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "END_THINKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "START_SPEAKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "END_SPEAKING") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "START_ERROR") Service_Display.ShowIndicator(new IndicatorSettings(request));
+            else if (request == "END_ERROR") Service_Display.ShowIndicator(new IndicatorSettings(request));
         }
     }
 

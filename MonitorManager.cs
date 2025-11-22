@@ -358,8 +358,7 @@ namespace CyanSystemManager
             HWND handle_ = IntPtr.Zero;
             foreach (KeyValuePair<IntPtr, string> window in OpenWindows)
             {
-                if (handle_ != IntPtr.Zero) break;
-                bool containsall = app.win.Length != 0;
+                bool containsall = true;
                 foreach (string stringa in app.win) if (!window.Value.Contains(stringa)) containsall = false;
                 if (containsall)
                 {
@@ -395,11 +394,14 @@ namespace CyanSystemManager
         public static HWND getHandle(IDictionary<IntPtr, string> OpenWindows, application app)
         {
             HWND handle_ = IntPtr.Zero;
-            // Log("Searching " + app.name + " by windows");
-            handle_ = getHandleByWin(OpenWindows, app);
+            if (app.win.Length != 0)
+            {
+                Log("Searching " + app.name + " by windows");
+                handle_ = getHandleByWin(OpenWindows, app);
+            }
             if (handle_ == IntPtr.Zero)
             {
-                // Log("Searching " + app.name + " by processes");
+                Log("Searching " + app.name + " by processes");
                 handle_ = getHandleByProc(OpenWindows, app);
             }
             return handle_;
@@ -662,6 +664,11 @@ namespace CyanSystemManager
                 return true;
 
             }, 0);
+
+            foreach (var w in windows.Values)
+            {
+                Program.Log(w);
+            }
 
             return windows;
         }

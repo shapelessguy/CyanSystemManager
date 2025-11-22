@@ -377,6 +377,11 @@
       <DependentUpon>NotebookForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcessHelper.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScreenSaverForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -393,6 +398,7 @@
     <Compile Include="Service_CheckSite.cs" />
     <Compile Include="Service_Arduino.cs" />
     <Compile Include="Service_Display.cs" />
+    <Compile Include="Service_WTracker.cs" />
     <Compile Include="Service_Server.cs" />
     <Compile Include="Service_Example.cs" />
     <Compile Include="FirebaseClass.cs" />
@@ -462,14 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="ScreenSaverForm.resx">
       <DependentUpon>ScreenSaverForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -496,6 +497,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\calendar.png" />
+    <None Include="Resources\Telegram_logo.svg.webp" />
     <None Include="Resources\vacation.png" />
     <None Include="Resources\notepad.png" />
     <None Include="Resources\pngwing.com.png" />
@@ -508,9 +510,17 @@
     <None Include="Resources\neon_on.png" />
     <None Include="Resources\neon_off.png" />
     <None Include="App.config" />
+    <None Include="bin\x64\Release\passPlaceholder.bmp" />
+    <None Include="Icons\passPlaceholder.bmp" />
+    <None Include="Icons\warning.png" />
     <Content Include="MultiMonitorTool\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\pass1.bmp" />
+    <None Include="Resources\pass2.bmp" />
+    <None Include="Resources\pass3.bmp" />
+    <None Include="Resources\Telegram_logo.svg %281%29.png" />
+    <None Include="Resources\3488463.png" />
     <Content Include="SoundVolumeView\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

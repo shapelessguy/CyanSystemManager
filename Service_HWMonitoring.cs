@@ -27,9 +27,9 @@ namespace CyanSystemManager
         public void print()
         {
             Program.Log("");
-            Console.Write("CPU load: "); foreach (var value in cpus) Console.Write(value + "  "); Program.Log("");
+            Program.Log("CPU load: "); foreach (var value in cpus) Console.Write(value + "  "); Program.Log("");
             Log("CPU total load: " + cpuTot);
-            Console.Write("CPU temp: "); foreach (var value in cpusTemp) Console.Write(value + "  "); Program.Log("");
+            Program.Log("CPU temp: "); foreach (var value in cpusTemp) Console.Write(value + "  "); Program.Log("");
             Log("CPU total temperature: " + cpuTempTot);
             Log("GPU total load: " + gpuTot);
             Log("GPU temp: : " + gpuTemp);

@@ -46,12 +46,20 @@
             this.plant_leds_autoset_btn = new System.Windows.Forms.Button();
             this.plant_leds_on_btn = new System.Windows.Forms.Button();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.input_btn = new System.Windows.Forms.Button();
+            this.on_off_btn = new System.Windows.Forms.Button();
+            this.minus_btn = new System.Windows.Forms.Button();
+            this.plus_btn = new System.Windows.Forms.Button();
+            this.effect_btn = new System.Windows.Forms.Button();
+            this.level_btn = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.tv_off_btn = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.tv_on_btn = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
+            this.label15 = new System.Windows.Forms.Label();
+            this.button13 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.show_wg_btn = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
@@ -61,6 +69,19 @@
             this.label10 = new System.Windows.Forms.Label();
             this.wg_btn = new System.Windows.Forms.Button();
             this.panel9 = new System.Windows.Forms.Panel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.button12 = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel10 = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
             this.menu_btn = new System.Windows.Forms.Button();
@@ -72,12 +93,6 @@
             this.startBtn = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.generalBtn = new System.Windows.Forms.Button();
-            this.level_btn = new System.Windows.Forms.Button();
-            this.effect_btn = new System.Windows.Forms.Button();
-            this.plus_btn = new System.Windows.Forms.Button();
-            this.minus_btn = new System.Windows.Forms.Button();
-            this.on_off_btn = new System.Windows.Forms.Button();
-            this.input_btn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.icon_panel.SuspendLayout();
@@ -85,6 +100,7 @@
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
+            this.panel9.SuspendLayout();
             this.panel10.SuspendLayout();
             this.menu_panel.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -341,6 +357,114 @@
             this.panel6.Size = new System.Drawing.Size(416, 347);
             this.panel6.TabIndex = 31;
             // 
+            // input_btn
+            // 
+            this.input_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.input_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.input_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.input_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.input_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.input_btn.Location = new System.Drawing.Point(236, 85);
+            this.input_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.input_btn.Name = "input_btn";
+            this.input_btn.Size = new System.Drawing.Size(105, 39);
+            this.input_btn.TabIndex = 31;
+            this.input_btn.Text = "INPUT";
+            this.input_btn.UseVisualStyleBackColor = false;
+            this.input_btn.Click += new System.EventHandler(this.input_btn_Click);
+            // 
+            // on_off_btn
+            // 
+            this.on_off_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.on_off_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.on_off_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.on_off_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.on_off_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.on_off_btn.Location = new System.Drawing.Point(63, 85);
+            this.on_off_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.on_off_btn.Name = "on_off_btn";
+            this.on_off_btn.Size = new System.Drawing.Size(105, 39);
+            this.on_off_btn.TabIndex = 30;
+            this.on_off_btn.Text = "ON/OFF";
+            this.on_off_btn.UseVisualStyleBackColor = false;
+            this.on_off_btn.Click += new System.EventHandler(this.audio_on_off_btn_Click);
+            // 
+            // minus_btn
+            // 
+            this.minus_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.minus_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.minus_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.minus_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.minus_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minus_btn.Location = new System.Drawing.Point(91, 199);
+            this.minus_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.minus_btn.Name = "minus_btn";
+            this.minus_btn.Size = new System.Drawing.Size(41, 55);
+            this.minus_btn.TabIndex = 29;
+            this.minus_btn.Text = "-";
+            this.minus_btn.UseVisualStyleBackColor = false;
+            this.minus_btn.Click += new System.EventHandler(this.minus_btn_Click);
+            // 
+            // plus_btn
+            // 
+            this.plus_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.plus_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.plus_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.plus_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.plus_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.plus_btn.Location = new System.Drawing.Point(278, 199);
+            this.plus_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.plus_btn.Name = "plus_btn";
+            this.plus_btn.Size = new System.Drawing.Size(41, 55);
+            this.plus_btn.TabIndex = 28;
+            this.plus_btn.Text = "+";
+            this.plus_btn.UseVisualStyleBackColor = false;
+            this.plus_btn.Click += new System.EventHandler(this.plus_btn_Click);
+            // 
+            // effect_btn
+            // 
+            this.effect_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.effect_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.effect_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.effect_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.effect_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.effect_btn.Location = new System.Drawing.Point(158, 247);
+            this.effect_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.effect_btn.Name = "effect_btn";
+            this.effect_btn.Size = new System.Drawing.Size(95, 35);
+            this.effect_btn.TabIndex = 27;
+            this.effect_btn.Text = "EFFECT";
+            this.effect_btn.UseVisualStyleBackColor = false;
+            this.effect_btn.Click += new System.EventHandler(this.audio_effect_btn_Click);
+            // 
+            // level_btn
+            // 
+            this.level_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.level_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.level_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.level_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.level_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.level_btn.Location = new System.Drawing.Point(158, 170);
+            this.level_btn.Margin = new System.Windows.Forms.Padding(0);
+            this.level_btn.Name = "level_btn";
+            this.level_btn.Size = new System.Drawing.Size(95, 35);
+            this.level_btn.TabIndex = 26;
+            this.level_btn.Text = "LEVEL";
+            this.level_btn.UseVisualStyleBackColor = false;
+            this.level_btn.Click += new System.EventHandler(this.level_btn_Click);
+            // 
             // panel7
             // 
             this.panel7.Controls.Add(this.label8);
@@ -417,6 +541,8 @@
             // 
             // panel8
             // 
+            this.panel8.Controls.Add(this.label15);
+            this.panel8.Controls.Add(this.button13);
             this.panel8.Controls.Add(this.label13);
             this.panel8.Controls.Add(this.show_wg_btn);
             this.panel8.Controls.Add(this.label12);
@@ -431,6 +557,37 @@
             this.panel8.Size = new System.Drawing.Size(416, 347);
             this.panel8.TabIndex = 33;
             // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.ForeColor = System.Drawing.SystemColors.Control;
+            this.label15.Location = new System.Drawing.Point(209, 60);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(148, 24);
+            this.label15.TabIndex = 44;
+            this.label15.Text = "WG → PUBLISH";
+            // 
+            // button13
+            // 
+            this.button13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.button13.BackgroundImage = global::CyanSystemManager.Properties.Resources.telegram;
+            this.button13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button13.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button13.Location = new System.Drawing.Point(233, 85);
+            this.button13.Margin = new System.Windows.Forms.Padding(0);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(105, 99);
+            this.button13.TabIndex = 43;
+            this.button13.UseVisualStyleBackColor = false;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // label13
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -439,7 +596,7 @@
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.SystemColors.Control;
-            this.label13.Location = new System.Drawing.Point(65, 223);
+            this.label13.Location = new System.Drawing.Point(71, 206);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(58, 24);
             this.label13.TabIndex = 42;
@@ -454,7 +611,7 @@
             this.show_wg_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.calendar;
             this.show_wg_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.show_wg_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.show_wg_btn.Location = new System.Drawing.Point(52, 247);
+            this.show_wg_btn.Location = new System.Drawing.Point(58, 230);
             this.show_wg_btn.Margin = new System.Windows.Forms.Padding(0);
             this.show_wg_btn.Name = "show_wg_btn";
             this.show_wg_btn.Size = new System.Drawing.Size(78, 84);
@@ -470,7 +627,7 @@
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.SystemColors.Control;
-            this.label12.Location = new System.Drawing.Point(272, 223);
+            this.label12.Location = new System.Drawing.Point(278, 206);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(66, 24);
             this.label12.TabIndex = 40;
@@ -485,7 +642,7 @@
             this.vac_wg_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.vacation;
             this.vac_wg_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.vac_wg_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.vac_wg_btn.Location = new System.Drawing.Point(159, 247);
+            this.vac_wg_btn.Location = new System.Drawing.Point(165, 230);
             this.vac_wg_btn.Margin = new System.Windows.Forms.Padding(0);
             this.vac_wg_btn.Name = "vac_wg_btn";
             this.vac_wg_btn.Size = new System.Drawing.Size(78, 84);
@@ -501,7 +658,7 @@
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(154, 223);
+            this.label11.Location = new System.Drawing.Point(160, 206);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(92, 24);
             this.label11.TabIndex = 38;
@@ -516,7 +673,7 @@
             this.swap_wg_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.notepad;
             this.swap_wg_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.swap_wg_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.swap_wg_btn.Location = new System.Drawing.Point(266, 247);
+            this.swap_wg_btn.Location = new System.Drawing.Point(272, 230);
             this.swap_wg_btn.Margin = new System.Windows.Forms.Padding(0);
             this.swap_wg_btn.Name = "swap_wg_btn";
             this.swap_wg_btn.Size = new System.Drawing.Size(78, 84);
@@ -530,11 +687,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(137, 36);
+            this.label10.Location = new System.Drawing.Point(61, 58);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(136, 25);
+            this.label10.Size = new System.Drawing.Size(120, 24);
             this.label10.TabIndex = 37;
             this.label10.Text = "WG → PLAN";
             // 
@@ -547,21 +704,240 @@
             this.wg_btn.BackgroundImage = global::CyanSystemManager.Properties.Resources.wg;
             this.wg_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.wg_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.wg_btn.Location = new System.Drawing.Point(112, 61);
+            this.wg_btn.Location = new System.Drawing.Point(65, 85);
             this.wg_btn.Margin = new System.Windows.Forms.Padding(0);
             this.wg_btn.Name = "wg_btn";
-            this.wg_btn.Size = new System.Drawing.Size(180, 153);
+            this.wg_btn.Size = new System.Drawing.Size(112, 99);
             this.wg_btn.TabIndex = 36;
             this.wg_btn.UseVisualStyleBackColor = false;
             this.wg_btn.Click += new System.EventHandler(this.wg_btn_Click);
             // 
             // panel9
             // 
+            this.panel9.Controls.Add(this.label14);
+            this.panel9.Controls.Add(this.button12);
+            this.panel9.Controls.Add(this.button11);
+            this.panel9.Controls.Add(this.button10);
+            this.panel9.Controls.Add(this.button9);
+            this.panel9.Controls.Add(this.button8);
+            this.panel9.Controls.Add(this.button7);
+            this.panel9.Controls.Add(this.button6);
+            this.panel9.Controls.Add(this.button5);
+            this.panel9.Controls.Add(this.button4);
+            this.panel9.Controls.Add(this.button3);
+            this.panel9.Controls.Add(this.button2);
+            this.panel9.Controls.Add(this.button1);
             this.panel9.Location = new System.Drawing.Point(419, 350);
             this.panel9.Margin = new System.Windows.Forms.Padding(1);
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(416, 347);
             this.panel9.TabIndex = 33;
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.SystemColors.Control;
+            this.label14.Location = new System.Drawing.Point(170, 43);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(67, 25);
+            this.label14.TabIndex = 36;
+            this.label14.Text = "Strips";
+            // 
+            // button12
+            // 
+            this.button12.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button12.BackColor = System.Drawing.Color.DimGray;
+            this.button12.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button12.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button12.Location = new System.Drawing.Point(239, 229);
+            this.button12.Margin = new System.Windows.Forms.Padding(0);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(43, 39);
+            this.button12.TabIndex = 53;
+            this.button12.UseVisualStyleBackColor = false;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
+            // button11
+            // 
+            this.button11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button11.BackColor = System.Drawing.Color.Gray;
+            this.button11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button11.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button11.Location = new System.Drawing.Point(239, 180);
+            this.button11.Margin = new System.Windows.Forms.Padding(0);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(43, 39);
+            this.button11.TabIndex = 52;
+            this.button11.UseVisualStyleBackColor = false;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // button10
+            // 
+            this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button10.BackColor = System.Drawing.Color.Silver;
+            this.button10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button10.Location = new System.Drawing.Point(239, 132);
+            this.button10.Margin = new System.Windows.Forms.Padding(0);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(43, 39);
+            this.button10.TabIndex = 51;
+            this.button10.UseVisualStyleBackColor = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // button9
+            // 
+            this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button9.BackColor = System.Drawing.Color.Gainsboro;
+            this.button9.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button9.Location = new System.Drawing.Point(239, 84);
+            this.button9.Margin = new System.Windows.Forms.Padding(0);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(43, 39);
+            this.button9.TabIndex = 50;
+            this.button9.UseVisualStyleBackColor = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // button8
+            // 
+            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button8.BackColor = System.Drawing.Color.White;
+            this.button8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button8.Location = new System.Drawing.Point(125, 84);
+            this.button8.Margin = new System.Windows.Forms.Padding(0);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(43, 39);
+            this.button8.TabIndex = 49;
+            this.button8.UseVisualStyleBackColor = false;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button7
+            // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button7.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button7.Location = new System.Drawing.Point(183, 84);
+            this.button7.Margin = new System.Windows.Forms.Padding(0);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(43, 39);
+            this.button7.TabIndex = 48;
+            this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click_1);
+            // 
+            // button6
+            // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button6.BackColor = System.Drawing.Color.Yellow;
+            this.button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button6.Location = new System.Drawing.Point(183, 229);
+            this.button6.Margin = new System.Windows.Forms.Padding(0);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(43, 39);
+            this.button6.TabIndex = 47;
+            this.button6.UseVisualStyleBackColor = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // button5
+            // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button5.BackColor = System.Drawing.Color.Red;
+            this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button5.Location = new System.Drawing.Point(125, 180);
+            this.button5.Margin = new System.Windows.Forms.Padding(0);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(43, 39);
+            this.button5.TabIndex = 46;
+            this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button4
+            // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.BackColor = System.Drawing.Color.Fuchsia;
+            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button4.Location = new System.Drawing.Point(183, 132);
+            this.button4.Margin = new System.Windows.Forms.Padding(0);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(43, 39);
+            this.button4.TabIndex = 45;
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.BackColor = System.Drawing.Color.Cyan;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button3.Location = new System.Drawing.Point(125, 132);
+            this.button3.Margin = new System.Windows.Forms.Padding(0);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(43, 39);
+            this.button3.TabIndex = 44;
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.BackColor = System.Drawing.Color.Blue;
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button2.Location = new System.Drawing.Point(125, 229);
+            this.button2.Margin = new System.Windows.Forms.Padding(0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(43, 39);
+            this.button2.TabIndex = 43;
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.BackColor = System.Drawing.Color.LawnGreen;
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button1.Location = new System.Drawing.Point(183, 180);
+            this.button1.Margin = new System.Windows.Forms.Padding(0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(43, 39);
+            this.button1.TabIndex = 42;
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // panel10
             // 
@@ -719,114 +1095,6 @@
             this.generalBtn.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.generalBtn.UseVisualStyleBackColor = false;
             // 
-            // level_btn
-            // 
-            this.level_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.level_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.level_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.level_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.level_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.level_btn.Location = new System.Drawing.Point(158, 170);
-            this.level_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.level_btn.Name = "level_btn";
-            this.level_btn.Size = new System.Drawing.Size(95, 35);
-            this.level_btn.TabIndex = 26;
-            this.level_btn.Text = "LEVEL";
-            this.level_btn.UseVisualStyleBackColor = false;
-            this.level_btn.Click += new System.EventHandler(this.level_btn_Click);
-            // 
-            // effect_btn
-            // 
-            this.effect_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.effect_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.effect_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.effect_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.effect_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.effect_btn.Location = new System.Drawing.Point(158, 247);
-            this.effect_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.effect_btn.Name = "effect_btn";
-            this.effect_btn.Size = new System.Drawing.Size(95, 35);
-            this.effect_btn.TabIndex = 27;
-            this.effect_btn.Text = "EFFECT";
-            this.effect_btn.UseVisualStyleBackColor = false;
-            this.effect_btn.Click += new System.EventHandler(this.audio_effect_btn_Click);
-            // 
-            // plus_btn
-            // 
-            this.plus_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.plus_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.plus_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.plus_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.plus_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.plus_btn.Location = new System.Drawing.Point(278, 199);
-            this.plus_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.plus_btn.Name = "plus_btn";
-            this.plus_btn.Size = new System.Drawing.Size(41, 55);
-            this.plus_btn.TabIndex = 28;
-            this.plus_btn.Text = "+";
-            this.plus_btn.UseVisualStyleBackColor = false;
-            this.plus_btn.Click += new System.EventHandler(this.plus_btn_Click);
-            // 
-            // minus_btn
-            // 
-            this.minus_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.minus_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.minus_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.minus_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.minus_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minus_btn.Location = new System.Drawing.Point(91, 199);
-            this.minus_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.minus_btn.Name = "minus_btn";
-            this.minus_btn.Size = new System.Drawing.Size(41, 55);
-            this.minus_btn.TabIndex = 29;
-            this.minus_btn.Text = "-";
-            this.minus_btn.UseVisualStyleBackColor = false;
-            this.minus_btn.Click += new System.EventHandler(this.minus_btn_Click);
-            // 
-            // on_off_btn
-            // 
-            this.on_off_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.on_off_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.on_off_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.on_off_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.on_off_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.on_off_btn.Location = new System.Drawing.Point(63, 85);
-            this.on_off_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.on_off_btn.Name = "on_off_btn";
-            this.on_off_btn.Size = new System.Drawing.Size(105, 39);
-            this.on_off_btn.TabIndex = 30;
-            this.on_off_btn.Text = "ON/OFF";
-            this.on_off_btn.UseVisualStyleBackColor = false;
-            this.on_off_btn.Click += new System.EventHandler(this.audio_on_off_btn_Click);
-            // 
-            // input_btn
-            // 
-            this.input_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.input_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.input_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.input_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.input_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.input_btn.Location = new System.Drawing.Point(236, 85);
-            this.input_btn.Margin = new System.Windows.Forms.Padding(0);
-            this.input_btn.Name = "input_btn";
-            this.input_btn.Size = new System.Drawing.Size(105, 39);
-            this.input_btn.TabIndex = 31;
-            this.input_btn.Text = "INPUT";
-            this.input_btn.UseVisualStyleBackColor = false;
-            this.input_btn.Click += new System.EventHandler(this.input_btn_Click);
-            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -855,6 +1123,8 @@
             this.panel7.PerformLayout();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
             this.panel10.ResumeLayout(false);
             this.panel10.PerformLayout();
             this.menu_panel.ResumeLayout(false);
@@ -916,6 +1186,21 @@
         private System.Windows.Forms.Button plus_btn;
         private System.Windows.Forms.Button effect_btn;
         private System.Windows.Forms.Button level_btn;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button button13;
+        private System.Windows.Forms.Label label15;
     }
 }
 

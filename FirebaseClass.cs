@@ -171,6 +171,51 @@ namespace CyanSystemManager
             await UploadIP_onStorage();
         }
 
+        public static void ReadIP(string file_storage)
+        {
+            if (token == null) { Program.Log("LogIn needed!"); return; }
+            FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
+            string download_url = "";
+            FirebaseMetaData metadata = GetMetadata_fromStorage(file_storage).Result;
+            var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage);
+            var task1 = task.GetDownloadUrlAsync().ContinueWith((Task<string> uriTask) => {
+                try { download_url = uriTask.Result.ToString(); }
+                catch (Exception e)
+                {
+                    Program.Log(e.ToString());
+                    Program.Log("File not found: " + file_storage); return;
+                }
+            });
+            task1.Wait();
+
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    string file_local = "ip_server.txt";
+                    client.DownloadFile(new Uri(download_url), file_local);
+                }
+                catch (Exception)
+                {
+                    Program.Log("Error in downloading the file " + file_storage);
+                    return;
+                }
+            }
+            return;
+        }
+
+        public static void AssignServerIP()
+        {
+            string file_storage_server = @"RaspberryPi-Cyan/ip_server.txt";
+            ReadIP(file_storage_server);
+            string newServerIp = File.ReadAllText("ip_server.txt");
+            if (serverIp != newServerIp)
+            {
+                serverIp = newServerIp;
+                Program.Log("NEW SERVER IP: " + serverIp);
+            }
+        }
+
         public static async Task UploadIP_onStorage()
         {
             if (token == null) { Program.Log("LogIn required."); return; }
@@ -178,19 +223,13 @@ namespace CyanSystemManager
             {
                 string file_storage = Environment.MachineName + "/IP.txt";
                 string file_local = variablePath.networkPath + @"\IP.txt";
-                string file_storage_server = @"RaspberryPi-Cyan/ip_server.txt";
                 using (var sw = new StreamWriter(file_local)) { if (IP != "") sw.Write(IP); }
                 using (var stream = File.Open(file_local, FileMode.Open))
                 {
                     FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
                     var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage).PutAsync(stream);
                     await task;
-                    Thread t = ReadIP_Thread(file_storage_server);
-                    t.Start();
-                    t.Join();
-
-                    Thread.Sleep(100);
-                    serverIp = File.ReadAllText("ip_server.txt");
+                    AssignServerIP();
                 };
                 Program.Log("IP has been uploaded -> " + DateTime.Now);
             }
@@ -214,38 +253,5 @@ namespace CyanSystemManager
             await task2;
             return metadata;
         }
-        public static Thread ReadIP_Thread(string file_storage)
-        {
-            Thread thread = new Thread(Method);
-            void Method()
-            {
-                if (token == null) { Program.Log("LogIn needed!"); return; }
-                FirebaseStorageOptions op = new FirebaseStorageOptions() { AuthTokenAsyncFactory = () => Task.FromResult(token.FirebaseToken) };
-                string download_url = "";
-                FirebaseMetaData metadata = GetMetadata_fromStorage(file_storage).Result;
-                var task = new FirebaseStorage("ip-manager42.appspot.com", op).Child(file_storage);
-                var task1 = task.GetDownloadUrlAsync().ContinueWith((Task<string> uriTask) => { try { download_url = uriTask.Result.ToString(); } catch (Exception e) {
-                        Program.Log(e.ToString());
-                        Program.Log("File not found: " + file_storage); return; } });
-                task1.Wait();
-
-                using (var client = new WebClient())
-                {
-                    try
-                    {
-                        string file_local = "ip_server.txt";
-                        client.DownloadFile(new Uri(download_url), file_local);
-                    }
-                    catch (Exception)
-                    {
-                        Program.Log("Error in downloading the file " + file_storage);// try { File.Move(file_local + "b", file_local); } catch (Exception) { Program.Log(ex.Message); };
-                        return;
-                    }
-                }
-                return;
-            }
-            return thread;
-        }
-
     }
 }

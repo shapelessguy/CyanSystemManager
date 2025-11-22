@@ -45,11 +45,10 @@ namespace CyanSystemManager
             {
                 try
                 {
-                    Thread.Sleep(100); // 10 fps
+                    Thread.Sleep(25); // 10 fps
                     if (commands.Count == 0) continue;
-                    Command command = commands[commands.Count - 1];
+                    foreach (Command command in commands) Tree(command);
                     commands.Clear();
-                    Tree(command);
                 }
                 catch (Exception ex) { Log("Exception in " + title); Log(ex.Message); }
             }

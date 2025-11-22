@@ -33,6 +33,7 @@ namespace CyanSystemManager
         {
             int counter = 0;
             n_monitors = -1;
+            Screen prevPrimaryMonitor = Screen.PrimaryScreen;
             TurnOn();
             while (!forceTermination && status != State.OFF)
             {
@@ -42,9 +43,14 @@ namespace CyanSystemManager
                     counter++;
                     if (counter == 40) { 
                         counter = 0;
-                        if (Screen.AllScreens.Length != n_monitors)
+                        if (Screen.AllScreens.Length != n_monitors || prevPrimaryMonitor != Screen.PrimaryScreen)
                         {
+                            prevPrimaryMonitor = Screen.PrimaryScreen;
                             MonitorManager.allMonitors = MonitorManager.getMonitorConfiguration();
+                            foreach (var m in MonitorManager.allMonitors)
+                            {
+                                m.Print();
+                            }
                         }
                     }
                     if (commands.Count == 0) continue;
@@ -99,6 +105,7 @@ namespace CyanSystemManager
                                           + MonitorManager.Ref(VT.Ausiliary1).screen.DeviceName + " "
                                           + MonitorManager.Ref(VT.Ausiliary2).screen.DeviceName + " ";
             execProfile(command);
+            home.defaultColor(null, null);
         }
 
         private static void TurnOff()
@@ -107,6 +114,7 @@ namespace CyanSystemManager
                                           + MonitorManager.Ref(VT.Ausiliary1).screen.DeviceName + " "
                                           + MonitorManager.Ref(VT.Ausiliary2).screen.DeviceName + " ";
             execProfile(command);
+            home.minimumLights(null, null);
         }
     }
 
@@ -157,7 +165,6 @@ namespace CyanSystemManager
     class SortWindows
     {
         public static Dictionary<string[], MyMonitor> browsers = new Dictionary<string[], MyMonitor>();
-        public static int tempo_avvio = 25000;
         public static Dictionary<float, float> AudioLevels = new Dictionary<float, float>();
         static string[] browserToLocate;
 

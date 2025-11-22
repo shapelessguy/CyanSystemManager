@@ -15,6 +15,20 @@ using static Vanara.PInvoke.Kernel32.RETRIEVAL_POINTERS_BUFFER;
 
 namespace CyanSystemManager
 {
+
+    public class ProfileSettings
+    {
+        public Point Location { get; set; }
+        public Size Size { get; set; }
+
+        public ProfileSettings(Point location, Size size)
+        {
+            Location = location;
+            Size = size;
+        }
+
+        public ProfileSettings() { }
+    }
     public class WinSet
     {
         public string name;
@@ -23,13 +37,28 @@ namespace CyanSystemManager
         public Monitor monitor = null;
         public string monitor_placeholder = "null";
         public List<string> avail_monitors = new List<string>();
+        public Dictionary<string, ProfileSettings> profileSettings = new Dictionary<string, ProfileSettings>();
         public Point location = new Point(0, 0);
         public Size size = new Size(0, 0);
+        static public string[] profiles = new string[] {
+            "Default",
+            "One-Portrait"
+        };
+        public string currentProfile = profiles[0];
+
+        private void InitializeProfileSettings()
+        {
+            foreach (string profile in profiles)
+            {
+                profileSettings[profile] = new ProfileSettings(new Point(0, 0), new Size(0, 0));
+            }
+        }
         public WinSet(string name, application app)
         {
             this.name = name;
             this.app = app;
-            foreach(Monitor monitor in MonitorManager.allMonitors) { avail_monitors.Add(monitor.id); }
+            InitializeProfileSettings();
+            foreach (Monitor monitor in MonitorManager.allMonitors) { avail_monitors.Add(monitor.id); }
         }
 
         public void changeMonitor(string new_monitor)
@@ -56,8 +85,35 @@ namespace CyanSystemManager
                     } 
                 } 
             }
-            if (serial.Count > 4) { location = new Point(Convert.ToInt16(serial[3]), Convert.ToInt16(serial[4])); }
-            if (serial.Count > 6) { size = new Size(Convert.ToInt16(serial[5]), Convert.ToInt16(serial[6])); }
+
+            if (serial.Count > 3)
+            {
+                int index = 3;
+                while (index + 5 < serial.Count)
+                {
+                    string profileName = serial[index];
+                    int x = Convert.ToInt16(serial[index + 1]);
+                    int y = Convert.ToInt16(serial[index + 2]);
+                    int width = Convert.ToInt16(serial[index + 3]);
+                    int height = Convert.ToInt16(serial[index + 4]);
+
+                    if (profileSettings.ContainsKey(profileName))
+                    {
+                        profileSettings[profileName].Location = new Point(x, y);
+                        profileSettings[profileName].Size = new Size(width, height);
+                    }
+                    else
+                    {
+                        profileSettings[profileName] = new ProfileSettings(new Point(x, y), new Size(width, height));
+                    }
+
+                    index += 5;
+                }
+                currentProfile = serial[index];
+            }
+
+            location = profileSettings[currentProfile].Location;
+            size = profileSettings[currentProfile].Size;
         }
 
         public string stringify()
@@ -66,8 +122,15 @@ namespace CyanSystemManager
             out_ += name + ":";
             out_ += Convert.ToString(enabled) + ":";
             out_ += (monitor == null ? monitor_placeholder : monitor.id) + ":";
-            out_ += location.X + ":" + location.Y + ":";
-            out_ += size.Width + ":" + size.Height + ";";
+            foreach (var profileKvp in profileSettings)
+            {
+                string profileName = profileKvp.Key;
+                ProfileSettings settings = profileKvp.Value;
+                out_ += profileName + ":";
+                out_ += settings.Location.X + ":" + settings.Location.Y + ":";
+                out_ += settings.Size.Width + ":" + settings.Size.Height + ":";
+            }
+            out_ += currentProfile + ";";
             return out_;
         }
     }
@@ -161,6 +224,10 @@ namespace CyanSystemManager
 
             loadSettings();
             int height_idx = 1;
+            string defProfile = "";
+            if (winSets.Count > 0) defProfile = winSets[0].currentProfile;
+            ComboBox profile = initializeDropDown("profile_screen_pan2", "", new Point(10, 6), new Size(140, 24), WinSet.profiles, defProfile);
+            int y_offset = 40;
             foreach (var item in App.getApplications())
             {
                 WinSet cur_set = null;
@@ -171,19 +238,39 @@ namespace CyanSystemManager
                         break;
                     }
                 if (cur_set == null) continue;
-                allControls.Add(initializeLabel(item.Key.ToString() + "_lbl_pan2", item.Key.ToString(), new Point(16, 14 + height_idx * 30), new Size(150, 26)));
-                CheckBox enabling = initializeBox(item.Key.ToString() + "_enable_pan2", "Move", new Point(166, 14 + height_idx * 30), new Size(90, 26));
-                ComboBox combo = initializeComboBox(item.Key.ToString() + "_screen_pan2", item.Key.ToString(), new Point(256, 14 + height_idx * 30), new Size(140, 24));
-                TextBox x = initializeTextBox(item.Key.ToString() + "_x_pan2", "", new Point(400 + 70 * 0, 14 + height_idx * 30), new Size(66, 26));
-                TextBox y = initializeTextBox(item.Key.ToString() + "_y_pan2", "", new Point(400 + 70 * 1, 14 + height_idx * 30), new Size(66, 26));
-                TextBox width = initializeTextBox(item.Key.ToString() + "_width_pan2", "", new Point(400 + 70 * 2, 14 + height_idx * 30), new Size(66, 26));
-                TextBox height = initializeTextBox(item.Key.ToString() + "_height_pan2", "", new Point(400 + 70 * 3, 14 + height_idx * 30), new Size(66, 26));
+                int x_ = 16;
+                allControls.Add(initializeLabel(item.Key.ToString() + "_lbl_pan2", item.Key.ToString(), new Point(x_, y_offset + height_idx * 30), new Size(200, 26)));
+                x_ += 200;
+                CheckBox enabling = initializeBox(item.Key.ToString() + "_enable_pan2", "Move", new Point(x_, y_offset + height_idx * 30), new Size(90, 26));
+                x_ += 90;
+                ComboBox combo = initializeComboBox(item.Key.ToString() + "_screen_pan2", item.Key.ToString(), new Point(x_, y_offset + height_idx * 30), new Size(140, 24));
+                x_ += 140; 
+                TextBox x = initializeTextBox(item.Key.ToString() + "_x_pan2", "", new Point(x_, y_offset + height_idx * 30), new Size(66, 26));
+                x_ += 66;
+                TextBox y = initializeTextBox(item.Key.ToString() + "_y_pan2", "", new Point(x_, y_offset + height_idx * 30), new Size(66, 26));
+                x_ += 66;
+                TextBox width = initializeTextBox(item.Key.ToString() + "_width_pan2", "", new Point(x_, y_offset + height_idx * 30), new Size(66, 26));
+                x_ += 66;
+                TextBox height = initializeTextBox(item.Key.ToString() + "_height_pan2", "", new Point(x_, y_offset + height_idx * 30), new Size(66, 26));
                 combo.Enabled = false;
                 x.Enabled = false;
                 y.Enabled = false;
                 width.Enabled = false;
                 height.Enabled = false;
 
+                profile.SelectedIndexChanged += (o, e) => {
+                    if (initializing) return;
+                    initializing = true;
+                    cur_set.currentProfile = profile.SelectedItem.ToString();
+                    x.Text = cur_set.profileSettings[cur_set.currentProfile].Location.X.ToString();
+                    y.Text = cur_set.profileSettings[cur_set.currentProfile].Location.Y.ToString();
+                    width.Text = cur_set.profileSettings[cur_set.currentProfile].Size.Width.ToString();
+                    height.Text = cur_set.profileSettings[cur_set.currentProfile].Size.Height.ToString();
+                    cur_set.location = new Point(tryConvert(x), tryConvert(y));
+                    cur_set.size = new Size(tryConvert(width), tryConvert(height));
+                    initializing = false;
+                    saveWinSets();
+                };
                 enabling.CheckedChanged += (o, e) =>
                 {
                     cur_set.enabled = enabling.Checked;
@@ -223,6 +310,7 @@ namespace CyanSystemManager
                     cur_set.size = new Size(tryConvert(width), tryConvert(height));
                     saveWinSets();
                 };
+                allControls.Add(profile);
                 allControls.Add(enabling);
                 allControls.Add(combo);
                 allControls.Add(x);
@@ -344,6 +432,11 @@ namespace CyanSystemManager
         {
             if (initializing) return;
             string out_ = "";
+            foreach (WinSet winset in winSets)
+            {
+                winset.profileSettings[winset.currentProfile].Location = winset.location;
+                winset.profileSettings[winset.currentProfile].Size = winset.size;
+            }
             foreach (WinSet winset in winSets) out_ += winset.stringify();
             Properties.Settings.Default.winSet = out_;
             Properties.Settings.Default.Save();
@@ -533,6 +626,34 @@ namespace CyanSystemManager
             Box.Location = location;
             Box.Name = name;
             Box.Size = size;
+            Box.MouseWheel += (o, e) => {
+                ((HandledMouseEventArgs)e).Handled = true;
+            };
+            home.panel4.Controls.Add(Box);
+            return Box;
+        }
+
+        private ComboBox initializeDropDown(string name, string text, Point location, Size size, string[] items = null, string selectedProfile = "")
+        {
+            ComboBox Box = new ComboBox();
+            Box.Font = new Font("Cambria", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Box.ForeColor = Color.White;
+            Box.BackColor = btnBackColor;
+            Box.Location = location;
+            Box.Name = name;
+            Box.Size = size;
+            Box.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            if (items != null && items.Length > 0)
+            {
+                Box.Items.AddRange(items);
+                Box.SelectedIndex = 0;
+                if (selectedProfile != "" && items.Contains(selectedProfile))
+                {
+                    Box.SelectedItem = selectedProfile;
+                }
+            }
+
             Box.MouseWheel += (o, e) => {
                 ((HandledMouseEventArgs)e).Handled = true;
             };

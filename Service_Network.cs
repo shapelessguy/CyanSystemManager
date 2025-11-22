@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace CyanSystemManager
         {
             Program.Log("Starting netService..");
             now = DateTime.Now;
-            prev_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
+            prev_data = null;
             listIP = ips.Values.ToList();
             listIP_successes = new List<long>();
             foreach (var ip in listIP) { listIP_successes.Add(0); }
@@ -75,11 +76,11 @@ namespace CyanSystemManager
                 now = DateTime.Now;
                 int[] act_data = new int[] { now.Year, now.Month, now.Day, now.Hour, now.Minute };
 
-                if (!act_data.SequenceEqual(prev_data))
+                if (prev_data == null || !act_data.SequenceEqual(prev_data))
                 {
                     iter_UpdateIP++;
-                    if (iter_UpdateIP >= 60) { iter_UpdateIP = 0; FirebaseClass.UploadIP(); }  
-                    // upload ip ogni ora ... oppure ogni disconnessione (guarda sotto)
+                    if (prev_data != null && iter_UpdateIP >= 30) { iter_UpdateIP = 0; FirebaseClass.UploadIP(); }  
+                    // upload ip ogni 30 minuti ... oppure ogni disconnessione (guarda sotto)
                     prev_data = new int[] { act_data[0], act_data[1], act_data[2], act_data[3], act_data[4] };
                     SaveGarancy(Fill0(act_data[0], 4) + Fill0(act_data[1], 2) + Fill0(act_data[2], 2) + Fill0(act_data[3], 2) + Fill0(act_data[4], 2));
                 }
@@ -154,12 +155,14 @@ namespace CyanSystemManager
 
         private static void HideDisconnect()
         {
+            Program.Log("HideDisconnect");
             if (disc_modem.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_modem.Hide(); });
             if (disc_wan.Visible) Program.home.Invoke((MethodInvoker)delegate { disc_wan.Hide(); });
         }
 
         private static void ShowDisconnect(DisconnectForm form)
         {
+            Program.Log("ShowDisconnect -> " + form.ToString());
             if (!form.Visible)
             {
                 Program.home.Invoke((MethodInvoker)delegate

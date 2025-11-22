@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -54,10 +55,40 @@ namespace CyanSystemManager
             }
         }
 
+        public class MultiTextWriter : TextWriter
+        {
+            private readonly TextWriter[] writers;
+
+            public MultiTextWriter(params TextWriter[] writers)
+            {
+                this.writers = writers;
+            }
+
+            public override void Write(char value)
+            {
+                foreach (var writer in writers)
+                {
+                    writer.Write(value);
+                }
+            }
+
+            public override void WriteLine(string value)
+            {
+                foreach (var writer in writers)
+                {
+                    writer.WriteLine(value);
+                }
+            }
+
+            public override Encoding Encoding => Encoding.Default;
+        }
+
         static public void Log(string text, string end=null)
         {
             if (end == null) end = Environment.NewLine;
-            File.AppendAllText(log_path, text + end);
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string logEntry = $"[{timestamp}] {text}";
+            File.AppendAllText(log_path, logEntry + end);
             Console.Write(text + end);
         }
 

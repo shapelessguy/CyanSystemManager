@@ -140,6 +140,7 @@ namespace CyanSystemManager
     }
     public class NotebookCom { static public string NOTEOPEN = "NoteOpen"; }
     public class StartCom { static public string START = "Start"; }
+    public class WTrackerCom { static public string CHECKWIN = "CheckWin"; }
 
     public class Activity
     {

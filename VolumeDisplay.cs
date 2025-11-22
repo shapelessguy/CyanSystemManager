@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using static CyanSystemManager.Utility;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Vanara.PInvoke.Gdi32;
 
 namespace CyanSystemManager
@@ -55,7 +58,7 @@ namespace CyanSystemManager
         public Screen screen;
         int cycle_index = 0;
         private List<Object> settingsQueue = new List<Object>();
-        private string indicator_type = "";
+        private List<string> indicators = new List<string>();
 
         private const int WS_EX_TRANSPARENT = 0x20;
         private const int WS_EX_LAYERED = 0x80000;
@@ -101,22 +104,51 @@ namespace CyanSystemManager
 
         private void DrawIndicator(PaintEventArgs e)
         {
-            if (indicator_type != "")
+            foreach (string indicator_type in indicators)
             {
-                Color color = Color.White;
-                if (indicator_type == "START_WAITING") color = Color.Red;
-                else if (indicator_type == "START_SPEAKING") color = Color.Blue;
-                Brush redBrush = new SolidBrush(color);
-                float circleDiameter = 30.0f;
-                PointF circlePosition = new PointF(10, 10);
-                e.Graphics.FillEllipse(redBrush, circlePosition.X, circlePosition.Y, circleDiameter, circleDiameter);
-                redBrush.Dispose();
+                if (indicator_type == "START_WAITING" || 
+                    indicator_type == "START_THINKING" || 
+                    indicator_type == "START_SPEAKING" || 
+                    indicator_type == "START_ERROR")
+                {
+                    Color color = Color.White;
+                    if (indicator_type == "START_WAITING") color = Color.Green;
+                    else if (indicator_type == "START_THINKING") color = Color.Orange;
+                    else if (indicator_type == "START_SPEAKING") color = Color.Blue;
+                    else if (indicator_type == "START_ERROR") color = Color.Red;
+                    Brush redBrush = new SolidBrush(color);
+                    float circleDiameter = 30.0f;
+                    PointF circlePosition = new PointF(10, 10);
+                    e.Graphics.FillEllipse(redBrush, circlePosition.X, circlePosition.Y, circleDiameter, circleDiameter);
+                    redBrush.Dispose();
+                }
+                else if (indicator_type == "START_OUTLOOK")
+                {
+                    Image image = Properties.Resources.warning;
+                    float imageWidth = 40f;
+                    float imageHeight = 40f;
+                    PointF imagePosition = new PointF(240, 50);
+                    e.Graphics.DrawImage(image, imagePosition.X, imagePosition.Y, imageWidth, imageHeight);
+
+                    Font textFont = new Font("Arial", 16, FontStyle.Bold);
+                    StringFormat stringFormat = new StringFormat();
+                    stringFormat.Alignment = StringAlignment.Near;
+                    stringFormat.LineAlignment = StringAlignment.Center;
+                    PointF textPosition = new PointF(290, 70);
+                    PointF shadowPosition = new PointF(textPosition.X + 2, textPosition.Y + 2);
+                    string text = "Password for Outlook needed";
+                    e.Graphics.DrawString(text, textFont, Brushes.Black, shadowPosition, stringFormat);
+                    e.Graphics.DrawString(text, textFont, Brushes.White, textPosition, stringFormat);
+                }
             }
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             Location = screen.Bounds.Location;
+            this.TopMost = true;
+            this.TopLevel = true;
+            SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
             base.OnPaint(e);
 
             // Set high-quality rendering for smooth graphics.
@@ -126,11 +158,11 @@ namespace CyanSystemManager
 
             if (settingsQueue.Count() > 0)
             {
-                Object set_obj = settingsQueue[settingsQueue.Count - 1];
+                Object set_obj = settingsQueue[0];
                 if (set_obj is VolSettings)
                 {
                     VolSettings set = (VolSettings)set_obj;
-                    
+
                     // Define the overall dimensions for the volume display.
                     int diameter = 140; // Diameter of the circle.
                     int centerX = diameter / 2;
@@ -147,7 +179,7 @@ namespace CyanSystemManager
                     // The sweep angle is proportional to the current volume level (0 to 360 degrees).
                     float sweepAngle = (float)(360 * set.volume);
                     // You can adjust the pen thickness as needed.
-                    Brush color = set.mute? Brushes.DarkGray : Brushes.Red;
+                    Brush color = set.mute ? Brushes.DarkGray : Brushes.Red;
                     Pen volumePen = new Pen(color, 30);
                     // The arc is drawn just inside the circle's bounds.
                     e.Graphics.DrawArc(volumePen, circleBounds, -90, sweepAngle); // Start from the top (-90 degrees).
@@ -204,14 +236,47 @@ namespace CyanSystemManager
                 else if (set_obj is IndicatorSettings)
                 {
                     IndicatorSettings set = (IndicatorSettings)set_obj;
-                    if (set.type == "START_WAITING") indicator_type = set.type;
-                    else if (set.type == "END_WAITING") indicator_type = "";
-                    else if (set.type == "START_SPEAKING") indicator_type = set.type;
-                    else if (set.type == "END_SPEAKING") indicator_type = "";
+
+                    if (set.type == "START_WAITING") AddIfNotPresent(indicators, set.type);
+                    else if (set.type == "END_WAITING") RemoveIfPresent(indicators, "START_WAITING");
+
+                    else if (set.type == "START_THINKING") AddIfNotPresent(indicators, set.type);
+                    else if (set.type == "END_THINKING") RemoveIfPresent(indicators, "START_THINKING");
+
+                    else if (set.type == "START_SPEAKING") AddIfNotPresent(indicators, set.type);
+                    else if (set.type == "END_SPEAKING") { RemoveIfPresent(indicators, "START_SPEAKING"); }
+
+                    else if (set.type == "START_ERROR") AddIfNotPresent(indicators, set.type);
+                    else if (set.type == "END_ERROR") { RemoveIfPresent(indicators, "START_ERROR"); }
+
+                    else if (set.type == "START_OUTLOOK") AddIfNotPresent(indicators, set.type);
+                    else if (set.type == "END_OUTLOOK") RemoveIfPresent(indicators, "START_OUTLOOK");
+
                 }
-                settingsQueue.Clear();
+                settingsQueue.RemoveAt(0);
             }
             DrawIndicator(e);
+        }
+        public static void AddIfNotPresent(List<string> list, string item)
+        {
+            if (!list.Contains(item))
+            {
+                list.Add(item);
+            }
+        }
+        public static void RemoveAllStarts(List<string> list)
+        {
+            for (int i = list.Count- 1; i >= 0; i--)
+            {
+                if (list[i].Substring(0, 5) == "START") { list.RemoveAt(i); }
+            }
+        }
+        public static void RemoveIfPresent(List<string> list, string item)
+        {
+            if (list.Contains(item))
+            {
+                list.Remove(item);
+            }
         }
 
         protected override CreateParams CreateParams
@@ -228,7 +293,7 @@ namespace CyanSystemManager
         {
             dispose = true;
             Dispose();
-            Console.WriteLine("Disposing");
+            Program.Log("Disposing");
         }
     }
 }

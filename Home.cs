@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -182,7 +183,7 @@ namespace CyanSystemManager
             start.Enabled = false;
             network.Enabled = false;
         }
-        private void Sort_Click(object sender, EventArgs e) { Service_Monitor.sort(); }
+        private void Sort_Click(object sender, EventArgs e) {Service_Monitor.sort(); }
         private void Now_Click(object sender, EventArgs e) { Service_Start.SystemStart(false); }
         private void YeReboot_Click(object sender, EventArgs e) {Reboot_Click(true); }
         private void NoReboot_Click(object sender, EventArgs e) {Reboot_Click(false);}
@@ -307,16 +308,17 @@ namespace CyanSystemManager
         {
             icon_panel.BringToFront();
         }
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient{ Timeout = TimeSpan.FromSeconds(1) };
         public static async Task<bool> sendHTTP(string topic, string arg, bool verbose=true)
         {
             try
             {
                 var values = new Dictionary<string, string> {{ topic, arg }};
-                var content = new FormUrlEncodedContent(values);
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(values), Encoding.UTF8, "application/json");
 
-                if (verbose) Console.WriteLine("http://" + FirebaseClass.serverIp + ":10001/" + topic);
-                var response = await client.PostAsync("http://" + FirebaseClass.serverIp + ":10001/" + topic, content);
+                string server_port = "10004";
+                if (verbose) Program.Log("http://" + FirebaseClass.serverIp + ":" + server_port + "/" + topic);
+                var response = await client.PostAsync("http://" + FirebaseClass.serverIp + ":" + server_port + "/" + topic, jsonContent);
 
                 using (var sr = new StreamReader(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding("iso-8859-1")))
                 {
@@ -327,7 +329,6 @@ namespace CyanSystemManager
             catch (TaskCanceledException ex)
             {
                 if (verbose) Program.Log("Request timed out: " + ex.Message);
-                // Handle timeout-specific logic here
                 return false;
             }
             catch (Exception ex)
@@ -340,14 +341,14 @@ namespace CyanSystemManager
 
         public async void plant_leds_on_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("lights", "on");
-            Service_Display.ShowMsg(new MsgSettings("LIGHTS: ON"));
+            var result = await sendHTTP("lights", "on");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("LIGHTS: ON")); }
         }
 
         public async void plant_leds_off_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("lights", "off");
-            Service_Display.ShowMsg(new MsgSettings("LIGHTS: OFF"));
+            var result = await sendHTTP("lights", "off");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("LIGHTS: OFF")); }
         }
 
         public async void plant_leds_auto_womsg_set(int hour_, int minute_)
@@ -366,11 +367,11 @@ namespace CyanSystemManager
             hour = hour.Length == 1 ? "0" + hour : hour;
             minute = minute.Length == 1 ? "0" + minute : minute;
             string arg = "auto " + hour + ":" + minute;
-            await sendHTTP("lights", arg);
-            Service_Display.ShowMsg(new MsgSettings("LIGHTS AUTO: " + "at " + hour + ":" + minute + " CONFIRMED"));
+            var result = await sendHTTP("lights", arg);
+            if (result) { Service_Display.ShowMsg(new MsgSettings("LIGHTS AUTO: " + "at " + hour + ":" + minute + " CONFIRMED")); }
         }
 
-        public async void plants_leds_auto_in_set(int auto_minutes)
+        public void plants_leds_auto_in_set(int auto_minutes)
         {
             string minutes = "NOW";
             DateTime currentTime = DateTime.Now;
@@ -383,8 +384,8 @@ namespace CyanSystemManager
 
         public async void plant_leds_auto_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("lights", "auto");
-            Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO"));
+            var result = await sendHTTP("lights", "auto");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO")); }
         }
         public async void plant_leds_auto()
         {
@@ -398,69 +399,162 @@ namespace CyanSystemManager
             string minute = dateTimePicker1.Value.Minute.ToString();
             minute = minute.Length == 1 ? "0" + minute : minute;
             string arg = "auto " + hour + ":" + minute;
-            await sendHTTP("lights", arg);
-            Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO " + hour + ":" + minute));
+
+            var result = await sendHTTP("lights", arg);
+            if (result) { Service_Display.ShowMsg(new MsgSettings("LIGHTS: AUTO " + hour + ":" + minute)); }
         }
 
         public async void tv_on_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("tv", "on");
-            Service_Display.ShowMsg(new MsgSettings("TV: ON"));
+            var result = await sendHTTP("tv", "on");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("TV: ON")); }
         }
 
         public async void tv_off_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("tv", "off");
-            Service_Display.ShowMsg(new MsgSettings("TV: OFF"));
+            var result = await sendHTTP("tv", "off");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("TV: OFF")); }
         }
 
         public async void audio_on_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "on");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: ON"));
+            var result = await sendHTTP("audio", "on");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: ON")); }
         }
 
         public async void audio_off_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "off");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: OFF"));
+            var result = await sendHTTP("audio", "off");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: OFF")); }
         }
 
         public async void audio_on_off_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "on/off");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: ON/OFF"));
+            var result = await sendHTTP("audio", "on/off");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: ON/OFF")); }
         }
 
         private async void input_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "input");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: INPUT"));
+            var result = await sendHTTP("audio", "input");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: INPUT")); }
         }
 
         private async void level_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "level");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: LEVEL"));
+            var result = await sendHTTP("audio", "level");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: LEVEL")); }
         }
 
         private async void minus_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "vol-");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL -"));
+            var result = await sendHTTP("audio", "vol-");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL -")); }
         }
 
         private async void plus_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "vol+");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL +"));
+            var result = await sendHTTP("audio", "vol+");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: VOL +")); }
         }
 
         public async void audio_effect_btn_Click(object sender, EventArgs e)
         {
-            await sendHTTP("audio", "effect");
-            Service_Display.ShowMsg(new MsgSettings("AUDIO: EFFECT"));
+            var result = await sendHTTP("audio", "effect");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("AUDIO: EFFECT")); }
         }
+
+        private async void button8_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "toplight");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOPLIGHT")); }
+        }
+
+        private async void button7_Click_1(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topoff");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOPOFF")); }
+        }
+
+        public async void defaultColor(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topG4");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-G4")); }
+        }
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topG4");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-G4")); }
+        }
+
+        private async void button4_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topB3");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-B3")); }
+        }
+
+        private async void button5_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topR0");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-R0")); }
+        }
+
+        private async void button1_Click_1(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topG0");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-G0")); }
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topB0");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-B0")); }
+        }
+
+        private async void button6_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "topR4");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: TOP-R4")); }
+        }
+
+        public async void button9_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "i4");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: I4")); }
+        }
+
+        public async void button10_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "i3");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: I3")); }
+        }
+
+        public async void button11_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "i2");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: I2")); }
+        }
+
+        public async void button12_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "i1");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: I1")); }
+        }
+
+        public async void minimumLights(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("strip", "i0");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("STRIP: I0")); }
+        }
+
+        private async void button13_Click(object sender, EventArgs e)
+        {
+            var result = await sendHTTP("announce", "performing");
+            if (result) { Service_Display.ShowMsg(new MsgSettings("ANNOUNCE: PERFORMING")); }
+        }
+
+
         public static void OpenFile(string filePath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
@@ -481,14 +575,14 @@ namespace CyanSystemManager
 
         private void wg_btn_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Executing py script");
-            Program.cmd(variablePath.python, variablePath.pyWgScript, true);
-            string clipboardText = Clipboard.GetText(TextDataFormat.Text);
-            if (clipboardText.Substring(0, 10) == "Exception:")
-            {
-                Clipboard.Clear();
-                System.Windows.Forms.MessageBox.Show(clipboardText);
-            }
+            // Program.Log("Executing py script");
+            // Program.cmd(variablePath.python, variablePath.pyWgScript, true);
+            // string clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            // if (clipboardText.Substring(0, 10) == "Exception:")
+            // {
+            //     Clipboard.Clear();
+            //     System.Windows.Forms.MessageBox.Show(clipboardText);
+            // }
         }
 
         private void vac_wg_btn_Click(object sender, EventArgs e)
@@ -503,7 +597,7 @@ namespace CyanSystemManager
 
         private void show_wg_btn_Click(object sender, EventArgs e)
         {
-            OpenFile(variablePath.pyCalendarWg);
+            // OpenFile(variablePath.pyCalendarWg);
         }
     }
 }
