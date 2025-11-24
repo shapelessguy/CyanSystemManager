@@ -55,9 +55,10 @@ namespace CyanSystemManager
     public partial class VolumeDisplay : Form
     {
         public bool dispose = false;
+        public static bool workingOnQueue = false;
         public Screen screen;
         int cycle_index = 0;
-        private List<Object> settingsQueue = new List<Object>();
+        private Queue<object> settingsQueue = new Queue<object>();
         private List<string> indicators = new List<string>();
 
         private const int WS_EX_TRANSPARENT = 0x20;
@@ -76,8 +77,45 @@ namespace CyanSystemManager
         public void submit(Object set)
         {
             if (dispose) return;
-            settingsQueue.Add(set); // Store the current settings for painting.
+            while (workingOnQueue) Thread.Sleep(5);
+            workingOnQueue = true;
+            settingsQueue.Enqueue(set);
+            if (settingsQueue.Count < 2)
+            {
+                cycle_index = 0;
+                workingOnQueue = false;
+                return;
+            }
+            else
+            {
+                var volumes = settingsQueue.OfType<VolSettings>().ToList();
+                var messages = settingsQueue.OfType<MsgSettings>().ToList();
+                if (volumes.Count >= 2)
+                {
+                    float firstVolume = volumes.First().volume;
+                    float lastVolume = volumes.Last().volume;
+                    VolSettings lastVol = volumes.Last();
+                    int targetCount = volumes.Count;
+
+                    List<VolSettings> resampled = new List<VolSettings>();
+                    for (int i = 0; i < targetCount; i++)
+                    {
+                        float t = (float)i / (targetCount - 1);
+                        float interpolatedVolume = firstVolume + t * (lastVolume - firstVolume);
+                        var original = volumes[0];
+                        resampled.Add(new VolSettings(interpolatedVolume, lastVol.mute, lastVol.deviceName));
+                    }
+
+                    volumes = resampled;
+                }
+                settingsQueue = new Queue<object>(volumes);
+                if (messages.Count > 0)
+                {
+                    settingsQueue.Enqueue(messages.Last());
+                }
+            }
             cycle_index = 0;
+            workingOnQueue = false;
         }
 
         private void handleVisibility()
@@ -88,7 +126,10 @@ namespace CyanSystemManager
                 cycle_index ++;
                 if (cycle_index < threshold)
                 {
+                    while (workingOnQueue) Thread.Sleep(5);
+                    workingOnQueue = true;
                     if (settingsQueue.Count() > 0) { Invalidate(); cycle_index = 0; }
+                    workingOnQueue = false;
                 }
                 else if (cycle_index == threshold)
                 {
@@ -98,7 +139,7 @@ namespace CyanSystemManager
                 {
                     cycle_index = threshold;
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(30);
             }
         }
 
@@ -156,17 +197,19 @@ namespace CyanSystemManager
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
+            while (workingOnQueue) Thread.Sleep(5);
+            workingOnQueue = true;
             if (settingsQueue.Count() > 0)
             {
-                Object set_obj = settingsQueue[0];
+                Object set_obj = settingsQueue.Dequeue();
                 if (set_obj is VolSettings)
                 {
                     VolSettings set = (VolSettings)set_obj;
 
                     // Define the overall dimensions for the volume display.
                     int diameter = 100; // Diameter of the circle.
-                    int centerX = diameter / 2;
-                    int centerY = diameter / 4;
+                    int centerX = Convert.ToInt16(diameter * 0.5);
+                    int centerY = Convert.ToInt16(diameter * 0.4);
                     Rectangle circleBounds = new Rectangle(centerX, centerY, diameter, diameter);
 
                     // Draw the background circle.
@@ -195,7 +238,7 @@ namespace CyanSystemManager
                     stringFormat.LineAlignment = StringAlignment.Center; // Vertically align text to the center of the point
 
                     // Calculate the text position (to the right of the circle)
-                    PointF textPosition = new PointF(centerX + diameter + 20, centerY + diameter / 2); // Adjust as needed
+                    PointF textPosition = new PointF(centerX + diameter + 30, centerY + diameter / 2); // Adjust as needed
                     PointF shadowPosition = new PointF(textPosition.X + 2, textPosition.Y + 2); // Shadow position, slightly offset
 
                     // Draw the shadow text (black)
@@ -259,8 +302,8 @@ namespace CyanSystemManager
                     else if (set.type == "END_OUTLOOK") RemoveIfPresent(indicators, "START_OUTLOOK");
 
                 }
-                settingsQueue.RemoveAt(0);
             }
+            workingOnQueue = false;
             DrawIndicator(e);
         }
         public static void AddIfNotPresent(List<string> list, string item)

@@ -145,7 +145,6 @@ namespace CyanSystemManager
 
         // //////////////   Functions of AudioService
         public static void MasterVolume(string type) { addCommand(type, baseSpeed); }
-        public static float GetMasterVolume() { if (status == State.OFF) return -1f; return audioInfo.masterVolume; }
         public static void SetMasterVolume(float volume) { addCommand(AudioCom.SET_VOL, volume); }
         public static AudioDevice GetDevice() { if (status == State.OFF) return AudioDevices.getDevice(AT.None); 
                                                 return audioInfo.audioDevice; }
@@ -543,7 +542,6 @@ namespace CyanSystemManager
 
             bool change = audioInfo.masterVolume - prev_masterVol != 0;
             if (change) { audioInfo.defaultDevice.AudioEndpointVolume.Mute = false; audioInfo.mute = false; }
-
             SetVolume(audioInfo.masterVolume);
         }
         static void noVol()
@@ -567,6 +565,7 @@ namespace CyanSystemManager
         static void submit()
         {
             Program.Log("Command sent");
+            Console.WriteLine(audioInfo.masterVolume);
             Service_Display.ShowVol(new VolSettings(audioInfo.masterVolume, audioInfo.mute, audioInfo.deviceName));
         }
 
