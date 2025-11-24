@@ -22,6 +22,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Vanara.PInvoke.User32;
 using Timer = System.Windows.Forms.Timer;
 
+
 namespace CyanSystemManager
 {
     public partial class Home : Form
@@ -37,7 +38,7 @@ namespace CyanSystemManager
         public Home(bool start)
         {
             MonitorManager.initialize_monitors();
-            binded = new BindElements(); 
+            binded = new BindElements();
             serviceControls = new List<serviceBoxControl>();
             startup = start;
             InitializeComponent();

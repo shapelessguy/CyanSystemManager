@@ -123,6 +123,7 @@ namespace CyanSystemManager
         static public string RST = "RST";
         static public string START = "START";
         static public string SNAPSHOT = "SNAPSHOT";
+        static public string SNAPSHOT_FULL = "SNAPSHOT_FULL";
         static public string UPSIZING = "UPSIZING";
     }
     public class MonitorCom
@@ -167,6 +168,7 @@ namespace CyanSystemManager
             else if (name == "reset") Service_Shortcut.KeyPad(ShortcutCom.RST);
             else if (name == "start") Service_Shortcut.KeyPad(ShortcutCom.START);
             else if (name == "snapshot") Service_Shortcut.TakeSnapshot();
+            else if (name == "snapshotFull") Service_Shortcut.TakeSnapshotFull();
             else if (name == "mediumUpSizing") Service_Shortcut.UpSizing();
 
             else if (name == "AudioPrimary") Service_Audio.SetDevice(AudioCom.PRIMARY);

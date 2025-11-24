@@ -16,6 +16,8 @@ namespace CyanSystemManager
     {
         static public State status = State.OFF;
         static public bool clear;
+        static bool firstShown = false;
+
         public static void startService()
         {
             status = State.NEUTRAL;
@@ -37,6 +39,7 @@ namespace CyanSystemManager
 
         // //////////////   Functions of ShortcutService
         public static void TakeSnapshot() { addCommand(ShortcutCom.SNAPSHOT); }
+        public static void TakeSnapshotFull() { addCommand(ShortcutCom.SNAPSHOT_FULL); }
         public static void UpSizing() { addCommand(ShortcutCom.UPSIZING); }
         public static void Show_Menu() { addCommand(ShortcutCom.SHOW_MENU); }
         public static void KeyPad(string command, KeyMode keymode = KeyMode.Normal) { addCommand(command, keymode); }
@@ -71,6 +74,7 @@ namespace CyanSystemManager
                     else if (command.type == ShortcutCom.RST) RST(mode);
                     else if (command.type == ShortcutCom.START) START(mode);
                     else if (command.type == ShortcutCom.SNAPSHOT) SNAPSHOT();
+                    else if (command.type == ShortcutCom.SNAPSHOT_FULL) SNAPSHOT_FULL();
                     else if (command.type == ShortcutCom.UPSIZING) UPSIZING();
                 }
                 catch (Exception e) { Program.Log("Exception in shortcutRun\n" + e); }
@@ -80,7 +84,7 @@ namespace CyanSystemManager
 
         static private void ShowMenu()
         {
-            if (Program.home.Visible) Program.home.Invoke((MethodInvoker)delegate { Program.home.Hide(); });
+            if (Program.home.Visible && firstShown) Program.home.Invoke((MethodInvoker)delegate { Program.home.Hide(); });
             else Program.home.Invoke((MethodInvoker)delegate {
                 try
                 {
@@ -96,6 +100,7 @@ namespace CyanSystemManager
                 }
                 catch (Exception ex) { Program.Log(ex.ToString()); }
             });
+            firstShown = true;
         }
 
         static int updatedThreadID = 0;
@@ -200,6 +205,10 @@ namespace CyanSystemManager
         private static void SNAPSHOT()
         {
             SendKeys.SendWait("%^+{S}");
+        }
+        private static void SNAPSHOT_FULL()
+        {
+            SendKeys.SendWait("%^+{D}");
         }
         private static void UPSIZING()
         {

@@ -164,28 +164,29 @@ namespace CyanSystemManager
                     VolSettings set = (VolSettings)set_obj;
 
                     // Define the overall dimensions for the volume display.
-                    int diameter = 140; // Diameter of the circle.
+                    int diameter = 100; // Diameter of the circle.
                     int centerX = diameter / 2;
                     int centerY = diameter / 4;
                     Rectangle circleBounds = new Rectangle(centerX, centerY, diameter, diameter);
 
                     // Draw the background circle.
-                    // e.Graphics.FillEllipse(Brushes.Black, circleBounds);
+                    //e.Graphics.FillEllipse(Brushes.Black, circleBounds);
 
                     // Assuming the "carving" is a static visual element, like a shadow or a border.
-                    e.Graphics.DrawEllipse(new Pen(Brushes.White, 34), circleBounds);
+                    using (var pen = new Pen(Color.FromArgb(30, 30, 30), 34)) e.Graphics.DrawEllipse(pen, circleBounds);
 
                     // Draw the volume indicator as an arc around the circle.
                     // The sweep angle is proportional to the current volume level (0 to 360 degrees).
                     float sweepAngle = (float)(360 * set.volume);
                     // You can adjust the pen thickness as needed.
-                    Brush color = set.mute ? Brushes.DarkGray : Brushes.Red;
+                    Brush color = set.mute ? Brushes.DarkGray : Brushes.Cyan;
                     Pen volumePen = new Pen(color, 30);
                     // The arc is drawn just inside the circle's bounds.
                     e.Graphics.DrawArc(volumePen, circleBounds, -90, sweepAngle); // Start from the top (-90 degrees).
 
                     string volumeText = set.deviceName;
-                    string volumeInt = set.mute ? "MUTE" : ((int)Math.Round(set.volume * 100)).ToString();
+                    int volumeInt = (int)Math.Round(set.volume * 100);
+                    string volumeStr = set.mute ? "MUTE" : (volumeInt).ToString();
 
                     // Define the font and text formatting
                     Font textFont = new Font("Arial", 18, FontStyle.Bold);
@@ -194,7 +195,7 @@ namespace CyanSystemManager
                     stringFormat.LineAlignment = StringAlignment.Center; // Vertically align text to the center of the point
 
                     // Calculate the text position (to the right of the circle)
-                    PointF textPosition = new PointF(centerX + diameter + 30, centerY + diameter / 2); // Adjust as needed
+                    PointF textPosition = new PointF(centerX + diameter + 20, centerY + diameter / 2); // Adjust as needed
                     PointF shadowPosition = new PointF(textPosition.X + 2, textPosition.Y + 2); // Shadow position, slightly offset
 
                     // Draw the shadow text (black)
@@ -205,14 +206,19 @@ namespace CyanSystemManager
 
                     // Calculate the text position (to the right of the circle)
                     int offset = set.mute ? -40 : -20;
-                    PointF VolPosition = new PointF(centerX + (int)(diameter / 2) + offset, centerY + diameter / 2); // Adjust as needed
+
+                    int xPosition = centerX + (int)(diameter / 2) + offset;
+                    if (volumeInt < 10) xPosition += 8;
+                    else if (volumeInt == 100) xPosition -= 5;
+
+                    PointF VolPosition = new PointF(xPosition, centerY + diameter / 2); // Adjust as needed
                     PointF VolShadowPosition = new PointF(VolPosition.X + 2, VolPosition.Y + 2); // Shadow position, slightly offset
 
                     // Draw the shadow text (black)
-                    e.Graphics.DrawString(volumeInt, textFont, Brushes.Black, VolPosition, stringFormat);
+                    e.Graphics.DrawString(volumeStr, textFont, Brushes.Black, VolPosition, stringFormat);
 
                     // Draw the main text (white)
-                    e.Graphics.DrawString(volumeInt, textFont, Brushes.White, VolShadowPosition, stringFormat);
+                    e.Graphics.DrawString(volumeStr, textFont, Brushes.White, VolShadowPosition, stringFormat);
                 }
                 else if (set_obj is MsgSettings)
                 {
