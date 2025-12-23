@@ -95,7 +95,7 @@ namespace CyanSystemManager
                     float firstVolume = volumes.First().volume;
                     float lastVolume = volumes.Last().volume;
                     VolSettings lastVol = volumes.Last();
-                    int targetCount = volumes.Count;
+                    int targetCount = Math.Min(volumes.Count, 8);
 
                     List<VolSettings> resampled = new List<VolSettings>();
                     for (int i = 0; i < targetCount; i++)
@@ -342,7 +342,7 @@ namespace CyanSystemManager
         {
             dispose = true;
             Dispose();
-            Program.Log("Disposing");
+            // Program.Log("Disposing");
         }
     }
 }

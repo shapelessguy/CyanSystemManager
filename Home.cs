@@ -56,7 +56,7 @@ namespace CyanSystemManager
             Size = new Size(1276, 764);
             winSize = Size;
             new Thread(monitorMemConsumption).Start();
-            keepAlive = new System.Threading.Timer(Callback, null, 10000, Timeout.Infinite);
+            // keepAlive = new System.Threading.Timer(Callback, null, 10000, Timeout.Infinite);
         }
 
         static async void Callback(Object state) {

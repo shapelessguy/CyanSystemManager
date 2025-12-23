@@ -36,8 +36,14 @@ namespace CyanSystemManager
                 while (restart)
                 {
                     restart = false;
-                    Application.Run(home = new Home(startup));
+                    try
+                    {
+                        Application.Run(home = new Home(startup));
+                    }
+                    catch (Exception e) { Log(e.ToString()); }
+                    Thread.Sleep(10000);
                     startup = false;
+                    forceTermination = false;
                     if (restart)
                     {
                         ConfigurationManager.RefreshSection("appSettings");
@@ -45,7 +51,6 @@ namespace CyanSystemManager
                         Properties.Settings.Default.Reload();
                         Thread.Sleep(1500);
                     }
-                    forceTermination = false;
                 }
                 killMainProcess();
                 Log("Program terminated");
@@ -89,8 +94,12 @@ namespace CyanSystemManager
             if (end == null) end = Environment.NewLine;
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             string logEntry = $"[{timestamp}] {text}";
-            File.AppendAllText(log_path, logEntry + end);
-            Console.Write(text + end);
+            try
+            {
+                File.AppendAllText(log_path, logEntry + end);
+                Console.Write(text + end);
+            }
+            catch { Console.Write("Error while saving logs.\n" + text + end); }
         }
 
         static public void killMainProcess()
