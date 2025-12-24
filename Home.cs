@@ -20,6 +20,7 @@ using static CyanSystemManager.Settings;
 using static CyanSystemManager.Utility;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Vanara.PInvoke.User32;
+using System.Management;
 using Timer = System.Windows.Forms.Timer;
 
 
@@ -77,6 +78,20 @@ namespace CyanSystemManager
                     Program.restart = true;
                     Program.home.Invoke((MethodInvoker)delegate { SafeClose(null, null); });
                 }
+                var searcher1 = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE 'USB\\\\" + variablePath.android_identifier + "'");
+                bool androidConnected = searcher1.Get().Count > 0;
+                if (!button14.Enabled && androidConnected)
+                {
+                    Program.home.Invoke((MethodInvoker)delegate {
+                        button14.Enabled = true;
+                        Thread.Sleep(2000);
+                        button14_Click(null, null);
+                    });
+                }
+                else if (button14.Enabled && !androidConnected)
+                {
+                    Program.home.Invoke((MethodInvoker)delegate { button14.Enabled = false; });
+                }
                 Thread.Sleep(1000);
             }
         }
@@ -95,11 +110,14 @@ namespace CyanSystemManager
                 WindowStyle = ProcessWindowStyle.Hidden
             };
 
-            foreach(var p in Program.all_processes)
+            if (File.Exists(variablePath.chatbot))
             {
-                if (p.ProcessName == "CyanChatBot") p.Kill();
+                foreach (var p in Program.all_processes)
+                {
+                    if (p.ProcessName == "CyanChatBot") p.Kill();
+                }
+                Process chatbot = Process.Start(startInfo);
             }
-            Process chatbot = Process.Start(startInfo);
             FirebaseClass.UploadIP();
         }
         public void SafeClose(object sender, EventArgs e)
@@ -599,6 +617,27 @@ namespace CyanSystemManager
         private void show_wg_btn_Click(object sender, EventArgs e)
         {
             // OpenFile(variablePath.pyCalendarWg);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "wscript.exe",
+                    Arguments = $"\"{variablePath.android_sync}\" \"{variablePath.android_backup_folder}\" \"{variablePath.android_serial}\"",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
+
+                Process.Start(psi);
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // User cancelled UAC prompt
+                System.Windows.Forms.MessageBox.Show("Administrator privileges are required.");
+            }
         }
     }
 }

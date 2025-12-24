@@ -26,6 +26,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+!Xm4Battery-5.11.14\Xm4Battery\bin\Release
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

@@ -513,6 +513,7 @@
     <Content Include="MultiMonitorTool\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\phone.png" />
     <Content Include="Xm4Battery-5.11.14\Xm4Battery\bin\Release\net10.0-windows\Xm4Battery.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
