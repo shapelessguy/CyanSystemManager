@@ -78,7 +78,7 @@ namespace CyanSystemManager
                     Program.restart = true;
                     Program.home.Invoke((MethodInvoker)delegate { SafeClose(null, null); });
                 }
-                var searcher1 = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE 'USB\\\\" + variablePath.android_identifier + "'");
+                var searcher1 = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE 'USB\\\\" + variablePath.android_identifier + "%'");
                 bool androidConnected = searcher1.Get().Count > 0;
                 if (!button14.Enabled && androidConnected)
                 {
